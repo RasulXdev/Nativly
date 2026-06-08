@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/types/database'
 
-// Service role client - only for server-side admin operations
+// SUPABASE_URL + SUPABASE_SECRET_KEY — auto-provided by Vercel-Supabase integration (server-side only)
 export function createAdminClient() {
   return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    (process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY)!,
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
     {
       auth: {
         autoRefreshToken: false,
