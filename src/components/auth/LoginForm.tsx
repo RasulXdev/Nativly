@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
@@ -22,7 +23,8 @@ export default function LoginForm() {
   const t = useTranslations('auth')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
+  const locale = useLocale()
+  const redirectTo = searchParams.get('redirectTo') ?? `/${locale}/dashboard`
   const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -58,8 +60,8 @@ export default function LoginForm() {
 
         const role = profile?.role ?? 'student'
         const destination =
-          role === 'admin' ? '/admin'
-          : role === 'tutor' ? '/tutor-dashboard'
+          role === 'admin' ? `/${locale}/admin`
+          : role === 'tutor' ? `/${locale}/tutor-dashboard`
           : redirectTo
 
         router.push(destination)
@@ -95,7 +97,7 @@ export default function LoginForm() {
             <Separator />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">{t('or') ?? 'və ya'}</span>
+            <span className="bg-background px-2 text-muted-foreground">{t('orDivider')}</span>
           </div>
         </div>
 

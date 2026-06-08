@@ -85,7 +85,8 @@
     "tutor": "Tutor",
     "agreeToTerms": "I agree to the terms",
     "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "orDivider": "or"
   },
   "landing": {
     "heroTitle": "Learn a language anytime, anywhere",
@@ -307,7 +308,7 @@
     "title": "Settings",
     "profile": "Profile",
     "billing": "Billing",
-    "notifications": "Notifications",
+    "notificationsTitle": "Notifications",
     "updateProfile": "Update profile",
     "changePassword": "Change password",
     "language": "Interface language",

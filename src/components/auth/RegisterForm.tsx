@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -22,6 +23,7 @@ import Logo from '@/components/shared/Logo'
 export default function RegisterForm() {
   const t = useTranslations('auth')
   const router = useRouter()
+  const locale = useLocale()
   const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -57,7 +59,7 @@ export default function RegisterForm() {
         description: t('checkEmail'),
       })
 
-      router.push('/login')
+      router.push(`/${locale}/login`)
     } catch {
       toast.error('Xəta baş verdi')
     } finally {

@@ -85,7 +85,8 @@
     "tutor": "Müəllim",
     "agreeToTerms": "Şərtləri qəbul edirəm",
     "termsOfService": "İstifadə şərtləri",
-    "privacyPolicy": "Gizlilik siyasəti"
+    "privacyPolicy": "Gizlilik siyasəti",
+    "orDivider": "və ya"
   },
   "landing": {
     "heroTitle": "İstənilən vaxt, istənilən yerdən dil öyrən",
@@ -325,7 +326,7 @@
     "title": "Parametrlər",
     "profile": "Profil",
     "billing": "Ödəniş",
-    "notifications": "Bildirişlər",
+    "notificationsTitle": "Bildirişlər",
     "updateProfile": "Profili yenilə",
     "changePassword": "Şifrəni dəyiş",
     "language": "İnterfeys dili",

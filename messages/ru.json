@@ -85,7 +85,8 @@
     "tutor": "Репетитор",
     "agreeToTerms": "Я согласен с условиями",
     "termsOfService": "Условия использования",
-    "privacyPolicy": "Политика конфиденциальности"
+    "privacyPolicy": "Политика конфиденциальности",
+    "orDivider": "или"
   },
   "landing": {
     "heroTitle": "Учите языки в любое время, в любом месте",
@@ -307,7 +308,7 @@
     "title": "Настройки",
     "profile": "Профиль",
     "billing": "Оплата",
-    "notifications": "Уведомления",
+    "notificationsTitle": "Уведомления",
     "updateProfile": "Обновить профиль",
     "changePassword": "Изменить пароль",
     "language": "Язык интерфейса",
