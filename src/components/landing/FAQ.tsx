@@ -1,44 +1,55 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
+import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 import { cn } from '@/lib/utils'
 
-const questions = Array.from({ length: 10 }, (_, i) => `q${i + 1}`) as `q${number}`[]
+const keys = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'] as const
 
 export default function FAQ() {
   const t = useTranslations('landing.faq')
-  const [open, setOpen] = useState<string | null>(null)
+  const [open, setOpen] = useState<string | null>('q1')
 
   return (
-    <section className="py-20 px-4 bg-muted/30">
+    <section className="py-24 px-4 bg-background">
       <div className="container mx-auto max-w-3xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold">{t('title')}</h2>
-        </div>
-        <div className="space-y-2">
-          {questions.map((q) => {
-            const aKey = `a${q.slice(1)}` as `a${number}`
-            const isOpen = open === q
+        <AnimateOnScroll className="text-center mb-14">
+          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">FAQ</p>
+          <h2 className="text-4xl font-bold">{t('title')}</h2>
+        </AnimateOnScroll>
+
+        <AnimateOnScroll className="space-y-2">
+          {keys.map((key) => {
+            const isOpen = open === key
             return (
-              <div key={q} className="border rounded-lg overflow-hidden bg-background">
+              <div
+                key={key}
+                className={cn(
+                  'border rounded-2xl overflow-hidden transition-all duration-200',
+                  isOpen ? 'border-primary/30 bg-primary/3 shadow-sm' : 'border-border bg-card hover:border-primary/20'
+                )}
+              >
                 <button
-                  className="w-full flex items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors"
-                  onClick={() => setOpen(isOpen ? null : q)}
+                  className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left cursor-pointer"
+                  onClick={() => setOpen(isOpen ? null : key)}
+                  aria-expanded={isOpen}
                 >
-                  {t(q)}
-                  <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform', isOpen && 'rotate-180')} />
+                  <span className="font-medium text-sm">{t(key)}</span>
+                  <ChevronDown className={cn('h-4 w-4 text-muted-foreground shrink-0 transition-transform duration-200', isOpen && 'rotate-180 text-primary')} />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-sm text-muted-foreground">
-                    {t(aKey)}
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {t(key.replace('q', 'a') as `a${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10}`)}
+                    </p>
                   </div>
                 )}
               </div>
             )
           })}
-        </div>
+        </AnimateOnScroll>
       </div>
     </section>
   )

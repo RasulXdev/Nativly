@@ -1,175 +1,89 @@
-import { useTranslations, useLocale } from 'next-intl'
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
-import { Star, MapPin } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Star, ArrowRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
-const MOCK_TUTORS = [
-  {
-    id: '1',
-    name: 'Sarah Mitchell',
-    country: 'GB',
-    flag: '🇬🇧',
-    language: 'İngilis dili',
-    rating: 4.9,
-    reviews: 312,
-    lessons: 1840,
-    price: 18,
-    specializations: ['IELTS', 'Business English'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
-    bio: 'CELTA sertifikatlı, 8 illik təcrübə ilə həm yeni başlayanlar, həm də IELTS hazırlıq üçün ideal.',
-  },
-  {
-    id: '2',
-    name: 'Mikhail Ivanov',
-    country: 'RU',
-    flag: '🇷🇺',
-    language: 'Rus dili',
-    rating: 4.8,
-    reviews: 198,
-    lessons: 920,
-    price: 12,
-    specializations: ['Danışıq', 'Qrammatika'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mikhail',
-    bio: 'Filologiya üzrə magistr, uşaqlar və yeniyetmələr üçün ixtisaslaşmışam.',
-  },
-  {
-    id: '3',
-    name: 'Elif Kaya',
-    country: 'TR',
-    flag: '🇹🇷',
-    language: 'Türk dili',
-    rating: 5.0,
-    reviews: 87,
-    lessons: 430,
-    price: 10,
-    specializations: ['Danışıq', 'Səyahət'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=elif',
-    bio: 'Müasir Türk dilini öyrədin, Türkiyə mədəniyyəti ilə tanış olun.',
-  },
-  {
-    id: '4',
-    name: 'Hans Müller',
-    country: 'DE',
-    flag: '🇩🇪',
-    language: 'Alman dili',
-    rating: 4.9,
-    reviews: 145,
-    lessons: 780,
-    price: 20,
-    specializations: ['TestDaF', 'İş Almancası'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=hans',
-    bio: 'TestDaF, Goethe sertifikatları üçün hazırlıq. 10+ il təcrübə.',
-  },
-  {
-    id: '5',
-    name: 'Marie Dubois',
-    country: 'FR',
-    flag: '🇫🇷',
-    language: 'Fransız dili',
-    rating: 4.7,
-    reviews: 203,
-    lessons: 1100,
-    price: 16,
-    specializations: ['DELF', 'Danışıq'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=marie',
-    bio: 'Paris-dan native müəllim. DELF/DALF hazırlığı üçün mükəmməl.',
-  },
-  {
-    id: '6',
-    name: 'Carlos Ruiz',
-    country: 'ES',
-    flag: '🇪🇸',
-    language: 'İspan dili',
-    rating: 4.8,
-    reviews: 167,
-    lessons: 890,
-    price: 14,
-    specializations: ['DELE', 'Latin Amerika'],
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=carlos',
-    bio: 'Madrid-dən native müəllim, həm Avropa, həm Latin Amerika İspancası öyrədir.',
-  },
+const TUTORS = [
+  { id: '1', name: 'Sarah Mitchell', flag: '🇬🇧', lang: 'İngilis dili', rating: 4.9, reviews: 312, lessons: 1840, price: 18, tags: ['IELTS', 'Business'], seed: 'sarah' },
+  { id: '2', name: 'Mikhail Ivanov', flag: '🇷🇺', lang: 'Rus dili', rating: 4.8, reviews: 198, lessons: 920, price: 12, tags: ['Danışıq', 'Qrammatika'], seed: 'mikhail' },
+  { id: '3', name: 'Elif Kaya', flag: '🇹🇷', lang: 'Türk dili', rating: 5.0, reviews: 87, lessons: 430, price: 10, tags: ['Başlanğıc', 'Danışıq'], seed: 'elif' },
+  { id: '4', name: 'Hans Müller', flag: '🇩🇪', lang: 'Alman dili', rating: 4.9, reviews: 145, lessons: 780, price: 20, tags: ['TestDaF', 'İş dili'], seed: 'hans' },
+  { id: '5', name: 'Marie Dubois', flag: '🇫🇷', lang: 'Fransız dili', rating: 4.7, reviews: 203, lessons: 1100, price: 16, tags: ['DELF', 'Danışıq'], seed: 'marie' },
+  { id: '6', name: 'Carlos Ruiz', flag: '🇪🇸', lang: 'İspan dili', rating: 4.8, reviews: 167, lessons: 890, price: 14, tags: ['DELE', 'Danışıq'], seed: 'carlos' },
 ]
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-1">
-      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-      <span className="font-semibold text-sm">{rating.toFixed(1)}</span>
-    </div>
-  )
-}
-
 export default function TutorShowcase() {
-  const t = useTranslations('landing.tutorShowcase')
   const locale = useLocale()
 
   return (
-    <section className="py-20 px-4 bg-background">
+    <section className="py-24 px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
-        <AnimateOnScroll className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-3">{t('title')}</h2>
-          <p className="text-muted-foreground">{t('subtitle')}</p>
+        <AnimateOnScroll className="text-center mb-14">
+          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">Müəllimlər</p>
+          <h2 className="text-4xl font-bold mb-4">Ən yaxşı müəllimlər</h2>
+          <p className="text-muted-foreground text-lg">Sertifikatlı, təcrübəli, native müəllimlər</p>
         </AnimateOnScroll>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_TUTORS.map((tutor, i) => (
-            <AnimateOnScroll key={tutor.id} delay={i * 100} animation="fade-up">
-              <Card className="hover:shadow-lg transition-shadow duration-300 h-full">
-                <CardContent className="pt-6 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-14 w-14 shrink-0">
-                      <AvatarImage src={tutor.avatar} alt={tutor.name} />
-                      <AvatarFallback>{tutor.name[0]}</AvatarFallback>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TUTORS.map((tutor, i) => (
+            <AnimateOnScroll key={tutor.id} delay={i * 80} animation="fade-up">
+              <div className="group bg-card border border-border rounded-2xl p-5 space-y-4 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+                {/* Header */}
+                <div className="flex items-start gap-3">
+                  <div className="relative shrink-0">
+                    <Avatar className="h-14 w-14 ring-2 ring-primary/10 group-hover:ring-primary/30 transition-all">
+                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.seed}`} alt={tutor.name} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold">{tutor.name[0]}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">{tutor.name}</h3>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <span>{tutor.flag}</span>
-                        <span>{tutor.language}</span>
-                      </div>
-                      <StarRating rating={tutor.rating} />
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="font-bold text-primary">${tutor.price}</div>
-                      <div className="text-xs text-muted-foreground">/ saat</div>
+                    <span className="absolute -bottom-1 -right-1 text-base">{tutor.flag}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold truncate">{tutor.name}</h3>
+                    <p className="text-xs text-muted-foreground">{tutor.lang}</p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-semibold">{tutor.rating.toFixed(1)}</span>
+                      <span className="text-xs text-muted-foreground">({tutor.reviews})</span>
                     </div>
                   </div>
-
-                  <p className="text-sm text-muted-foreground line-clamp-2">{tutor.bio}</p>
-
-                  <div className="flex flex-wrap gap-1">
-                    {tutor.specializations.map((s) => (
-                      <Badge key={s} variant="secondary" className="text-xs">
-                        {s}
-                      </Badge>
-                    ))}
+                  <div className="text-right shrink-0">
+                    <div className="text-lg font-bold text-primary">${tutor.price}</div>
+                    <div className="text-xs text-muted-foreground">/saat</div>
                   </div>
+                </div>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                    <span>{tutor.lessons} dərs</span>
-                    <span>{tutor.reviews} rəy</span>
-                  </div>
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {tutor.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs rounded-full bg-primary/8 text-primary border-0">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
 
+                {/* Stats + CTA */}
+                <div className="flex items-center justify-between pt-1 border-t border-border/60">
+                  <span className="text-xs text-muted-foreground">{tutor.lessons.toLocaleString()} dərs</span>
                   <Link
                     href={`/${locale}/tutors/${tutor.id}`}
-                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-full')}
+                    className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-primary hover:text-primary hover:bg-primary/10 gap-1 h-7 text-xs')}
                   >
-                    Profili gör
+                    Profil <ArrowRight className="h-3 w-3" />
                   </Link>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </AnimateOnScroll>
           ))}
         </div>
 
         <AnimateOnScroll className="text-center mt-10">
-          <Link href={`/${locale}/tutors`} className={cn(buttonVariants({ size: 'lg' }))}>
-            Bütün müəllimləri gör →
+          <Link href={`/${locale}/tutors`} className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'gap-2 hover:border-primary/40 hover:bg-primary/5')}>
+            Bütün müəllimləri gör
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </AnimateOnScroll>
       </div>
