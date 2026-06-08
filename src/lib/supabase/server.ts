@@ -2,13 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/types/database'
 
-// SUPABASE_URL + SUPABASE_ANON_KEY — auto-provided by Vercel-Supabase integration (server-side only)
 export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
@@ -20,7 +19,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Server Component-dən çağırıldıqda set əməliyyatı ignore edilir
+            // Server Component-dən çağırıldıqda ignore edilir
           }
         },
       },
