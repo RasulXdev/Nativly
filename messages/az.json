@@ -59,7 +59,10 @@
     "becomeTutor": "Müəllim ol",
     "profile": "Profil",
     "openMenu": "Menyunu aç",
-    "closeMenu": "Menyunu bağla"
+    "closeMenu": "Menyunu bağla",
+    "students": "Tələbələr",
+    "lessons": "Dərslər",
+    "earnings": "Qazanc"
   },
   "auth": {
     "login": "Daxil ol",
@@ -147,10 +150,22 @@
     "howItWorks": {
       "title": "Necə işləyir?",
       "subtitle": "4 addımda dil öyrənməyə başla",
-      "step1": { "title": "Qeydiyyatdan keç", "desc": "Pulsuz hesab yarat, dil səviyyəni qeyd et" },
-      "step2": { "title": "Müəllim seç", "desc": "Filtr et, profili oxu, rəyləri yoxla" },
-      "step3": { "title": "Vaxt rezerv et", "desc": "Sənə uyğun vaxt seç, dərsi sifariş et" },
-      "step4": { "title": "Dərsə qoşul", "desc": "Video zəng et, sürətlə inkişaf et" }
+      "step1": {
+        "title": "Qeydiyyatdan keç",
+        "desc": "Pulsuz hesab yarat, dil səviyyəni qeyd et"
+      },
+      "step2": {
+        "title": "Müəllim seç",
+        "desc": "Filtr et, profili oxu, rəyləri yoxla"
+      },
+      "step3": {
+        "title": "Vaxt rezerv et",
+        "desc": "Sənə uyğun vaxt seç, dərsi sifariş et"
+      },
+      "step4": {
+        "title": "Dərsə qoşul",
+        "desc": "Video zəng et, sürətlə inkişaf et"
+      }
     },
     "pricing": {
       "title": "Əlçatan qiymətlər",

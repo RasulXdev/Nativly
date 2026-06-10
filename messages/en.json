@@ -59,7 +59,10 @@
     "becomeTutor": "Become a tutor",
     "profile": "Profile",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "students": "Students",
+    "lessons": "Lessons",
+    "earnings": "Earnings"
   },
   "auth": {
     "login": "Log in",
@@ -119,20 +122,50 @@
     "features": {
       "title": "Why Nativly?",
       "subtitle": "We make language learning easy and effective",
-      "video": { "title": "1-on-1 Video Lessons", "desc": "Direct connection with your tutor, progress faster" },
-      "schedule": { "title": "Flexible Schedule", "desc": "24/7 available tutors, learn on your time" },
-      "certified": { "title": "Certified Tutors", "desc": "TEFL/TESOL certified, experienced native tutors" },
-      "price": { "title": "Affordable Prices", "desc": "Packages for every budget, trial lesson from $5" },
-      "levels": { "title": "Every Level", "desc": "From A1 to C2, beginner to professional level" },
-      "materials": { "title": "Learning Materials", "desc": "Personalized materials, homework included" }
+      "video": {
+        "title": "1-on-1 Video Lessons",
+        "desc": "Direct connection with your tutor, progress faster"
+      },
+      "schedule": {
+        "title": "Flexible Schedule",
+        "desc": "24/7 available tutors, learn on your time"
+      },
+      "certified": {
+        "title": "Certified Tutors",
+        "desc": "TEFL/TESOL certified, experienced native tutors"
+      },
+      "price": {
+        "title": "Affordable Prices",
+        "desc": "Packages for every budget, trial lesson from $5"
+      },
+      "levels": {
+        "title": "Every Level",
+        "desc": "From A1 to C2, beginner to professional level"
+      },
+      "materials": {
+        "title": "Learning Materials",
+        "desc": "Personalized materials, homework included"
+      }
     },
     "howItWorks": {
       "title": "How does it work?",
       "subtitle": "Start learning in 4 easy steps",
-      "step1": { "title": "Sign up", "desc": "Create a free account, set your language level" },
-      "step2": { "title": "Choose a tutor", "desc": "Filter, read profiles, check reviews" },
-      "step3": { "title": "Book a time", "desc": "Pick a time that works for you" },
-      "step4": { "title": "Join the lesson", "desc": "Video call and progress fast" }
+      "step1": {
+        "title": "Sign up",
+        "desc": "Create a free account, set your language level"
+      },
+      "step2": {
+        "title": "Choose a tutor",
+        "desc": "Filter, read profiles, check reviews"
+      },
+      "step3": {
+        "title": "Book a time",
+        "desc": "Pick a time that works for you"
+      },
+      "step4": {
+        "title": "Join the lesson",
+        "desc": "Video call and progress fast"
+      }
     },
     "pricing": {
       "title": "Affordable pricing",

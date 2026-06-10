@@ -1,0 +1,128 @@
+'use client'
+
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { createClient } from '@/lib/supabase/client'
+import type { TutorWithProfile } from '@/lib/types'
+
+export interface TutorFilters {
+  languages?: string[]
+  minPrice?: number
+  maxPrice?: number
+  minRating?: number
+  specializations?: string[]
+  onlineOnly?: boolean
+  instantBooking?: boolean
+  search?: string
+  sortBy?: 'rating' | 'price_asc' | 'price_desc' | 'newest' | 'popular'
+}
+
+const PAGE_SIZE = 12
+
+export function useTutors(filters: TutorFilters = {}) {
+  const supabase = createClient()
+
+  return useInfiniteQuery({
+    queryKey: ['tutors', filters],
+    queryFn: async ({ pageParam = 0 }) => {
+      let query = supabase
+        .from('tutor_profiles')
+        .select(`
+          *,
+          profiles!inner(*),
+          user_languages(*, languages(*))
+        `)
+        .eq('application_status', 'approved')
+        .eq('is_accepting_students', true)
+        .range(pageParam * PAGE_SIZE, (pageParam + 1) * PAGE_SIZE - 1)
+
+      if (filters.onlineOnly) {
+        query = query.eq('profiles.is_online', true)
+      }
+      if (filters.instantBooking) {
+        query = query.eq('instant_booking', true)
+      }
+      if (filters.minPrice != null) {
+        query = query.gte('hourly_rate', filters.minPrice)
+      }
+      if (filters.maxPrice != null) {
+        query = query.lte('hourly_rate', filters.maxPrice)
+      }
+      if (filters.minRating != null) {
+        query = query.gte('average_rating', filters.minRating)
+      }
+      if (filters.search) {
+        query = query.ilike('profiles.full_name', `%${filters.search}%`)
+      }
+
+      switch (filters.sortBy) {
+        case 'price_asc':
+          query = query.order('hourly_rate', { ascending: true })
+          break
+        case 'price_desc':
+          query = query.order('hourly_rate', { ascending: false })
+          break
+        case 'newest':
+          query = query.order('created_at', { ascending: false })
+          break
+        case 'popular':
+          query = query.order('total_lessons', { ascending: false })
+          break
+        default:
+          query = query.order('average_rating', { ascending: false })
+      }
+
+      const { data, error } = await query
+      if (error) throw error
+      return (data ?? []) as TutorWithProfile[]
+    },
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === PAGE_SIZE ? allPages.length : undefined,
+    initialPageParam: 0,
+  })
+}
+
+export function useTutor(id: string) {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['tutor', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tutor_profiles')
+        .select(`
+          *,
+          profiles!inner(*),
+          user_languages(*, languages(*)),
+          tutor_availability(*)
+        `)
+        .eq('id', id)
+        .eq('application_status', 'approved')
+        .single()
+
+      if (error) throw error
+      return data as TutorWithProfile & { tutor_availability: any[] }
+    },
+    enabled: !!id,
+  })
+}
+
+export function useTutorReviews(tutorId: string, page = 0) {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['tutor-reviews', tutorId, page],
+    queryFn: async () => {
+      const { data, error, count } = await supabase
+        .from('reviews')
+        .select('*, profiles!student_id(*)', { count: 'exact' })
+        .eq('tutor_id', tutorId)
+        .eq('is_visible', true)
+        .order('created_at', { ascending: false })
+        .range(page * 5, (page + 1) * 5 - 1)
+
+      if (error) throw error
+      return { reviews: data ?? [], total: count ?? 0 }
+    },
+    enabled: !!tutorId,
+  })
+}
