@@ -120,11 +120,19 @@
     "pricing": {
       "title": "Affordable pricing",
       "subtitle": "Choose the package that fits your budget",
-      "perLesson": "per lesson",
+      "perLesson": "/ lesson",
       "popular": "Popular",
       "discount": "off",
       "buyNow": "Buy now",
-      "trialLesson": "Trial lesson — $5"
+      "trialLesson": "Trial lesson — $5",
+      "features": {
+        "f1": "Choose your tutor",
+        "f2": "Lesson materials included",
+        "f3": "Lesson notes",
+        "f4": "Video lessons",
+        "f5": "Homework assignments",
+        "f6": "Priority support"
+      }
     },
     "testimonials": {
       "title": "What our students say",
@@ -161,6 +169,28 @@
     "tutorShowcase": {
       "title": "Our top tutors",
       "subtitle": "Certified, experienced native tutors"
+    },
+    "dashboardPreview": {
+      "badge": "Platform preview",
+      "title": "What does the student dashboard look like?",
+      "subtitle": "Manage your lessons, connect with tutors",
+      "welcome": "Welcome",
+      "upcoming": "Upcoming lessons",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "join": "Join",
+      "details": "Details",
+      "nav": {
+        "lessons": "Lessons",
+        "messages": "Messages",
+        "wallet": "Wallet"
+      },
+      "stat": {
+        "lessons": "Lessons",
+        "hours": "Hours",
+        "rating": "Rating",
+        "balance": "Balance"
+      }
     }
   },
   "tutors": {

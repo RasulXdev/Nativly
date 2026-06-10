@@ -1,58 +1,45 @@
-import Link from 'next/link'
+'use client'
+
 import { useTranslations } from 'next-intl'
-import { useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import Logo from '@/components/shared/Logo'
 
 export default function Footer() {
   const t = useTranslations('footer')
-  const locale = useLocale()
 
   const links = {
     company: [
-      { href: `/${locale}/about`, label: t('about') },
-      { href: `/${locale}/how-it-works`, label: 'Necə işləyir' },
-      { href: `/${locale}/become-tutor`, label: 'Müəllim ol' },
+      { href: '/about' as const, label: t('about') },
+      { href: '/how-it-works' as const, label: t('help') },
+      { href: '/become-tutor' as const, label: t('careers') },
     ],
     support: [
-      { href: `/${locale}/faq`, label: t('faq') },
-      { href: `/${locale}/contact`, label: t('contact') },
+      { href: '/faq' as const, label: t('faq') },
+      { href: '/contact' as const, label: t('contact') },
     ],
     legal: [
-      { href: `/${locale}/privacy`, label: t('privacy') },
-      { href: `/${locale}/terms`, label: t('terms') },
+      { href: '/privacy' as const, label: t('privacy') },
+      { href: '/terms' as const, label: t('terms') },
     ],
   }
 
   return (
-    <footer className="border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="border-t border-border/30 bg-muted/20">
+      <div className="container mx-auto px-4 sm:px-6 py-12 max-w-7xl">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-4">
             <Logo />
-            <p className="text-sm text-muted-foreground max-w-xs">
-              Native müəllimlərlə 1-on-1 video dərslər. İstənilən vaxt, istənilən yerdən dil öyrən.
+            <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+              {t('about')}
             </p>
-            <div className="flex gap-3">
-              <a href="https://instagram.com/nativly.az" target="_blank" rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                Instagram
-              </a>
-              <a href="https://t.me/nativly" target="_blank" rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                Telegram
-              </a>
-            </div>
           </div>
 
-          {/* Company */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm">{t('company')}</h3>
+            <h3 className="font-bold text-sm">{t('company')}</h3>
             <ul className="space-y-2">
               {links.company.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -60,14 +47,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm">{t('support')}</h3>
+            <h3 className="font-bold text-sm">{t('support')}</h3>
             <ul className="space-y-2">
               {links.support.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -75,14 +60,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm">{t('legal')}</h3>
+            <h3 className="font-bold text-sm">{t('legal')}</h3>
             <ul className="space-y-2">
               {links.legal.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -91,15 +74,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">{t('copyright')}</p>
+        <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <p className="text-xs text-muted-foreground">{t('copyright')}</p>
           <div className="flex gap-4">
-            <Link href={`/${locale}/privacy`}
-              className="text-xs text-muted-foreground hover:text-foreground">
+            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">
               {t('privacy')}
             </Link>
-            <Link href={`/${locale}/terms`}
-              className="text-xs text-muted-foreground hover:text-foreground">
+            <Link href="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">
               {t('terms')}
             </Link>
           </div>

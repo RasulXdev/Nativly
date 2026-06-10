@@ -1,60 +1,54 @@
-import { useTranslations, useLocale } from 'next-intl'
-import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
+import { ArrowRight, Shield, Clock, CreditCard } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
 export default function CTA() {
   const t = useTranslations('landing.cta')
-  const locale = useLocale()
 
   return (
-    <section className="py-24 px-4 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-teal-700" />
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+    <section className="py-24 sm:py-28 px-4 relative overflow-hidden section-dark">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.395_0.195_262_/_0.12)_0%,transparent_60%)]" />
 
       <div className="container mx-auto max-w-3xl relative z-10">
-        <AnimateOnScroll className="text-center space-y-8">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium text-white/90">
-            <Sparkles className="h-3.5 w-3.5" />
-            Riskisiz başla
-          </div>
+        <AnimateOnScroll className="text-center space-y-7">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">
+            {t('title')}
+          </h2>
 
-          <div className="space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-              {t('title')}
-            </h2>
-            <p className="text-white/75 text-lg">{t('subtitle')}</p>
-          </div>
+          <p className="text-lg text-white/50">
+            {t('subtitle')}
+          </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Link
-              href={`/${locale}/register`}
+              href="/register"
               className={cn(
                 buttonVariants({ size: 'lg' }),
-                'bg-white text-primary hover:bg-white/90 text-base px-8 gap-2 shadow-lg hover:scale-[1.02] transition-all duration-200'
+                'bg-white text-foreground hover:bg-white/90 text-base px-8 h-12 gap-2 rounded-full shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 font-semibold'
               )}
             >
               {t('button')}
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              href={`/${locale}/tutors`}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'lg' }),
-                'border-white/30 text-white hover:bg-white/10 hover:border-white/50 text-base px-8 transition-all duration-200'
-              )}
-            >
-              Müəllimləri kəşf et
-            </Link>
           </div>
 
-          <p className="text-white/50 text-sm">
-            ✓ Kredit kartı tələb olunmur &nbsp;·&nbsp; ✓ İstənilən vaxt ləğv et &nbsp;·&nbsp; ✓ 30 gün zəmanət
-          </p>
+          <div className="flex flex-wrap justify-center gap-6 pt-4">
+            {[
+              { icon: CreditCard, text: 'Kredit kartı lazım deyil' },
+              { icon: Clock, text: 'İstənilən vaxt ləğv et' },
+              { icon: Shield, text: '30 gün zəmanət' },
+            ].map((item) => (
+              <div key={item.text} className="flex items-center gap-2 text-white/35 text-sm">
+                <item.icon className="h-4 w-4" />
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </div>
         </AnimateOnScroll>
       </div>
     </section>

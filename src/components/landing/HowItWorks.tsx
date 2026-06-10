@@ -1,3 +1,5 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
 import { UserPlus, Search, CalendarCheck, Video } from 'lucide-react'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
@@ -9,54 +11,38 @@ export default function HowItWorks() {
   const t = useTranslations('landing.howItWorks')
 
   return (
-    <section className="py-24 px-4 bg-muted/40">
-      <div className="container mx-auto max-w-5xl">
+    <section className="py-24 sm:py-28 px-4 bg-muted/30 relative overflow-hidden" id="how-it-works">
+      <div className="container mx-auto max-w-6xl relative">
         <AnimateOnScroll className="text-center mb-16">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">Proses</p>
-          <h2 className="text-4xl font-bold mb-4">{t('title')}</h2>
+          <p className="text-sm font-semibold text-primary mb-3 tracking-wide uppercase">{t('title')}</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">{t('title')}</h2>
           <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
         </AnimateOnScroll>
 
-        <div className="relative">
-          {/* Connecting line (desktop) */}
-          <div className="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-primary/20 via-primary/60 to-primary/20" />
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stepKeys.map((key, i) => {
-              const Icon = icons[i]
-              return (
-                <AnimateOnScroll key={key} delay={i * 120} animation="fade-up">
-                  <div className="relative text-center space-y-4 group">
-                    {/* Step number + Icon */}
-                    <div className="relative mx-auto w-20 h-20">
-                      <div className="w-20 h-20 rounded-2xl bg-card border-2 border-border group-hover:border-primary/40 shadow-sm group-hover:shadow-md transition-all duration-300 flex items-center justify-center mx-auto">
-                        <Icon className="h-8 w-8 text-primary" />
-                      </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow-md">
-                        {i + 1}
-                      </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stepKeys.map((key, i) => {
+            const Icon = icons[i]
+            return (
+              <AnimateOnScroll key={key} delay={i * 120} animation="fade-up">
+                <div className="relative group">
+                  {i < 3 && (
+                    <div className="hidden lg:block absolute top-8 left-[calc(100%+0.25rem)] w-[calc(100%-2rem)] h-px border-t-2 border-dashed border-primary/15 z-0" />
+                  )}
+                  <div className="relative bg-card border border-border/50 rounded-2xl p-6 text-center card-lift h-full">
+                    <div className="w-14 h-14 rounded-2xl gradient-bg text-white font-extrabold text-lg flex items-center justify-center mx-auto mb-5 shadow-md shadow-primary/15 group-hover:scale-110 transition-transform duration-300">
+                      {i + 1}
                     </div>
-
-                    <div className="space-y-1.5">
-                      <h3 className="font-semibold">{t(`${key}.title`)}</h3>
-                      <p className="text-sm text-muted-foreground">{t(`${key}.desc`)}</p>
+                    <div className="w-10 h-10 rounded-xl bg-primary/6 flex items-center justify-center mx-auto mb-4">
+                      <Icon className="h-5 w-5 text-primary" />
                     </div>
+                    <h3 className="font-bold text-base mb-2">{t(`${key}.title`)}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{t(`${key}.desc`)}</p>
                   </div>
-                </AnimateOnScroll>
-              )
-            })}
-          </div>
+                </div>
+              </AnimateOnScroll>
+            )
+          })}
         </div>
-
-        {/* Bottom highlight */}
-        <AnimateOnScroll className="mt-14 mx-auto max-w-md">
-          <div className="glass border border-primary/20 rounded-2xl p-5 text-center space-y-2 shadow-sm">
-            <p className="font-semibold text-sm">💡 Orta nəticə</p>
-            <p className="text-sm text-muted-foreground">
-              Tələbələrimizin <strong className="text-foreground">85%</strong>-i ilk 3 ayda hədəf səviyyəsinə çatır
-            </p>
-          </div>
-        </AnimateOnScroll>
       </div>
     </section>
   )

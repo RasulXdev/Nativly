@@ -1,10 +1,10 @@
 'use client'
 
-import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
 import { Settings, LogOut, LayoutDashboard, Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -26,43 +26,53 @@ export default function Navbar() {
   const { user, profile, signOut } = useAuth()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const navLinks = [
-    { href: `/${locale}/tutors`, label: t('tutors') },
-    { href: `/${locale}/pricing`, label: t('pricing') },
-    { href: `/${locale}/how-it-works`, label: t('howItWorks') },
-    { href: `/${locale}/about`, label: t('about') },
+    { href: '/tutors' as const, label: t('tutors') },
+    { href: '/pricing' as const, label: t('pricing') },
+    { href: '/how-it-works' as const, label: t('howItWorks') },
+    { href: '/about' as const, label: t('about') },
   ]
 
   return (
     <nav className="sticky top-0 z-50 w-full">
-      <div className="glass border-b border-border/50">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 max-w-7xl">
+      <div className={cn(
+        'transition-all duration-300 border-b',
+        scrolled
+          ? 'bg-white/85 backdrop-blur-xl border-border/40 shadow-sm shadow-primary/3'
+          : 'bg-transparent border-transparent'
+      )}>
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 max-w-7xl">
           <Logo />
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
+                className="px-3.5 py-2 text-sm font-medium text-foreground/55 hover:text-primary rounded-full hover:bg-primary/4 transition-all duration-200"
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* Right */}
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
 
             {user && profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className="rounded-full outline-none">
-                  <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/20 hover:ring-primary/50 transition-all">
+                  <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/15 hover:ring-primary/35 transition-all">
                     <AvatarImage src={profile.avatar_url ?? ''} alt={profile.full_name} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                    <AvatarFallback className="gradient-bg text-white text-sm font-semibold">
                       {getInitials(profile.full_name)}
                     </AvatarFallback>
                   </Avatar>
@@ -89,34 +99,37 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link href={`/${locale}/login`} className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}>
+                <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'rounded-full px-4 text-foreground/60 hover:text-foreground')}>
                   {t('login')}
                 </Link>
-                <Link href={`/${locale}/register`} className={cn(buttonVariants({ size: 'sm' }))}>
+                <Link href="/register" className={cn(buttonVariants({ size: 'sm' }), 'rounded-full px-5 gradient-bg border-0 hover:opacity-90 shadow-md shadow-primary/15')}>
                   {t('register')}
                 </Link>
               </div>
             )}
 
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(v => !v)}>
+            <Button variant="ghost" size="icon" className="md:hidden rounded-full" onClick={() => setMobileOpen(v => !v)}>
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-border/50 px-4 py-3 space-y-1">
+          <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-border/40 px-4 py-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-primary/10 rounded-lg transition-all">
+                className="block px-4 py-2.5 text-sm font-medium text-foreground/60 hover:text-primary hover:bg-primary/4 rounded-xl transition-all">
                 {link.label}
               </Link>
             ))}
             {!user && (
-              <div className="flex gap-2 pt-2">
-                <Link href={`/${locale}/login`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex-1')}>{t('login')}</Link>
-                <Link href={`/${locale}/register`} className={cn(buttonVariants({ size: 'sm' }), 'flex-1')}>{t('register')}</Link>
+              <div className="flex gap-2 pt-3 border-t border-border/40 mt-2">
+                <Link href="/login" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex-1 rounded-full')} onClick={() => setMobileOpen(false)}>
+                  {t('login')}
+                </Link>
+                <Link href="/register" className={cn(buttonVariants({ size: 'sm' }), 'flex-1 rounded-full gradient-bg border-0')} onClick={() => setMobileOpen(false)}>
+                  {t('register')}
+                </Link>
               </div>
             )}
           </div>

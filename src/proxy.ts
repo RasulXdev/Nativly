@@ -23,7 +23,7 @@ const protectedRoutes = [
 
 const authRoutes = ['/login', '/register', '/forgot-password']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const pathnameWithoutLocale = pathname.replace(/^\/(az|en|ru)/, '') || '/'

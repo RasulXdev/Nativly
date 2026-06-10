@@ -138,11 +138,19 @@
     "pricing": {
       "title": "Əlçatan qiymətlər",
       "subtitle": "Büdcənizə uyğun paket seçin",
-      "perLesson": "dərsə",
+      "perLesson": "/ dərs",
       "popular": "Populyar",
       "discount": "endirim",
       "buyNow": "İndi al",
-      "trialLesson": "Sınaq dərsi — $5"
+      "trialLesson": "Sınaq dərsi — $5",
+      "features": {
+        "f1": "Fərdi müəllim seçimi",
+        "f2": "Dərs materialları daxil",
+        "f3": "Dərs qeydləri",
+        "f4": "Video dərslər",
+        "f5": "Ev tapşırığı",
+        "f6": "Prioritet dəstək"
+      }
     },
     "testimonials": {
       "title": "Tələbələrimiz nə deyir?",
@@ -179,6 +187,28 @@
     "tutorShowcase": {
       "title": "Ən yaxşı müəllimlərimiz",
       "subtitle": "Sertifikatlı, təcrübəli, native müəllimlər"
+    },
+    "dashboardPreview": {
+      "badge": "Platforma preview",
+      "title": "Student dashboard necə görünəcək?",
+      "subtitle": "Dərslərinizi idarə edin, müəllimlərlə əlaqə saxlayın",
+      "welcome": "Xoş gəldin",
+      "upcoming": "Gələn dərslər",
+      "today": "Bu gün",
+      "tomorrow": "Sabah",
+      "join": "Qoşul",
+      "details": "Detallar",
+      "nav": {
+        "lessons": "Dərslər",
+        "messages": "Mesajlar",
+        "wallet": "Cüzdan"
+      },
+      "stat": {
+        "lessons": "Dərs",
+        "hours": "Saat",
+        "rating": "Reytinq",
+        "balance": "Balans"
+      }
     }
   },
   "tutors": {

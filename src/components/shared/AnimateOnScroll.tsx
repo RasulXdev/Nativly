@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
+type Animation = 'fade-up' | 'fade-in' | 'slide-left' | 'slide-right' | 'scale-up' | 'blur-in' | 'rotate-in'
+
 interface Props {
   children: React.ReactNode
   className?: string
   delay?: number
-  animation?: 'fade-up' | 'fade-in' | 'slide-left' | 'slide-right'
+  animation?: Animation
+  duration?: number
+  once?: boolean
 }
 
 export default function AnimateOnScroll({
@@ -15,6 +19,8 @@ export default function AnimateOnScroll({
   className,
   delay = 0,
   animation = 'fade-up',
+  duration = 700,
+  once = true,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
@@ -26,27 +32,37 @@ export default function AnimateOnScroll({
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
-          observer.unobserve(el)
+          if (once) observer.unobserve(el)
+        } else if (!once) {
+          setVisible(false)
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [once])
 
-  const animations = {
-    'fade-up': visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
+  const base = 'transition-all ease-out'
+
+  const animations: Record<Animation, string> = {
+    'fade-up': visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
     'fade-in': visible ? 'opacity-100' : 'opacity-0',
-    'slide-left': visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8',
-    'slide-right': visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8',
+    'slide-left': visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12',
+    'slide-right': visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12',
+    'scale-up': visible ? 'opacity-100 scale-100' : 'opacity-0 scale-90',
+    'blur-in': visible ? 'opacity-100 blur-0' : 'opacity-0 blur-sm',
+    'rotate-in': visible ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-3',
   }
 
   return (
     <div
       ref={ref}
-      className={cn('transition-all duration-700', animations[animation], className)}
-      style={{ transitionDelay: `${delay}ms` }}
+      className={cn(base, animations[animation], className)}
+      style={{
+        transitionDelay: `${delay}ms`,
+        transitionDuration: `${duration}ms`,
+      }}
     >
       {children}
     </div>
