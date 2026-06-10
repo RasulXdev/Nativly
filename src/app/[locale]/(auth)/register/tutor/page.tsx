@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import TutorRegisterForm from '@/components/auth/TutorRegisterForm'
+import TutorOnboardingForm from '@/components/auth/TutorOnboardingForm'
 
 export const metadata: Metadata = {
   title: 'Müəllim qeydiyyatı — Nativly',
@@ -8,10 +8,8 @@ export const metadata: Metadata = {
 
 export default function TutorRegisterPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
-      <div className="w-full max-w-md">
-        <TutorRegisterForm />
-      </div>
+    <div className="min-h-screen bg-background px-4 py-10">
+      <TutorOnboardingForm />
     </div>
   )
 }
