@@ -57,7 +57,9 @@
     "settings": "Settings",
     "logout": "Log out",
     "becomeTutor": "Become a tutor",
-    "profile": "Profile"
+    "profile": "Profile",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "auth": {
     "login": "Log in",

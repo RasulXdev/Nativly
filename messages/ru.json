@@ -57,7 +57,9 @@
     "settings": "Настройки",
     "logout": "Выйти",
     "becomeTutor": "Стать репетитором",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню"
   },
   "auth": {
     "login": "Войти",

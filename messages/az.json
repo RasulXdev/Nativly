@@ -57,7 +57,9 @@
     "settings": "Parametrlər",
     "logout": "Çıxış",
     "becomeTutor": "Müəllim ol",
-    "profile": "Profil"
+    "profile": "Profil",
+    "openMenu": "Menyunu aç",
+    "closeMenu": "Menyunu bağla"
   },
   "auth": {
     "login": "Daxil ol",

@@ -108,7 +108,7 @@ export default function Navbar() {
               </div>
             )}
 
-            <Button variant="ghost" size="icon" className="md:hidden rounded-full" onClick={() => setMobileOpen(v => !v)}>
+            <Button variant="ghost" size="icon" className="md:hidden rounded-full" onClick={() => setMobileOpen(v => !v)} aria-label={mobileOpen ? t('closeMenu') : t('openMenu')} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
