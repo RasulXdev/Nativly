@@ -11,7 +11,7 @@ import Pricing from '@/components/landing/Pricing'
 import Testimonials from '@/components/landing/Testimonials'
 import FAQ from '@/components/landing/FAQ'
 import CTA from '@/components/landing/CTA'
-import { getLandingPackages, getFeaturedTutors } from '@/lib/data/landing'
+import { getLandingPlans, getFeaturedTutors } from '@/lib/data/landing'
 
 const APP_URL = 'https://nativly.az'
 
@@ -51,8 +51,8 @@ const courseJsonLd = {
 
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
-  const [packages, tutors] = await Promise.all([
-    getLandingPackages(locale),
+  const [plans, tutors] = await Promise.all([
+    getLandingPlans(locale),
     getFeaturedTutors(),
   ])
 
@@ -67,7 +67,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         <HowItWorks />
         <TutorShowcase tutors={tutors} />
         <DashboardPreview />
-        <Pricing packages={packages} />
+        <Pricing plans={plans} />
         <Testimonials />
         <FAQ />
         <CTA />

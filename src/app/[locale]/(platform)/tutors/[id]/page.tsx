@@ -329,17 +329,14 @@ export default function TutorProfilePage() {
         {/* Booking sidebar */}
         <div className="lg:col-span-1">
           <div className="sticky top-4 rounded-2xl border border-border bg-card overflow-hidden">
-            {/* Price header */}
+            {/* Subscription header */}
             <div className="gradient-bg px-5 py-4 text-white">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-extrabold">${tutor.hourly_rate}</span>
-                <span className="text-sm text-white/70">/saat</span>
+                <span className="text-2xl font-extrabold">Abonəliklə dərs</span>
               </div>
-              {tutor.trial_rate != null && (
-                <p className="text-xs text-white/80 mt-1">
-                  Sınaq dərsi: <span className="font-bold text-amber-300">${tutor.trial_rate}</span>
-                </p>
-              )}
+              <p className="text-xs text-white/80 mt-1">
+                Dərslər aylıq abonəliyinizə daxildir
+              </p>
             </div>
 
             <div className="p-5 space-y-4">

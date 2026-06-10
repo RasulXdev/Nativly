@@ -138,29 +138,20 @@ export default function TutorCard({ tutor }: TutorCardProps) {
               <span>Ani rezerv</span>
             </div>
           )}
-          {tutor.trial_rate != null && (
-            <span className="text-amber-400 font-medium">Sınaq: ${tutor.trial_rate}</span>
-          )}
         </div>
 
-        {/* Price + Actions */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/50">
-          <div>
-            <span className="text-xl font-extrabold text-primary">${tutor.hourly_rate}</span>
-            <span className="text-xs text-muted-foreground">/saat</span>
-          </div>
-          <div className="flex gap-2">
-            <Link href={`/tutors/${tutor.id}`}>
-              <Button variant="outline" size="sm" className="h-8 text-xs rounded-full border-border/70">
-                Profil
-              </Button>
-            </Link>
-            <Link href={`/tutors/${tutor.id}?book=1`}>
-              <Button size="sm" className="h-8 text-xs rounded-full gradient-bg border-0 text-white shadow-md">
-                Rezerv et
-              </Button>
-            </Link>
-          </div>
+        {/* Actions */}
+        <div className="mt-auto flex items-center gap-2 pt-4 border-t border-border/50">
+          <Link href={`/tutors/${tutor.id}`} className="flex-1">
+            <Button variant="outline" size="sm" className="w-full h-8 text-xs rounded-full border-border/70">
+              Profil
+            </Button>
+          </Link>
+          <Link href={`/tutors/${tutor.id}?book=1`} className="flex-1">
+            <Button size="sm" className="w-full h-8 text-xs rounded-full gradient-bg border-0 text-white shadow-md">
+              Rezerv et
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

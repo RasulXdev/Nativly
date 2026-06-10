@@ -82,8 +82,8 @@ export default function RecommendedTutors() {
                     </div>
 
                     <div className="shrink-0 text-right">
-                      <p className="text-sm font-bold text-primary">${tutor.hourly_rate}</p>
-                      <p className="text-xs text-muted-foreground">/saat</p>
+                      <p className="text-sm font-bold text-primary">{tutor.total_lessons ?? 0}</p>
+                      <p className="text-xs text-muted-foreground">dərs</p>
                     </div>
                   </div>
                 </Link>

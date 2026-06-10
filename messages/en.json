@@ -169,7 +169,7 @@
     },
     "pricing": {
       "title": "Affordable pricing",
-      "subtitle": "Choose the package that fits your budget",
+      "subtitle": "Choose a monthly subscription plan",
       "perLesson": "/ lesson",
       "popular": "Popular",
       "discount": "off",
@@ -182,7 +182,10 @@
         "f4": "Video lessons",
         "f5": "Homework assignments",
         "f6": "Priority support"
-      }
+      },
+      "lessonsPerMonth": "lessons/mo",
+      "perMonth": "month",
+      "subscribe": "Subscribe"
     },
     "testimonials": {
       "title": "What our students say",

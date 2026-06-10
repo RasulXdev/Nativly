@@ -20,7 +20,7 @@ export function useUpcomingLessons() {
           id, scheduled_at, status, duration_minutes, room_id, price, currency,
           student_id, tutor_id,
           student:profiles!lessons_student_id_fkey(id, full_name, avatar_url),
-          tutor:tutor_profiles!lessons_tutor_id_fkey(id, user_id, hourly_rate,
+          tutor:tutor_profiles!lessons_tutor_id_fkey(id, user_id,
             profiles!tutor_profiles_user_id_fkey(id, full_name, avatar_url)
           )
         `)
@@ -153,9 +153,9 @@ export function useStudentStats() {
 
       const lessons = lessonsResult.data ?? []
       const now = new Date().toISOString()
-      const completed = lessons.filter((l: { status: string }) => l.status === 'completed')
+      const completed = lessons.filter((l: { status: string | null }) => l.status === 'completed')
       const upcoming = lessons.filter(
-        (l: { status: string; scheduled_at: string }) =>
+        (l: { status: string | null; scheduled_at: string }) =>
           l.status === 'scheduled' && l.scheduled_at > now
       )
       const totalHours =

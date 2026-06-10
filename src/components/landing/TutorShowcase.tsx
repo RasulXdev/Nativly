@@ -20,19 +20,18 @@ type TutorCard = {
   rating: number
   reviews: number
   lessons: number
-  price: number
   tags: string[]
   filter: string
   online: boolean
 }
 
 const DEMO_TUTORS: TutorCard[] = [
-  { id: '1', name: 'Sarah Mitchell', flag: '🇬🇧', country: 'London, UK', rating: 4.9, reviews: 312, lessons: 1840, price: 18, tags: ['IELTS', 'Business'], filter: 'english', online: true },
-  { id: '2', name: 'Mikhail Ivanov', flag: '🇷🇺', country: 'Moscow, RU', rating: 4.8, reviews: 198, lessons: 920, price: 12, tags: ['Grammar', 'Speaking'], filter: 'english', online: true },
-  { id: '3', name: 'Elif Kaya', flag: '🇹🇷', country: 'Istanbul, TR', rating: 5.0, reviews: 87, lessons: 430, price: 10, tags: ['Beginner', 'Speaking'], filter: 'turkish', online: false },
-  { id: '4', name: 'Hans Müller', flag: '🇩🇪', country: 'Berlin, DE', rating: 4.9, reviews: 145, lessons: 780, price: 20, tags: ['TestDaF', 'Business'], filter: 'german', online: true },
-  { id: '5', name: 'Marie Dubois', flag: '🇫🇷', country: 'Paris, FR', rating: 4.7, reviews: 203, lessons: 1100, price: 16, tags: ['DELF', 'Speaking'], filter: 'french', online: false },
-  { id: '6', name: 'James Wright', flag: '🇬🇧', country: 'Manchester, UK', rating: 4.8, reviews: 167, lessons: 890, price: 14, tags: ['IELTS', 'Conversation'], filter: 'ielts', online: true },
+  { id: '1', name: 'Sarah Mitchell', flag: '🇬🇧', country: 'London, UK', rating: 4.9, reviews: 312, lessons: 1840, tags: ['IELTS', 'Business'], filter: 'english', online: true },
+  { id: '2', name: 'Mikhail Ivanov', flag: '🇷🇺', country: 'Moscow, RU', rating: 4.8, reviews: 198, lessons: 920, tags: ['Grammar', 'Speaking'], filter: 'english', online: true },
+  { id: '3', name: 'Elif Kaya', flag: '🇹🇷', country: 'Istanbul, TR', rating: 5.0, reviews: 87, lessons: 430, tags: ['Beginner', 'Speaking'], filter: 'turkish', online: false },
+  { id: '4', name: 'Hans Müller', flag: '🇩🇪', country: 'Berlin, DE', rating: 4.9, reviews: 145, lessons: 780, tags: ['TestDaF', 'Business'], filter: 'german', online: true },
+  { id: '5', name: 'Marie Dubois', flag: '🇫🇷', country: 'Paris, FR', rating: 4.7, reviews: 203, lessons: 1100, tags: ['DELF', 'Speaking'], filter: 'french', online: false },
+  { id: '6', name: 'James Wright', flag: '🇬🇧', country: 'Manchester, UK', rating: 4.8, reviews: 167, lessons: 890, tags: ['IELTS', 'Conversation'], filter: 'ielts', online: true },
 ]
 
 const FILTER_LABELS: Record<string, string> = {
@@ -59,7 +58,6 @@ export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[
     rating: t.rating,
     reviews: t.reviews,
     lessons: t.lessons,
-    price: t.price,
     tags: t.specializations,
     filter: 'all',
     online: true,
@@ -124,8 +122,8 @@ export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-lg font-extrabold text-primary">${tutor.price}</p>
-                    <p className="text-[10px] text-muted-foreground">{tc('perHour')}</p>
+                    <p className="text-lg font-extrabold text-primary">{tutor.lessons}</p>
+                    <p className="text-[10px] text-muted-foreground">{tc('lessons')}</p>
                   </div>
                 </div>
 

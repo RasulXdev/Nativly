@@ -38,10 +38,9 @@ export function useTutorStats() {
           .eq('tutor_id', tp.id)
           .eq('status', 'completed'),
         db
-          .from('transactions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .eq('type', 'lesson_earning')
+          .from('tutor_payouts')
+          .select('amount_azn')
+          .eq('tutor_id', user.id)
           .gte('created_at', monthStart),
       ])
 
@@ -51,7 +50,7 @@ export function useTutorStats() {
         (studentsResult.data ?? []).map((l: { student_id: string }) => l.student_id)
       ).size
       const monthlyEarnings = (earningsResult.data ?? []).reduce(
-        (sum: number, t: { amount: number }) => sum + (t.amount ?? 0), 0
+        (sum: number, t: { amount_azn: number }) => sum + Number(t.amount_azn ?? 0), 0
       )
 
       return {

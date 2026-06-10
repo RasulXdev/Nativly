@@ -169,7 +169,7 @@
     },
     "pricing": {
       "title": "Əlçatan qiymətlər",
-      "subtitle": "Büdcənizə uyğun paket seçin",
+      "subtitle": "Aylıq abonəlik planı seçin",
       "perLesson": "/ dərs",
       "popular": "Populyar",
       "discount": "endirim",
@@ -182,7 +182,10 @@
         "f4": "Video dərslər",
         "f5": "Ev tapşırığı",
         "f6": "Prioritet dəstək"
-      }
+      },
+      "lessonsPerMonth": "dərs/ay",
+      "perMonth": "ay",
+      "subscribe": "Abonə ol"
     },
     "testimonials": {
       "title": "Tələbələrimiz nə deyir?",

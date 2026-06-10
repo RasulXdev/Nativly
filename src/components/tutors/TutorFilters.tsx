@@ -23,8 +23,6 @@ const SPECIALIZATIONS = ['IELTS', 'Business', 'Kids', 'Conversation', 'Grammar',
 
 const SORT_OPTIONS = [
   { value: 'rating', label: 'Reytinq' },
-  { value: 'price_asc', label: 'Qiymət ↑' },
-  { value: 'price_desc', label: 'Qiymət ↓' },
   { value: 'popular', label: 'Populyar' },
   { value: 'newest', label: 'Yeni' },
 ] as const

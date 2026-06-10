@@ -41,11 +41,12 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
   const profile = (tutor as any).profiles
   const [date, setDate] = useState<Date | undefined>(addDays(new Date(), 1))
   const [time, setTime] = useState<string | null>(null)
-  const [duration, setDuration] = useState<30 | 60>(30)
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const price = duration === 30 ? tutor.hourly_rate / 2 : tutor.hourly_rate
+  // Lessons are 30 minutes and covered by the student's monthly subscription —
+  // tutors no longer set per-lesson prices.
+  const duration = 30
 
   const handleBook = async () => {
     if (!date || !time) return
@@ -66,8 +67,8 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
         tutor_id: tutor.id,
         scheduled_at: scheduledAt.toISOString(),
         duration_minutes: duration,
-        price,
-        currency: 'USD',
+        price: 0,
+        currency: 'AZN',
         student_note: note || null,
         is_trial: false,
         status: tutor.instant_booking ? 'confirmed' : 'pending',
@@ -108,7 +109,6 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
             <Rating value={tutor.average_rating ?? 0} count={tutor.total_reviews ?? 0} size="sm" />
           </div>
           <div className="text-right">
-            <p className="font-bold text-primary">${tutor.hourly_rate}/saat</p>
             {tutor.instant_booking && (
               <Badge variant="outline" className="text-xs text-emerald-400 border-emerald-500/30">
                 Ani rezerv
@@ -137,30 +137,15 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
           {/* Right column */}
           <div className="space-y-5">
-            {/* Duration */}
+            {/* Duration (fixed — covered by subscription) */}
             <div>
               <p className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
                 Müddət
               </p>
-              <div className="flex gap-2">
-                {([30, 60] as const).map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => setDuration(d)}
-                    className={cn(
-                      'flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all',
-                      duration === d
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border hover:border-primary/50'
-                    )}
-                  >
-                    {d} dəq
-                    <span className="block text-xs opacity-70">
-                      ${d === 30 ? (tutor.hourly_rate / 2).toFixed(0) : tutor.hourly_rate}
-                    </span>
-                  </button>
-                ))}
+              <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm">
+                <Info className="h-4 w-4 text-primary shrink-0" />
+                <span>30 dəqiqəlik dərs — abonəliyinizə daxildir</span>
               </div>
             </div>
 
@@ -216,7 +201,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
             <Separator className="my-1" />
             <div className="flex justify-between font-bold">
               <span>Cəmi</span>
-              <span className="text-primary">${price.toFixed(2)}</span>
+              <span className="text-primary">1 dərs (abonəlik)</span>
             </div>
           </div>
         )}
@@ -231,7 +216,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
             onClick={handleBook}
           >
             {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Rezerv et — ${price.toFixed(2)}
+            Rezerv et
           </Button>
         </div>
       </DialogContent>

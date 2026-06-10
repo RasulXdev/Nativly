@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Settings, User, DollarSign, Video, Bell, Camera, Plus, X } from 'lucide-react'
+import { Settings, User, Video, Bell, Camera, X } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,8 +33,6 @@ export default function TutorSettingsPage() {
     headline?: string
     about?: string
     specializations?: string[]
-    hourly_rate?: number
-    trial_rate?: number
     instant_booking?: boolean
     video_intro_url?: string
   }) | null
@@ -43,8 +41,6 @@ export default function TutorSettingsPage() {
   const [headline, setHeadline] = useState(tutorProfile?.headline ?? '')
   const [about, setAbout] = useState(tutorProfile?.about ?? '')
   const [specs, setSpecs] = useState<string[]>(tutorProfile?.specializations ?? [])
-  const [hourlyRate, setHourlyRate] = useState(String(tutorProfile?.hourly_rate ?? 15))
-  const [trialRate, setTrialRate] = useState(String(tutorProfile?.trial_rate ?? 5))
   const [instantBooking, setInstantBooking] = useState(tutorProfile?.instant_booking ?? true)
   const [videoUrl, setVideoUrl] = useState(tutorProfile?.video_intro_url ?? '')
   const [avatarUrl, setAvatarUrl] = useState(tutorProfile?.profiles?.avatar_url ?? '')
@@ -58,8 +54,6 @@ export default function TutorSettingsPage() {
     setHeadline(tutorProfile?.headline ?? '')
     setAbout(tutorProfile?.about ?? '')
     setSpecs(tutorProfile?.specializations ?? [])
-    setHourlyRate(String(tutorProfile?.hourly_rate ?? 15))
-    setTrialRate(String(tutorProfile?.trial_rate ?? 5))
     setInstantBooking(tutorProfile?.instant_booking ?? true)
     setVideoUrl(tutorProfile?.video_intro_url ?? '')
     setAvatarUrl(tutorProfile?.profiles?.avatar_url ?? '')
@@ -98,23 +92,13 @@ export default function TutorSettingsPage() {
     }
   }
 
-  const savePricing = async () => {
+  const saveLesson = async () => {
     try {
       await updateTutor.mutateAsync({
-        hourly_rate: Number(hourlyRate),
-        trial_rate: Number(trialRate),
+        video_intro_url: videoUrl,
         instant_booking: instantBooking,
       })
-      toast.success('Qiymətlər yeniləndi')
-    } catch {
-      toast.error('Xəta baş verdi')
-    }
-  }
-
-  const saveVideo = async () => {
-    try {
-      await updateTutor.mutateAsync({ video_intro_url: videoUrl })
-      toast.success('Video linki yeniləndi')
+      toast.success('Dərs tənzimləmələri yeniləndi')
     } catch {
       toast.error('Xəta baş verdi')
     }
@@ -143,23 +127,19 @@ export default function TutorSettingsPage() {
         </div>
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight">Tənzimləmələr</h1>
-          <p className="text-sm text-muted-foreground">Profil, qiymət və bildiriş tənzimləmələri</p>
+          <p className="text-sm text-muted-foreground">Profil, dərs və bildiriş tənzimləmələri</p>
         </div>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-5">
-        <TabsList className="rounded-xl h-11 bg-card border border-border p-1 w-full sm:w-auto grid grid-cols-4 sm:inline-flex">
+        <TabsList className="rounded-xl h-11 bg-card border border-border p-1 w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
           <TabsTrigger value="profile" className="rounded-lg text-xs sm:text-sm">
             <User className="h-3.5 w-3.5 mr-1.5 hidden sm:inline" />
             Profil
           </TabsTrigger>
-          <TabsTrigger value="pricing" className="rounded-lg text-xs sm:text-sm">
-            <DollarSign className="h-3.5 w-3.5 mr-1.5 hidden sm:inline" />
-            Qiymət
-          </TabsTrigger>
-          <TabsTrigger value="video" className="rounded-lg text-xs sm:text-sm">
+          <TabsTrigger value="lesson" className="rounded-lg text-xs sm:text-sm">
             <Video className="h-3.5 w-3.5 mr-1.5 hidden sm:inline" />
-            Video
+            Dərs
           </TabsTrigger>
           <TabsTrigger value="notifications" className="rounded-lg text-xs sm:text-sm">
             <Bell className="h-3.5 w-3.5 mr-1.5 hidden sm:inline" />
@@ -281,70 +261,8 @@ export default function TutorSettingsPage() {
           </div>
         </TabsContent>
 
-        {/* Pricing tab */}
-        <TabsContent value="pricing" className="space-y-5 mt-0">
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
-            <h2 className="font-semibold">Qiymət tənzimləmələri</h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Saatlik qiymət (USD)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                  <Input
-                    type="number"
-                    value={hourlyRate}
-                    onChange={(e) => setHourlyRate(e.target.value)}
-                    className="pl-7 rounded-xl"
-                    min="5"
-                    step="1"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">30 dəqiqəlik dərs bu qiymətin yarısına olacaq</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Sınaq dərsi qiyməti (USD)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                  <Input
-                    type="number"
-                    value={trialRate}
-                    onChange={(e) => setTrialRate(e.target.value)}
-                    className="pl-7 rounded-xl"
-                    min="0"
-                    step="1"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">İlk sınaq dərsi üçün xüsusi qiymət</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-white/3">
-              <div>
-                <p className="text-sm font-medium">Ani rezervasiya</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Tələbələr sizinlə birbaşa razılaşma olmadan rezerv edə bilər
-                </p>
-              </div>
-              <Switch
-                checked={instantBooking}
-                onCheckedChange={setInstantBooking}
-              />
-            </div>
-
-            <Button
-              onClick={savePricing}
-              disabled={updateTutor.isPending}
-              className="gradient-bg border-0 text-white rounded-xl w-full sm:w-auto px-8"
-            >
-              {updateTutor.isPending ? 'Saxlanılır...' : 'Qiymətləri yenilə'}
-            </Button>
-          </div>
-        </TabsContent>
-
-        {/* Video tab */}
-        <TabsContent value="video" className="space-y-5 mt-0">
+        {/* Lesson tab: video intro + instant booking */}
+        <TabsContent value="lesson" className="space-y-5 mt-0">
           <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
             <h2 className="font-semibold">Tanıtım videosu</h2>
             <p className="text-sm text-muted-foreground">
@@ -367,12 +285,32 @@ export default function TutorSettingsPage() {
               </div>
             )}
 
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-white/3">
+              <div>
+                <p className="text-sm font-medium">Ani rezervasiya</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Tələbələr sizinlə birbaşa razılaşma olmadan rezerv edə bilər
+                </p>
+              </div>
+              <Switch
+                checked={instantBooking}
+                onCheckedChange={setInstantBooking}
+              />
+            </div>
+
+            <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4">
+              <p className="text-xs text-muted-foreground">
+                💡 Qiymətlər platform tərəfindən idarə olunur — siz qiymət təyin etmirsiniz.
+                Hər keçirdiyiniz dərs üçün sabit ödəniş alırsınız.
+              </p>
+            </div>
+
             <Button
-              onClick={saveVideo}
+              onClick={saveLesson}
               disabled={updateTutor.isPending}
               className="gradient-bg border-0 text-white rounded-xl w-full sm:w-auto px-8"
             >
-              {updateTutor.isPending ? 'Saxlanılır...' : 'Videonu yenilə'}
+              {updateTutor.isPending ? 'Saxlanılır...' : 'Yadda saxla'}
             </Button>
           </div>
         </TabsContent>

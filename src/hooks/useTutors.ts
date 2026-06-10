@@ -6,14 +6,12 @@ import type { TutorWithProfile } from '@/lib/types'
 
 export interface TutorFilters {
   languages?: string[]
-  minPrice?: number
-  maxPrice?: number
   minRating?: number
   specializations?: string[]
   onlineOnly?: boolean
   instantBooking?: boolean
   search?: string
-  sortBy?: 'rating' | 'price_asc' | 'price_desc' | 'newest' | 'popular'
+  sortBy?: 'rating' | 'newest' | 'popular'
 }
 
 const PAGE_SIZE = 12
@@ -43,12 +41,6 @@ export function useTutors(filters: TutorFilters = {}) {
       if (filters.instantBooking) {
         query = query.eq('instant_booking', true)
       }
-      if (filters.minPrice != null) {
-        query = query.gte('hourly_rate', filters.minPrice)
-      }
-      if (filters.maxPrice != null) {
-        query = query.lte('hourly_rate', filters.maxPrice)
-      }
       if (filters.minRating != null) {
         query = query.gte('average_rating', filters.minRating)
       }
@@ -63,12 +55,6 @@ export function useTutors(filters: TutorFilters = {}) {
       }
 
       switch (filters.sortBy) {
-        case 'price_asc':
-          query = query.order('hourly_rate', { ascending: true })
-          break
-        case 'price_desc':
-          query = query.order('hourly_rate', { ascending: false })
-          break
         case 'newest':
           query = query.order('created_at', { ascending: false })
           break
@@ -81,7 +67,7 @@ export function useTutors(filters: TutorFilters = {}) {
 
       const { data, error } = await query
       if (error) throw error
-      return (data ?? []) as TutorWithProfile[]
+      return (data ?? []) as unknown as TutorWithProfile[]
     },
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === PAGE_SIZE ? allPages.length : undefined,
@@ -108,7 +94,7 @@ export function useTutor(id: string) {
         .single()
 
       if (error) throw error
-      return data as TutorWithProfile & { tutor_availability: any[] }
+      return data as unknown as TutorWithProfile & { tutor_availability: any[] }
     },
     enabled: !!id,
   })

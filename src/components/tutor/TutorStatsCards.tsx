@@ -9,11 +9,11 @@ const STATS = [
     key: 'monthlyEarnings' as const,
     label: 'Bu ayki qazanc',
     icon: DollarSign,
-    format: (v: number) => `$${v.toFixed(2)}`,
+    format: (v: number) => `₼${v.toFixed(2)}`,
     gradient: 'from-emerald-500 to-teal-600',
     glow: 'shadow-emerald-500/30',
     accent: 'text-emerald-400',
-    unit: 'USD',
+    unit: 'AZN',
   },
   {
     key: 'activeStudents' as const,

@@ -67,7 +67,7 @@ export default function EarningsChart() {
                     <div className="relative w-full flex items-end" style={{ height: '80px' }}>
                       {bar.amount > 0 && (
                         <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          ${bar.amount.toFixed(0)}
+                          ₼{bar.amount.toFixed(0)}
                         </span>
                       )}
                       <div
@@ -92,7 +92,7 @@ export default function EarningsChart() {
             <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
               <span>{period === 'weekly' ? 'Son 8 həftə' : 'Son 6 ay'}</span>
               <span className="font-semibold text-emerald-400">
-                ${bars.reduce((s, b) => s + b.amount, 0).toFixed(2)}
+                ₼{bars.reduce((s, b) => s + b.amount, 0).toFixed(2)}
               </span>
             </div>
           </>

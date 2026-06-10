@@ -408,9 +408,7 @@ CREATE TABLE tutor_profiles (
     headline TEXT, -- "IELTS Expert | Native English Speaker"
     about TEXT, -- detailed bio
     video_intro_url TEXT, -- intro video
-    hourly_rate DECIMAL(10,2) NOT NULL DEFAULT 15.00, -- USD
-    trial_rate DECIMAL(10,2) DEFAULT 5.00, -- trial lesson price
-    currency TEXT DEFAULT 'USD',
+    -- Qiymət tutor tərəfindən təyin edilmir, platform abonəlik planları ilə idarə olunur
     years_experience INT DEFAULT 0,
     total_lessons INT DEFAULT 0,
     total_hours DECIMAL(10,2) DEFAULT 0,
@@ -587,9 +585,9 @@ CREATE TABLE transactions (
 );
 
 -- ============================================
--- PACKAGES (dərs paketləri)
+-- SUBSCRIPTION PLANS (aylıq abonəlik planları)
 -- ============================================
-CREATE TABLE packages (
+CREATE TABLE subscription_plans (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name_az TEXT NOT NULL,
     name_en TEXT NOT NULL,
@@ -597,43 +595,57 @@ CREATE TABLE packages (
     description_az TEXT,
     description_en TEXT,
     description_ru TEXT,
-    lesson_count INT NOT NULL, -- 4, 8, 12, 20
-    duration_minutes INT NOT NULL DEFAULT 30, -- per lesson
-    price DECIMAL(10,2) NOT NULL,
-    original_price DECIMAL(10,2), -- for showing discount
-    currency TEXT DEFAULT 'USD',
-    discount_percent INT DEFAULT 0,
+    lessons_per_month INT NOT NULL,            -- ayda neçə dərs verir
+    duration_minutes INT NOT NULL DEFAULT 30,  -- hər dərsin müddəti
+    price_azn DECIMAL(10,2) NOT NULL,          -- AZN ilə aylıq qiymət
+    tutor_payout_per_lesson DECIMAL(10,2) NOT NULL, -- tutora hər dərs üçün ödəniş (AZN)
+    stripe_price_id TEXT,                      -- Stripe recurring price ID
     is_popular BOOLEAN DEFAULT false,
     is_active BOOLEAN DEFAULT true,
     sort_order INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed packages
-INSERT INTO packages (name_az, name_en, name_ru, lesson_count, duration_minutes, price, original_price, discount_percent, is_popular, sort_order) VALUES
-('Başlanğıc', 'Starter', 'Стартер', 4, 30, 49.99, 59.96, 15, false, 1),
-('Populyar', 'Popular', 'Популярный', 8, 30, 89.99, 119.92, 25, true, 2),
-('Premium', 'Premium', 'Премиум', 12, 30, 119.99, 179.88, 33, false, 3),
-('Intensiv', 'Intensive', 'Интенсив', 20, 30, 179.99, 299.80, 40, false, 4),
-('Başlanğıc 60', 'Starter 60', 'Стартер 60', 4, 60, 89.99, 107.96, 15, false, 5),
-('Populyar 60', 'Popular 60', 'Популярный 60', 8, 60, 159.99, 215.92, 25, false, 6),
-('Premium 60', 'Premium 60', 'Премиум 60', 12, 60, 219.99, 323.88, 32, false, 7);
+-- Seed subscription plans
+-- Qazanc nümunəsi: Basic → 15 AZN gəlir, 4×5=20 AZN tutor xərci → xərc optimallaşdır
+-- Standard → 35 AZN gəlir, 8×6=48 AZN tutor xərci → xərc optimallaşdır
+-- Premium → 60 AZN gəlir, 16×7=112 AZN → bu model ilkin mərhələ üçün, sonra tənzimlə
+INSERT INTO subscription_plans (name_az, name_en, name_ru, lessons_per_month, duration_minutes, price_azn, tutor_payout_per_lesson, is_popular, sort_order) VALUES
+('Basic', 'Basic', 'Базовый', 4, 30, 15.00, 2.50, false, 1),
+('Standard', 'Standard', 'Стандартный', 8, 30, 35.00, 3.50, true, 2),
+('Premium', 'Premium', 'Премиум', 16, 30, 60.00, 3.00, false, 3);
 
 -- ============================================
--- STUDENT PACKAGES (alınmış paketlər)
+-- USER SUBSCRIPTIONS (aktiv abonəliklər)
 -- ============================================
-CREATE TABLE student_packages (
+CREATE TABLE user_subscriptions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     student_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-    package_id UUID REFERENCES packages(id),
-    total_lessons INT NOT NULL,
-    used_lessons INT DEFAULT 0,
-    remaining_lessons INT GENERATED ALWAYS AS (total_lessons - used_lessons) STORED,
-    duration_minutes INT NOT NULL DEFAULT 30,
-    expires_at TIMESTAMPTZ, -- package expiry
-    is_active BOOLEAN DEFAULT true,
-    purchased_at TIMESTAMPTZ DEFAULT NOW(),
-    transaction_id UUID REFERENCES transactions(id)
+    plan_id UUID NOT NULL REFERENCES subscription_plans(id),
+    status TEXT NOT NULL DEFAULT 'active', -- 'active', 'cancelled', 'expired', 'past_due'
+    lessons_remaining INT NOT NULL,        -- bu ay qalan dərs hüququ
+    lessons_total INT NOT NULL,            -- bu ayın toplam dərs hüququ
+    current_period_start TIMESTAMPTZ NOT NULL,
+    current_period_end TIMESTAMPTZ NOT NULL,
+    stripe_subscription_id TEXT,           -- Stripe subscription ID
+    stripe_customer_id TEXT,
+    cancelled_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- TUTOR PAYOUTS (tutora ödənişlər — admin tərəfindən)
+-- ============================================
+CREATE TABLE tutor_payouts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tutor_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    lesson_id UUID REFERENCES lessons(id),
+    amount_azn DECIMAL(10,2) NOT NULL,      -- tutora ödəniləcək məbləğ
+    status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'paid', 'cancelled'
+    paid_at TIMESTAMPTZ,
+    admin_note TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================
@@ -1065,9 +1077,10 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 - Step 3: Təhsil & Sertifikatlar (file upload)
 - Step 4: Haqqında + İxtisaslar
 - Step 5: Video intro (upload və ya record)
-- Step 6: Qiymət təyini + cədvəl
+- Step 6: Cədvəl (iş saatları — nə vaxt dərs keçə bilər)
 - Step 7: Nəzərdən keçir + Göndər
 - Göndərdikdən sonra: "Müraciətiniz nəzərdən keçirilir" status page
+- **Qeyd: Qiymət tutor tərəfindən təyin edilmir — platform abonəlik planları ilə idarə olunur**
 
 ### 4.2 Tutor Dashboard (`/tutor-dashboard`)
 - Stats: bu aydakı dərslər, qazanc, reytinq, yeni tələbələr
@@ -1096,10 +1109,10 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 
 ### 4.6 Tutor Settings (`/tutor-settings`)
 - Profil redaktə (bio, video, avatar)
-- Qiymət dəyişdir
 - Ani booking on/off
 - Bildiriş tənzimləmələri
 - İş saatlarını dəyişdir
+- **Qeyd: Qiymət dəyişikliyi yoxdur — qiymətlər platform tərəfindən idarə olunur**
 
 ### 4.7 Gün 4 Gözlənilən Nəticə
 - [ ] Tutor registration multi-step form tam işləyir
@@ -1116,13 +1129,14 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 
 ### 5.1 Booking Flow
 1. Student tutor profilindən vaxt seçir
-2. Müddət seçir (30/60 dəq)
-3. Paketdən istifadə və ya tək dərs ödənişi
-4. Booking yaranır (status: pending/confirmed)
-5. Tutor bildiriş alır (instant booking = auto-confirm)
-6. Lesson record yaranır
-7. Hər iki tərəf email/notification alır
-8. Xatırlatma: 1 saat əvvəl, 15 dəqiqə əvvəl
+2. Müddət seçir (30 dəq — abonəliyə daxildir)
+3. **Abonəlik yoxlanır:** `user_subscriptions.lessons_remaining > 0`
+4. Yetərsə: "Abonəlik al" səhifəsinə yönləndirilir
+5. Booking yaranır (status: pending/confirmed), `lessons_remaining -= 1`
+6. Tutor bildiriş alır (instant booking = auto-confirm)
+7. Lesson record yaranır
+8. Hər iki tərəf email/notification alır
+9. Xatırlatma: 1 saat əvvəl, 15 dəqiqə əvvəl
 
 ### 5.2 Availability Engine
 - `GET /api/tutors/[id]/availability?date=2026-06-15`
@@ -1282,60 +1296,71 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 
 ---
 
-## GÜN 8 — PAYMENT SYSTEM (Stripe)
+## GÜN 8 — PAYMENT SYSTEM (Stripe Subscriptions)
 
 ### 8.1 Stripe Integration
-- `/api/stripe/checkout` — Checkout Session yaratmaq
-- `/api/stripe/webhook` — Webhook handler (payment events)
-- `/api/stripe/portal` — Customer portal redirect
+- `/api/stripe/subscription/create` — Abonəlik yaratmaq (recurring)
+- `/api/stripe/subscription/cancel` — Abonəliyi ləğv etmək
+- `/api/stripe/webhook` — Webhook handler (subscription events)
+- `/api/stripe/portal` — Customer portal (ödəniş məlumatı dəyişdir, ləğv et)
 
 ### 8.2 Payment Flows
 
-**Balans artırmaq (Deposit):**
-1. Student → Wallet → "Balans artır"
-2. Məbləğ seçir (preset: $10, $25, $50, $100 + custom)
-3. Stripe Checkout redirect
-4. Ödəniş sonrası: wallet.balance += amount, transaction record
-5. Success page
+**Abonəlik almaq:**
+1. Student → Pricing səhifəsi → Plan seçir (Basic 15₼ / Standard 35₼ / Premium 60₼)
+2. Stripe Checkout redirect (mode: 'subscription', metadata: plan_id, student_id)
+3. Webhook `customer.subscription.created`: `user_subscriptions` record yaradılır
+4. `lessons_remaining` = planın `lessons_per_month` dəyəri ilə doldurulur
+5. Hər ay avtomatik yenilənir (Stripe recurring)
+6. Success page → dashboard-a yönləndir
 
-**Paket almaq:**
-1. Student → Pricing / tutor profile
-2. Paket seçir
-3. Stripe Checkout redirect (metadata: package_id, student_id)
-4. Webhook: student_packages record yaradılır
-5. Success page
+**Aylıq yenilənmə (auto-renewal):**
+- Webhook `invoice.payment_succeeded`: `lessons_remaining` sıfırlanır, `current_period_*` yenilənir
+- Webhook `invoice.payment_failed`: subscription status → `past_due`, student-ə email
+- Webhook `customer.subscription.deleted`: status → `expired`
 
-**Dərs ödənişi (balansdan):**
-1. Booking zamanı: wallet.balance >= price yoxla
-2. Balans yetərsə: ödəniş alınır (wallet debit)
-3. Yetmirsə: "Balans artırın" redirect
+**Dərs rezervasiyası (abonəliklə):**
+1. Booking zamanı: `user_subscriptions.lessons_remaining > 0` yoxla
+2. Varsa: `lessons_remaining -= 1`, booking yaradılır
+3. Yoxdursa: "Abonəliyiniz bitib, yenilə" səhifəsinə yönləndir
+4. Dərs bitdikdən sonra: `tutor_payouts` record yaradılır (admin təsdiqini gözləyir)
 
-**Tutor payout:**
-- Dərs bitdikdən sonra: tutor wallet credited (platform commission çıxılmış — 20%)
-- Manual withdrawal request → admin approve → bank transfer
-- Minimum withdrawal: $50
+**Tutora ödəniş (admin tərəfindən):**
+- Dərs bitdikdən sonra: `tutor_payouts` → status: `pending`
+- Admin panel → Pending Payouts siyahısı → "Ödə" button
+- Admin bank transfer edir → status: `paid`, `paid_at` doldurulur
+- Tutor-un earnings dashboardunda göstərilir
 
-### 8.3 Wallet Page (`/wallet`)
-- Current balance (böyük rəqəm)
-- "Balans artır" button
-- Transaction history (filterable: all, deposits, payments, refunds)
-- Active packages (remaining lessons)
+### 8.3 Subscription Page (`/pricing`)
+- 3 plan card: Basic / Standard / Premium
+- Hər plan üçün: qiymət (AZN/ay), dərs sayı, "Abonə ol" button
+- Aktiv plan highlight (əgər artıq abonədirsə)
+- FAQ: "Dərsimi köçürə bilərəm?", "Ləğv etsəm nə olur?" və s.
 
-### 8.4 Pricing Page
-- Package cards (from DB)
-- Currency toggle (USD / AZN) — AZN = USD × rate
-- Comparison table
-- FAQ section
+### 8.4 Student Subscription Page (`/settings/billing`)
+- Aktiv plan məlumatı (plan adı, qiymət, növbəti ödəniş tarixi)
+- Qalan dərs sayı (bu ay)
+- Plan yüksəlt / aşağı sal
+- Stripe Customer Portal-a keçid (kartı dəyiş, ləğv et)
+- Ödəniş tarixçəsi
 
-### 8.5 Gün 8 Gözlənilən Nəticə
-- [ ] Stripe Checkout tam işləyir
-- [ ] Webhook handler: payment_intent.succeeded, checkout.session.completed
-- [ ] Wallet system (deposit, debit, balance check)
-- [ ] Package purchase flow
-- [ ] Transaction history
-- [ ] Tutor earnings + withdrawal request
-- [ ] Pricing page
-- [ ] Error handling: failed payments, expired sessions
+### 8.5 Tutor Earnings Page (`/tutor-earnings`)
+- Cari ay gözlənilən ödəniş (keçirilən dərslər × payout per lesson)
+- Ödənilmiş / Gözləyən məbləğlər
+- Dərs tarixçəsi ilə ödəniş breakdown
+- Bank hesab məlumatları (withdrawal üçün)
+
+### 8.6 Gün 8 Gözlənilən Nəticə
+- [ ] Stripe Subscription Checkout tam işləyir
+- [ ] Webhook handler: subscription.created, invoice.succeeded, invoice.failed, subscription.deleted
+- [ ] user_subscriptions yaradılır və yenilənir
+- [ ] lessons_remaining booking zamanı azalır
+- [ ] Abonəlik yoxdursa booking bloklanır + redirect
+- [ ] Pricing page (3 plan)
+- [ ] Billing settings page (aktiv plan + portal link)
+- [ ] Tutor payouts record yaradılır (dərs bitdikdə)
+- [ ] Tutor earnings page
+- [ ] Error handling: failed payments, expired subscriptions
 
 ---
 
@@ -1373,18 +1398,21 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 - Handle disputes
 
 ### 9.5 Payment Management (`/admin/payments`)
-- All transactions
-- Pending withdrawals (tutor payouts)
-- Revenue analytics
-- Refund management
+- Aylıq abonəlik gəlirləri (Stripe dashboard ilə sinxron)
+- **Pending Tutor Payouts** — ödənilməmiş tutor haqqları siyahısı
+  - Tutor adı, dərs, məbləğ, tarix
+  - "Ödə" button → status: paid, paid_at doldurulur
+- Ödənilmiş payout tarixçəsi
+- Aylıq gəlir analitikası (abonəlik gəliri vs tutor xərci)
+- Refund management (Stripe portal vasitəsilə)
 
 ### 9.6 Admin Settings (`/admin/settings`)
-- Platform commission rate
-- Minimum withdrawal amount
+- **Subscription plan qiymətləri dəyişdir** (Basic / Standard / Premium — AZN)
+- **Tutor payout per lesson dəyişdir** (hər plan üçün ayrıca)
 - Cancellation policy settings
 - Featured tutors selection
 - System announcements
-- Manage languages & packages
+- Manage languages & subscription plans
 
 ### 9.7 Admin Authorization
 - Middleware check: profile.role === 'admin'

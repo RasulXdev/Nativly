@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import {
   Loader2, ChevronRight, ChevronLeft, GraduationCap, Check,
-  Globe, User, FileText, DollarSign, CalendarDays, Eye, Upload, X
+  Globe, User, FileText, Video, CalendarDays, Eye, Upload, X
 } from 'lucide-react'
 import Logo from '@/components/shared/Logo'
 
@@ -62,7 +62,7 @@ const STEPS = [
   { icon: Globe, label: 'Dillər' },
   { icon: FileText, label: 'Profil' },
   { icon: GraduationCap, label: 'Təhsil' },
-  { icon: DollarSign, label: 'Qiymət' },
+  { icon: Video, label: 'Video' },
   { icon: CalendarDays, label: 'Cədvəl' },
   { icon: Eye, label: 'Nəzərdən keç' },
 ]
@@ -91,8 +91,7 @@ interface FormData {
   education: string[]
   certificateUrls: string[]
   // Step 5
-  hourly_rate: string
-  trial_rate: string
+  video_intro_url: string
   instant_booking: boolean
   // Step 6
   schedule: Record<string, DaySchedule>
@@ -124,7 +123,7 @@ export default function TutorOnboardingForm() {
     languages: [],
     headline: '', about: '', specializations: [],
     education: [''], certificateUrls: [],
-    hourly_rate: '15', trial_rate: '5', instant_booking: true,
+    video_intro_url: '', instant_booking: true,
     schedule: DEFAULT_SCHEDULE,
   })
 
@@ -263,17 +262,12 @@ export default function TutorOnboardingForm() {
     }
   }
 
-  // ── Step 5: Pricing ────────────────────────────────────────────────────────
+  // ── Step 5: Video intro ──────────────────────────────────────────────────
   const submitStep5 = async () => {
-    const errs: Record<string, string> = {}
-    if (!form.hourly_rate || Number(form.hourly_rate) < 5) errs.hourly_rate = 'Minimum $5 olmalıdır'
-    if (Object.keys(errs).length) { setErrors(errs); return false }
-
     setIsLoading(true)
     try {
       await db.from('tutor_profiles').update({
-        hourly_rate: Number(form.hourly_rate),
-        trial_rate: Number(form.trial_rate) || null,
+        video_intro_url: form.video_intro_url.trim() || null,
         instant_booking: form.instant_booking,
       }).eq('user_id', userId!)
       return true
@@ -672,42 +666,25 @@ export default function TutorOnboardingForm() {
           </>
         )}
 
-        {/* ── Step 5: Pricing ── */}
+        {/* ── Step 5: Video intro ── */}
         {step === 5 && (
           <>
             <div>
-              <h2 className="font-bold text-lg">Qiymət təyini</h2>
-              <p className="text-sm text-muted-foreground">Tələbələrə nə qədər ödəyəcəksiniz?</p>
+              <h2 className="font-bold text-lg">Təqdimat videosu</h2>
+              <p className="text-sm text-muted-foreground">Tələbələrin sizi tanıması üçün qısa video (ixtiyari)</p>
             </div>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label>Saatlik qiymət (USD) *</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input
-                      type="number"
-                      value={form.hourly_rate}
-                      onChange={(e) => set('hourly_rate', e.target.value)}
-                      className="pl-7 rounded-xl"
-                      min="5"
-                    />
-                  </div>
-                  {errors.hourly_rate && <p className="text-xs text-destructive">{errors.hourly_rate}</p>}
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Sınaq dərsi (USD)</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input
-                      type="number"
-                      value={form.trial_rate}
-                      onChange={(e) => set('trial_rate', e.target.value)}
-                      className="pl-7 rounded-xl"
-                      min="0"
-                    />
-                  </div>
-                </div>
+              <div className="space-y-1.5">
+                <Label>Video link (YouTube / Vimeo)</Label>
+                <Input
+                  value={form.video_intro_url}
+                  onChange={(e) => set('video_intro_url', e.target.value)}
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="rounded-xl"
+                />
+                <p className="text-xs text-muted-foreground">
+                  1-2 dəqiqəlik təqdimat — kim olduğunuz, nə öyrətdiyiniz və metodunuz haqqında.
+                </p>
               </div>
 
               <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
@@ -734,19 +711,11 @@ export default function TutorOnboardingForm() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-card border border-border p-4 space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">Nümunəvi qazanc:</p>
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  {[5, 10, 20].map((lessons) => (
-                    <div key={lessons} className="rounded-lg bg-white/5 p-3">
-                      <p className="text-xs text-muted-foreground">{lessons} dərs/ay</p>
-                      <p className="text-base font-bold text-emerald-400">
-                        ${(Number(form.hourly_rate) * 0.8 * lessons).toFixed(0)}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">(%20 komissiya)</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4">
+                <p className="text-xs text-muted-foreground">
+                  💡 Qiymətlər platform tərəfindən idarə olunur — siz qiymət təyin etmirsiniz.
+                  Hər keçirdiyiniz dərs üçün sabit ödəniş alırsınız.
+                </p>
               </div>
             </div>
           </>
@@ -851,8 +820,8 @@ export default function TutorOnboardingForm() {
                   label: 'İxtisaslar',
                   value: form.specializations.join(', ') || '—',
                 },
-                { label: 'Saatlik qiymət', value: `$${form.hourly_rate}` },
-                { label: 'Sınaq dərsi', value: `$${form.trial_rate}` },
+                { label: 'Video təqdimat', value: form.video_intro_url ? 'Əlavə edildi' : '—' },
+                { label: 'Ani rezervasiya', value: form.instant_booking ? 'Aktiv' : 'Deaktiv' },
                 {
                   label: 'İş günləri',
                   value: Object.entries(form.schedule)

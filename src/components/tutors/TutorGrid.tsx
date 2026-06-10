@@ -9,42 +9,42 @@ import type { TutorWithProfile } from '@/lib/types'
 // Demo tutors shown when no real data is available
 const DEMO_TUTORS: TutorWithProfile[] = ([
   {
-    id: 'demo-1', hourly_rate: 18, trial_rate: 8, average_rating: 4.9, total_reviews: 342, total_lessons: 1250,
+    id: 'demo-1', average_rating: 4.9, total_reviews: 342, total_lessons: 1250,
     instant_booking: true, headline: 'Native İngilis dili müəllimi, CELTA sertifikatlı. İş ingilis dili üzrə 8+ il təcrübə.',
     specializations: ['IELTS', 'Business', 'Conversation'],
     profiles: { full_name: 'Sarah Mitchell', country: 'United Kingdom', city: 'London', is_online: true, avatar_url: null },
     user_languages: [{ is_teaching: true, languages: { flag_emoji: '🇬🇧', name_az: 'İngilis' } }],
   },
   {
-    id: 'demo-2', hourly_rate: 14, trial_rate: 6, average_rating: 4.8, total_reviews: 218, total_lessons: 890,
+    id: 'demo-2', average_rating: 4.8, total_reviews: 218, total_lessons: 890,
     instant_booking: false, headline: 'Peşəkar fransız dili müəllimi. Universitetdə dil psixologiyası üzrə təhsil almışam.',
     specializations: ['Grammar', 'Academic', 'Conversation'],
     profiles: { full_name: 'Antoine Dupont', country: 'France', city: 'Paris', is_online: false, avatar_url: null },
     user_languages: [{ is_teaching: true, languages: { flag_emoji: '🇫🇷', name_az: 'Fransız' } }],
   },
   {
-    id: 'demo-3', hourly_rate: 22, trial_rate: 10, average_rating: 5.0, total_reviews: 501, total_lessons: 2100,
+    id: 'demo-3', average_rating: 5.0, total_reviews: 501, total_lessons: 2100,
     instant_booking: true, headline: 'Alman dili üzrə ekspert. Goethe sertifikatı hazırlığı mütəxəssisi.',
     specializations: ['IELTS', 'Kids', 'Grammar'],
     profiles: { full_name: 'Lena Müller', country: 'Germany', city: 'Berlin', is_online: true, avatar_url: null },
     user_languages: [{ is_teaching: true, languages: { flag_emoji: '🇩🇪', name_az: 'Alman' } }],
   },
   {
-    id: 'demo-4', hourly_rate: 16, trial_rate: 7, average_rating: 4.7, total_reviews: 183, total_lessons: 650,
+    id: 'demo-4', average_rating: 4.7, total_reviews: 183, total_lessons: 650,
     instant_booking: true, headline: 'İspan dili həvəskarı — Latın Amerikası aksentini sevənlər üçün.',
     specializations: ['Conversation', 'Business', 'Kids'],
     profiles: { full_name: 'María González', country: 'Spain', city: 'Madrid', is_online: true, avatar_url: null },
     user_languages: [{ is_teaching: true, languages: { flag_emoji: '🇪🇸', name_az: 'İspan' } }],
   },
   {
-    id: 'demo-5', hourly_rate: 20, trial_rate: 9, average_rating: 4.9, total_reviews: 427, total_lessons: 1680,
+    id: 'demo-5', average_rating: 4.9, total_reviews: 427, total_lessons: 1680,
     instant_booking: false, headline: 'Rus dili müəllimi, 10 il pedaqoji staj. Ədəbiyyat sevənlər üçün xüsusi proqramlar.',
     specializations: ['Academic', 'Grammar', 'Conversation'],
     profiles: { full_name: 'Aleksei Volkov', country: 'Russia', city: 'Moscow', is_online: false, avatar_url: null },
     user_languages: [{ is_teaching: true, languages: { flag_emoji: '🇷🇺', name_az: 'Rus' } }],
   },
   {
-    id: 'demo-6', hourly_rate: 15, trial_rate: 7, average_rating: 4.8, total_reviews: 264, total_lessons: 940,
+    id: 'demo-6', average_rating: 4.8, total_reviews: 264, total_lessons: 940,
     instant_booking: true, headline: 'Türk dili — başlanğıcdan C1 səviyyəsinə qədər. Sertifikatlı müəllim.',
     specializations: ['Conversation', 'IELTS', 'Business'],
     profiles: { full_name: 'Ayşe Kaya', country: 'Turkey', city: 'Istanbul', is_online: true, avatar_url: null },
@@ -257,15 +257,9 @@ function DemoTutorCard({ tutor }: { tutor: TutorWithProfile }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-border/50">
-          <div>
-            <span className="text-xl font-extrabold text-primary">${tutor.hourly_rate}</span>
-            <span className="text-xs text-muted-foreground">/saat</span>
-          </div>
-          <div className="flex gap-2">
-            <div className="h-8 px-3 text-xs rounded-full border border-border/70 flex items-center text-muted-foreground">Profil</div>
-            <div className="h-8 px-3 text-xs rounded-full gradient-bg text-white flex items-center opacity-60">Rezerv et</div>
-          </div>
+        <div className="flex items-center gap-2 pt-4 border-t border-border/50">
+          <div className="flex-1 h-8 px-3 text-xs rounded-full border border-border/70 flex items-center justify-center text-muted-foreground">Profil</div>
+          <div className="flex-1 h-8 px-3 text-xs rounded-full gradient-bg text-white flex items-center justify-center opacity-60">Rezerv et</div>
         </div>
       </div>
     </div>
