@@ -9,8 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Globe } from 'lucide-react'
-
 const languages = [
   { code: 'az' as const, label: 'Azərbaycan', flag: '🇦🇿' },
   { code: 'en' as const, label: 'English', flag: '🇬🇧' },
@@ -31,7 +29,6 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-full px-3 h-9 text-sm font-medium hover:bg-primary/5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <Globe className="h-4 w-4 text-primary/70" />
         <span className="hidden sm:inline">{current.flag} {current.code.toUpperCase()}</span>
         <span className="sm:hidden">{current.flag}</span>
       </DropdownMenuTrigger>

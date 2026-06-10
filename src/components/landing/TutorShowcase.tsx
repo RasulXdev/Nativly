@@ -68,8 +68,8 @@ export default function TutorShowcase() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((tutor, i) => (
-            <AnimateOnScroll key={tutor.id} delay={i * 60} animation="fade-up">
-              <div className="group bg-white/75 border border-white/80 backdrop-blur-sm rounded-2xl p-5 card-lift gradient-border shadow-sm">
+            <AnimateOnScroll key={tutor.id} delay={i * 60} animation="fade-up" className="h-full">
+              <div className="group bg-white/75 border border-white/80 backdrop-blur-sm rounded-2xl p-5 card-lift gradient-border shadow-sm h-full flex flex-col">
                 <div className="flex items-start gap-3.5 mb-4">
                   <div className="relative shrink-0">
                     <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center text-xl">
@@ -105,7 +105,7 @@ export default function TutorShowcase() {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-border/40">
+                <div className="flex items-center gap-2 pt-3 border-t border-border/40 mt-auto">
                   <Link
                     href={`/tutors/${tutor.id}` as '/tutors'}
                     className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex-1 rounded-full text-xs h-8')}

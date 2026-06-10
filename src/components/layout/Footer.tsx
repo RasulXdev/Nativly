@@ -74,16 +74,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-muted-foreground">{t('copyright')}</p>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-              {t('privacy')}
-            </Link>
-            <Link href="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-              {t('terms')}
-            </Link>
-          </div>
+        <div className="mt-10 pt-6 border-t border-border/30">
+          <p className="text-xs text-muted-foreground text-center">{t('copyright')}</p>
         </div>
       </div>
     </footer>

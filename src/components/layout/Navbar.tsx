@@ -57,7 +57,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-[0.9rem] font-semibold text-foreground/75 hover:text-primary rounded-full hover:bg-primary/6 transition-all duration-200"
+                className="px-4 py-2 text-[0.9rem] font-semibold text-foreground hover:text-primary rounded-full hover:bg-primary/6 transition-all duration-200"
               >
                 {link.label}
               </Link>
@@ -99,10 +99,10 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'rounded-full px-4 font-semibold text-foreground/80 hover:text-foreground hover:bg-primary/6')}>
+                <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'default' }), 'rounded-full px-5 font-semibold text-foreground hover:text-primary hover:bg-primary/6')}>
                   {t('login')}
                 </Link>
-                <Link href="/register" className={cn(buttonVariants({ size: 'sm' }), 'btn-glow rounded-full px-5 gradient-bg border-0 hover:scale-[1.03] hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 shadow-md shadow-primary/20')}>
+                <Link href="/register" className={cn(buttonVariants({ size: 'default' }), 'btn-glow rounded-full px-6 gradient-bg border-0 hover:scale-[1.03] hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 shadow-md shadow-primary/20')}>
                   {t('register')}
                 </Link>
               </div>

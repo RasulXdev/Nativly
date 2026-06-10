@@ -57,7 +57,7 @@ export default function Pricing() {
 
         <div className="grid md:grid-cols-3 gap-5 items-stretch">
           {PACKAGES.map((pkg, i) => (
-            <AnimateOnScroll key={pkg.id} delay={i * 100} animation="fade-up">
+            <AnimateOnScroll key={pkg.id} delay={i * 100} animation="fade-up" className="h-full">
               <Card
                 className={cn(
                   'relative h-full rounded-2xl overflow-hidden transition-all duration-400',

@@ -23,8 +23,8 @@ export default function HowItWorks() {
           {stepKeys.map((key, i) => {
             const Icon = icons[i]
             return (
-              <AnimateOnScroll key={key} delay={i * 120} animation="fade-up">
-                <div className="relative group">
+              <AnimateOnScroll key={key} delay={i * 120} animation="fade-up" className="h-full">
+                <div className="relative group h-full">
                   {i < 3 && (
                     <div className="hidden lg:block absolute top-8 left-[calc(100%+0.25rem)] w-[calc(100%-2rem)] h-px border-t-2 border-dashed border-primary/15 z-0" />
                   )}

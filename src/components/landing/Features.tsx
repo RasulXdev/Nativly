@@ -29,7 +29,7 @@ export default function Features() {
           {features.map((feature, i) => {
             const Icon = feature.icon
             return (
-              <AnimateOnScroll key={feature.key} delay={i * 80} animation="fade-up">
+              <AnimateOnScroll key={feature.key} delay={i * 80} animation="fade-up" className="h-full">
                 <div className="group relative bg-white/70 border border-white/80 backdrop-blur-sm rounded-2xl p-6 space-y-4 card-lift gradient-border h-full shadow-sm hover:shadow-primary/8">
                   <div className={`w-12 h-12 rounded-2xl ${feature.accent} ${feature.ring} flex items-center justify-center transition-all duration-300 group-hover:scale-110`}>
                     <Icon className="h-6 w-6" />
