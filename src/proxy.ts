@@ -7,6 +7,7 @@ const intlMiddleware = createMiddleware(routing)
 
 const protectedRoutes = [
   '/dashboard',
+  '/tutors',
   '/schedule',
   '/lessons',
   '/messages',
@@ -25,6 +26,11 @@ const authRoutes = ['/login', '/register', '/forgot-password']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Skip API routes entirely — let Next.js handle them directly
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
 
   const pathnameWithoutLocale = pathname.replace(/^\/(az|en|ru)/, '') || '/'
 
@@ -54,15 +60,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
+  // Run intl routing and merge Supabase session cookies into the response
   const intlResponse = intlMiddleware(request)
-  if (intlResponse) return intlResponse
+  if (intlResponse) {
+    response.cookies.getAll().forEach((cookie) => {
+      intlResponse.cookies.set(cookie)
+    })
+    return intlResponse
+  }
 
   return response
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Exclude _next static, images, favicon, api routes, and common static extensions
+    '/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
     '/',
     '/(az|en|ru)/:path*',
   ],
