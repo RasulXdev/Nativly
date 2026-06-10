@@ -152,12 +152,12 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
       {/* Minimum rating */}
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Minimum reytinq</p>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           {[null, 3, 4, 4.5].map((r) => (
             <button
               key={String(r)}
               onClick={() => onChange({ ...filters, minRating: r ?? undefined })}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${
                 (filters.minRating ?? null) === r
                   ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border hover:border-primary/50'
