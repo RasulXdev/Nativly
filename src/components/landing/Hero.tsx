@@ -11,8 +11,11 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden min-h-[90vh] flex items-center hero-mesh">
-      <div className="absolute top-16 left-[8%] w-72 h-72 rounded-full bg-primary/8 blur-[100px] float pointer-events-none" />
-      <div className="absolute bottom-16 right-[5%] w-80 h-80 rounded-full bg-primary/5 blur-[110px] float-delay pointer-events-none" />
+      {/* Animated background orbs */}
+      <div className="absolute -top-10 left-[2%] w-[520px] h-[520px] rounded-full bg-primary/20 blur-[120px] hero-orb-1 pointer-events-none" />
+      <div className="absolute bottom-0 right-[0%] w-[480px] h-[480px] rounded-full bg-violet-500/14 blur-[130px] hero-orb-2 pointer-events-none" />
+      <div className="absolute top-[40%] left-[40%] w-[320px] h-[320px] rounded-full bg-amber-400/8 blur-[100px] hero-orb-3 pointer-events-none" />
+      <div className="absolute top-[10%] right-[20%] w-[200px] h-[200px] rounded-full bg-sky-400/10 blur-[80px] float-slow pointer-events-none" />
 
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-20 lg:py-28 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -27,7 +30,7 @@ export default function Hero() {
               <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.08] text-foreground">
                 {t('heroTitle')}
               </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-lg text-foreground/65 leading-relaxed">
                 {t('heroSubtitle')}
               </p>
             </div>
@@ -37,7 +40,7 @@ export default function Hero() {
                 href="/register"
                 className={cn(
                   buttonVariants({ size: 'lg' }),
-                  'text-base px-8 h-12 gap-2 rounded-full gradient-bg border-0 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-300'
+                  'btn-glow text-base px-8 h-12 gap-2 rounded-full gradient-bg border-0 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-[1.03] transition-all duration-300'
                 )}
               >
                 {t('heroCta')}
@@ -47,7 +50,7 @@ export default function Hero() {
                 href="/tutors"
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'text-base px-8 h-12 gap-2 rounded-full border-primary/20 hover:bg-primary/4 hover:border-primary/35 transition-all duration-300'
+                  'text-base px-8 h-12 gap-2 rounded-full border-primary/30 text-foreground/80 hover:bg-primary/6 hover:border-primary/50 hover:text-primary transition-all duration-300'
                 )}
               >
                 {t('heroCtaSecondary')}
@@ -171,9 +174,9 @@ export default function Hero() {
               ['🇫🇷', 'Français'], ['🇹🇷', 'Türkçe'], ['🇪🇸', 'Español'],
               ['🇮🇹', 'Italiano'], ['🇨🇳', '中文'], ['🇯🇵', '日本語'],
             ].map(([flag, name]) => (
-              <div key={name} className="flex items-center gap-1.5 bg-white/60 border border-border/40 rounded-full px-3.5 py-1.5 text-xs hover:border-primary/25 hover:bg-primary/3 transition-all duration-200 cursor-default">
+              <div key={name} className="flex items-center gap-1.5 bg-white/70 border border-primary/12 rounded-full px-3.5 py-1.5 text-xs hover:border-primary/35 hover:bg-primary/5 hover:scale-105 transition-all duration-200 cursor-default shadow-sm">
                 <span>{flag}</span>
-                <span className="text-foreground/50 font-medium">{name}</span>
+                <span className="text-foreground/65 font-medium">{name}</span>
               </div>
             ))}
           </div>

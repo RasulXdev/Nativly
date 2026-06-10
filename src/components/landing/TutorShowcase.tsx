@@ -39,7 +39,9 @@ export default function TutorShowcase() {
     : TUTORS.filter(t => t.filter === activeFilter)
 
   return (
-    <section className="py-24 sm:py-28 px-4 bg-background relative" id="tutors">
+    <section className="py-24 sm:py-28 px-4 bg-background relative overflow-hidden" id="tutors">
+      <div className="absolute -top-20 right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/8 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-[-5%] w-[300px] h-[300px] rounded-full bg-violet-500/6 blur-[100px] pointer-events-none" />
       <div className="container mx-auto max-w-6xl">
         <AnimateOnScroll className="text-center mb-10">
           <p className="text-sm font-semibold text-primary mb-3 tracking-wide uppercase">{t('title')}</p>
@@ -55,8 +57,8 @@ export default function TutorShowcase() {
               className={cn(
                 'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border cursor-pointer',
                 activeFilter === f
-                  ? 'gradient-bg text-white border-transparent shadow-md shadow-primary/15'
-                  : 'bg-card border-border/50 text-muted-foreground hover:border-primary/25 hover:text-foreground'
+                  ? 'gradient-bg text-white border-transparent shadow-lg shadow-primary/20'
+                  : 'bg-white/70 border-primary/12 text-foreground/65 hover:border-primary/35 hover:text-primary hover:bg-primary/5'
               )}
             >
               {FILTER_LABELS[f]}
@@ -67,7 +69,7 @@ export default function TutorShowcase() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((tutor, i) => (
             <AnimateOnScroll key={tutor.id} delay={i * 60} animation="fade-up">
-              <div className="group bg-card border border-border/50 rounded-2xl p-5 card-lift">
+              <div className="group bg-white/75 border border-white/80 backdrop-blur-sm rounded-2xl p-5 card-lift gradient-border shadow-sm">
                 <div className="flex items-start gap-3.5 mb-4">
                   <div className="relative shrink-0">
                     <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center text-xl">

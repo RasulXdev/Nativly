@@ -46,8 +46,8 @@ export default function Navbar() {
       <div className={cn(
         'transition-all duration-300 border-b',
         scrolled
-          ? 'bg-white/85 backdrop-blur-xl border-border/40 shadow-sm shadow-primary/3'
-          : 'bg-transparent border-transparent'
+          ? 'bg-white/88 backdrop-blur-xl border-border/50 shadow-md shadow-primary/5'
+          : 'bg-white/40 backdrop-blur-md border-white/30'
       )}>
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 max-w-7xl">
           <Logo />
@@ -57,7 +57,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3.5 py-2 text-sm font-medium text-foreground/55 hover:text-primary rounded-full hover:bg-primary/4 transition-all duration-200"
+                className="px-4 py-2 text-[0.9rem] font-semibold text-foreground/75 hover:text-primary rounded-full hover:bg-primary/6 transition-all duration-200"
               >
                 {link.label}
               </Link>
@@ -99,10 +99,10 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'rounded-full px-4 text-foreground/60 hover:text-foreground')}>
+                <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'rounded-full px-4 font-semibold text-foreground/80 hover:text-foreground hover:bg-primary/6')}>
                   {t('login')}
                 </Link>
-                <Link href="/register" className={cn(buttonVariants({ size: 'sm' }), 'rounded-full px-5 gradient-bg border-0 hover:opacity-90 shadow-md shadow-primary/15')}>
+                <Link href="/register" className={cn(buttonVariants({ size: 'sm' }), 'btn-glow rounded-full px-5 gradient-bg border-0 hover:scale-[1.03] hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 shadow-md shadow-primary/20')}>
                   {t('register')}
                 </Link>
               </div>
@@ -118,7 +118,7 @@ export default function Navbar() {
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-border/40 px-4 py-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
-                className="block px-4 py-2.5 text-sm font-medium text-foreground/60 hover:text-primary hover:bg-primary/4 rounded-xl transition-all">
+                className="block px-4 py-2.5 text-[0.9rem] font-semibold text-foreground/78 hover:text-primary hover:bg-primary/6 rounded-xl transition-all">
                 {link.label}
               </Link>
             ))}
