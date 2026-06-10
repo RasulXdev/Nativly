@@ -2,9 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Bell, Search, LogOut, Settings, LayoutDashboard } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Bell, Search, LogOut, Settings, LayoutDashboard, Command } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,43 +25,59 @@ export default function TopBar() {
   const dashboardHref = `/${locale}/${role === 'admin' ? 'admin' : role === 'tutor' ? 'tutor-dashboard' : 'dashboard'}`
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
+    <header className="sticky top-0 z-40 flex h-[60px] items-center gap-4 border-b border-border bg-background/80 backdrop-blur-xl px-4 sm:px-6 shrink-0">
+      {/* Search bar */}
+      <div className="flex-1 max-w-sm">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
             placeholder="Axtar..."
-            className="pl-9 h-9 bg-muted/50 border-transparent focus:border-border focus:bg-background"
+            className="platform-input w-full h-9 pl-9 pr-9 text-sm"
           />
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
+            <kbd className="text-[10px] text-muted-foreground/60 font-mono border border-white/10 rounded px-1 py-0.5 leading-none">⌘K</kbd>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+      <div className="flex items-center gap-1.5 ml-auto">
+        {/* Notification bell */}
+        <button className="relative h-9 w-9 flex items-center justify-center rounded-xl hover:bg-white/6 text-muted-foreground hover:text-foreground transition-colors">
           <Bell className="h-4 w-4" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
+          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500 ring-1 ring-background" />
           <span className="sr-only">Bildirişlər</span>
-        </Button>
+        </button>
+
+        {/* Divider */}
+        <div className="h-5 w-px bg-border mx-1" />
 
         {/* User dropdown */}
         {profile && (
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/15 hover:ring-primary/35 transition-all">
-                <AvatarImage src={profile.avatar_url ?? ''} alt={profile.full_name} />
-                <AvatarFallback className="gradient-bg text-white text-sm font-semibold">
-                  {getInitials(profile.full_name)}
-                </AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <div className="flex flex-col space-y-1 p-2">
-                <p className="text-sm font-semibold leading-none">{profile.full_name}</p>
-                <p className="text-xs leading-none text-muted-foreground">{profile.email}</p>
+            <DropdownMenuTrigger className="outline-none">
+              <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-white/6 transition-colors cursor-pointer group">
+                <Avatar className="h-7 w-7 ring-1 ring-white/20 group-hover:ring-primary/40 transition-all">
+                  <AvatarImage src={profile.avatar_url ?? ''} alt={profile.full_name} />
+                  <AvatarFallback className="gradient-bg text-white text-[10px] font-bold">
+                    {getInitials(profile.full_name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-semibold text-foreground leading-tight truncate max-w-[100px]">
+                    {profile.full_name?.split(' ')[0]}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    {role === 'tutor' ? 'Müəllim' : role === 'admin' ? 'Admin' : 'Tələbə'}
+                  </p>
+                </div>
               </div>
-              <DropdownMenuSeparator />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-52" align="end" sideOffset={8}>
+              <div className="flex flex-col space-y-0.5 p-2.5 border-b border-border mb-1">
+                <p className="text-sm font-semibold leading-tight">{profile.full_name}</p>
+                <p className="text-xs leading-tight text-muted-foreground">{profile.email}</p>
+              </div>
               <DropdownMenuItem onClick={() => router.push(dashboardHref)}>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 {t('dashboard')}

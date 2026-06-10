@@ -217,6 +217,22 @@
     animation: shimmer 3s ease-in-out infinite;
   }
 
+  .nav-active-glow {
+    box-shadow: 0 4px 20px oklch(0.395 0.195 262 / 0.45), 0 1px 6px oklch(0.395 0.195 262 / 0.25);
+  }
+
+  .platform-input {
+    background: oklch(1 0 0 / 0.07);
+    border: 1px solid oklch(1 0 0 / 0.12);
+    @apply text-foreground placeholder:text-muted-foreground rounded-xl transition-all duration-200;
+  }
+  .platform-input:focus {
+    outline: none;
+    background: oklch(1 0 0 / 0.11);
+    border-color: oklch(0.395 0.195 262 / 0.5);
+    box-shadow: 0 0 0 3px oklch(0.395 0.195 262 / 0.12);
+  }
+
   .card-lift {
     @apply transition-all duration-400;
   }

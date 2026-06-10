@@ -12,20 +12,16 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Star,
   BookOpen,
   Users,
   BarChart3,
   CreditCard,
-  ShieldCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Logo from '@/components/shared/Logo'
 import { useUIStore } from '@/stores/uiStore'
 import { useAuth } from '@/hooks/useAuth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getInitials } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 
 interface NavItem {
   href: string
@@ -43,7 +39,7 @@ export default function Sidebar() {
   const isActive = (href: string) => {
     const segments = pathname.split('/')
     const hrefSegments = href.split('/').filter(Boolean)
-    return hrefSegments.every((seg, i) => segments.includes(seg))
+    return hrefSegments.every((seg) => segments.includes(seg))
   }
 
   const studentNav: NavItem[] = [
@@ -80,75 +76,104 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-col h-screen sticky top-0 border-r border-border/60 bg-sidebar transition-all duration-300 shrink-0',
-        sidebarCollapsed ? 'w-[68px]' : 'w-[240px]'
+        'hidden lg:flex flex-col h-screen sticky top-0 shrink-0 transition-all duration-300 ease-in-out',
+        'border-r border-border bg-sidebar',
+        sidebarCollapsed ? 'w-[72px]' : 'w-[248px]'
       )}
     >
       {/* Logo */}
-      <div className={cn('flex items-center h-16 px-4 border-b border-border/40', sidebarCollapsed && 'justify-center px-2')}>
+      <div
+        className={cn(
+          'flex items-center h-[60px] border-b border-border/60 transition-all',
+          sidebarCollapsed ? 'justify-center px-0' : 'px-5'
+        )}
+      >
         {sidebarCollapsed ? (
-          <div className="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">N</span>
+          <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-lg nav-active-glow">
+            <span className="text-white font-black text-base">N</span>
           </div>
         ) : (
-          <Logo />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center shadow-md">
+              <span className="text-white font-black text-sm">N</span>
+            </div>
+            <span className="font-extrabold text-lg tracking-tight text-foreground">Nativly</span>
+          </div>
         )}
       </div>
 
-      {/* Nav Items */}
-      <nav className="flex-1 py-4 space-y-0.5 overflow-y-auto px-2">
+      {/* Navigation */}
+      <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-2.5 space-y-0.5">
+        {/* Section label */}
+        {!sidebarCollapsed && (
+          <p className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/60 px-3 pb-2">
+            Naviqasiya
+          </p>
+        )}
+
         {navItems.map((item) => {
           const active = isActive(item.href)
           return (
             <Link
               key={item.href}
               href={item.href as Parameters<typeof Link>[0]['href']}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group',
-                active
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent',
-                sidebarCollapsed && 'justify-center px-2'
-              )}
               title={sidebarCollapsed ? item.label : undefined}
+              className={cn(
+                'relative flex items-center rounded-xl text-sm font-medium transition-all duration-150 group',
+                sidebarCollapsed
+                  ? 'h-10 w-10 mx-auto justify-center'
+                  : 'h-10 px-3 gap-3',
+                active
+                  ? 'gradient-bg text-white nav-active-glow'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-white/6'
+              )}
             >
-              <item.icon className={cn('shrink-0', sidebarCollapsed ? 'h-5 w-5' : 'h-4 w-4')} />
+              <item.icon className={cn('shrink-0 transition-transform duration-150', sidebarCollapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4', active && !sidebarCollapsed && 'scale-105')} />
               {!sidebarCollapsed && (
-                <span className="truncate flex-1">{item.label}</span>
+                <span className="flex-1 truncate">{item.label}</span>
               )}
               {!sidebarCollapsed && item.badge != null && item.badge > 0 && (
-                <Badge variant="destructive" className="h-5 min-w-5 px-1 text-xs rounded-full">
+                <span className="ml-auto text-[10px] font-bold bg-destructive text-white rounded-full h-4.5 min-w-[18px] flex items-center justify-center px-1">
                   {item.badge > 99 ? '99+' : item.badge}
-                </Badge>
+                </span>
+              )}
+              {/* Collapsed tooltip */}
+              {sidebarCollapsed && (
+                <span className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-popover border border-border text-foreground text-xs font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
+                  {item.label}
+                </span>
               )}
             </Link>
           )
         })}
       </nav>
 
-      {/* Profile + Collapse */}
-      <div className="border-t border-border/40 p-3 space-y-2">
+      {/* Bottom — Profile + Collapse */}
+      <div className="border-t border-border/60 p-2.5 space-y-2">
         {!sidebarCollapsed && profile && (
-          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-accent transition-colors cursor-pointer">
-            <Avatar className="h-8 w-8 shrink-0">
+          <div className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/8 transition-colors cursor-pointer">
+            <Avatar className="h-7 w-7 shrink-0 ring-1 ring-white/20">
               <AvatarImage src={profile.avatar_url ?? ''} alt={profile.full_name} />
-              <AvatarFallback className="gradient-bg text-white text-xs font-semibold">
+              <AvatarFallback className="gradient-bg text-white text-[10px] font-bold">
                 {getInitials(profile.full_name)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold truncate">{profile.full_name}</p>
-              <p className="text-xs text-muted-foreground truncate">{profile.email}</p>
+              <p className="text-xs font-semibold truncate text-foreground leading-tight">{profile.full_name}</p>
+              <p className="text-[10px] text-muted-foreground truncate leading-tight mt-0.5">{profile.email}</p>
             </div>
           </div>
         )}
 
         <button
           onClick={toggleSidebarCollapsed}
-          className="w-full flex items-center justify-center h-8 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+          className="w-full flex items-center justify-center h-8 rounded-xl hover:bg-white/6 text-muted-foreground hover:text-foreground transition-colors"
           aria-label={sidebarCollapsed ? 'Genişlət' : 'Daralt'}
         >
-          {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {sidebarCollapsed
+            ? <ChevronRight className="h-4 w-4" />
+            : <ChevronLeft className="h-4 w-4" />
+          }
         </button>
       </div>
     </aside>
