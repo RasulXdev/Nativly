@@ -89,7 +89,7 @@ export default function TutorsPage() {
                 <SlidersHorizontal className="h-4 w-4" />
                 Filtrlər
               </SheetTrigger>
-              <SheetContent side="left" className="w-80 overflow-y-auto">
+              <SheetContent side="left" className="dark bg-background text-foreground w-80 overflow-y-auto p-5">
                 <SheetHeader className="mb-4">
                   <SheetTitle>Filtrlər</SheetTitle>
                 </SheetHeader>

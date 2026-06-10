@@ -46,8 +46,8 @@ export default function TutorCard({ tutor }: TutorCardProps) {
             className={cn(
               'absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-200',
               isFav
-                ? 'text-rose-500 bg-rose-50 shadow-sm'
-                : 'text-muted-foreground hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100'
+                ? 'text-rose-400 bg-rose-500/15 shadow-sm'
+                : 'text-muted-foreground hover:text-rose-400 hover:bg-rose-500/15 opacity-0 group-hover:opacity-100'
             )}
             aria-label={isFav ? 'Seçilmişlərdən sil' : 'Seçilmişlərə əlavə et'}
           >
@@ -58,7 +58,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
         {/* Header: avatar + name */}
         <div className="flex items-start gap-3.5 mb-4">
           <div className="relative shrink-0">
-            <Avatar className="h-14 w-14 ring-2 ring-border group-hover:ring-primary/30 transition-all duration-300">
+            <Avatar className="h-14 w-14 ring-2 ring-white/10 group-hover:ring-primary/40 transition-all duration-300">
               <AvatarImage src={profile?.avatar_url ?? ''} alt={profile?.full_name} />
               <AvatarFallback className="gradient-bg text-white font-bold text-base">
                 {getInitials(profile?.full_name ?? '?')}
@@ -83,7 +83,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
             )}
             <div className="flex items-center gap-1 mt-1.5">
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-bold text-amber-600">
+              <span className="text-xs font-bold text-amber-400">
                 {(tutor.average_rating ?? 0).toFixed(1)}
               </span>
               <span className="text-xs text-muted-foreground">
@@ -127,19 +127,19 @@ export default function TutorCard({ tutor }: TutorCardProps) {
         )}
 
         {/* Stats row */}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <Video className="h-3 w-3" />
             <span>{tutor.total_lessons} dərs</span>
           </div>
           {tutor.instant_booking && (
-            <div className="flex items-center gap-1 text-emerald-600 font-medium">
+            <div className="flex items-center gap-1 text-emerald-400 font-medium">
               <Zap className="h-3 w-3" />
               <span>Ani rezerv</span>
             </div>
           )}
           {tutor.trial_rate != null && (
-            <span className="text-amber-600 font-medium">Sınaq: ${tutor.trial_rate}</span>
+            <span className="text-amber-400 font-medium">Sınaq: ${tutor.trial_rate}</span>
           )}
         </div>
 

@@ -180,7 +180,7 @@ function DemoTutorCard({ tutor }: { tutor: TutorWithProfile }) {
   const avatarGradient = `hsl(${hue}deg 60% 45%), hsl(${(hue + 40) % 360}deg 55% 38%)`
 
   return (
-    <div className="relative rounded-2xl border border-border bg-card overflow-hidden opacity-75 select-none">
+    <div className="relative rounded-2xl border border-border bg-card overflow-hidden select-none transition-all duration-300 hover:border-white/20 hover:-translate-y-1">
       {/* Top strip */}
       <div className="h-1 w-full gradient-bg" />
       <div className="p-5">
@@ -205,7 +205,7 @@ function DemoTutorCard({ tutor }: { tutor: TutorWithProfile }) {
             )}
             <div className="flex items-center gap-1 mt-1.5">
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-bold text-amber-500">{(tutor.average_rating ?? 0).toFixed(1)}</span>
+              <span className="text-xs font-bold text-amber-400">{(tutor.average_rating ?? 0).toFixed(1)}</span>
               <span className="text-xs text-muted-foreground">({tutor.total_reviews})</span>
             </div>
           </div>
@@ -234,13 +234,13 @@ function DemoTutorCard({ tutor }: { tutor: TutorWithProfile }) {
           </div>
         )}
 
-        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <Video className="h-3 w-3" />
             <span>{tutor.total_lessons} dərs</span>
           </div>
           {tutor.instant_booking && (
-            <div className="flex items-center gap-1 text-emerald-500 font-medium">
+            <div className="flex items-center gap-1 text-emerald-400 font-medium">
               <Zap className="h-3 w-3" />
               <span>Ani rezerv</span>
             </div>

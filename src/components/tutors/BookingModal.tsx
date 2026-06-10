@@ -90,14 +90,14 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="dark bg-background text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Dərs rezerv et</DialogTitle>
           <DialogDescription>Tarix, vaxt və müddət seçin</DialogDescription>
         </DialogHeader>
 
         {/* Tutor info */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
           <Avatar className="h-10 w-10">
             <AvatarFallback className="gradient-bg text-white text-xs font-semibold">
               {getInitials(profile?.full_name ?? '?')}
@@ -110,7 +110,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
           <div className="text-right">
             <p className="font-bold text-primary">${tutor.hourly_rate}/saat</p>
             {tutor.instant_booking && (
-              <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-200">
+              <Badge variant="outline" className="text-xs text-emerald-400 border-emerald-500/30">
                 Ani rezerv
               </Badge>
             )}
@@ -202,7 +202,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
         {/* Summary */}
         {date && time && (
-          <div className="bg-primary/5 rounded-xl p-4 space-y-2 text-sm">
+          <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Tarix</span>
               <span className="font-medium">

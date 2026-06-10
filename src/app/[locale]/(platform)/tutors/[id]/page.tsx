@@ -129,7 +129,7 @@ export default function TutorProfilePage() {
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-xl font-extrabold tracking-tight">{profile?.full_name}</h1>
                 {tutor.instant_booking && (
-                  <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50 gap-1 text-xs">
+                  <Badge variant="outline" className="text-emerald-400 border-emerald-500/30 bg-emerald-500/12 gap-1 text-xs">
                     <Zap className="h-3 w-3" />
                     Ani rezerv
                   </Badge>
@@ -156,29 +156,29 @@ export default function TutorProfilePage() {
                 icon: Star,
                 value: (tutor.average_rating ?? 0).toFixed(1),
                 label: `${tutor.total_reviews ?? 0} rəy`,
-                color: 'text-amber-500',
-                bg: 'bg-amber-50',
+                color: 'text-amber-400',
+                bg: 'bg-amber-500/12',
               },
               {
                 icon: Video,
                 value: String(tutor.total_lessons ?? 0),
                 label: 'Ümumi dərs',
-                color: 'text-blue-500',
-                bg: 'bg-blue-50',
+                color: 'text-blue-400',
+                bg: 'bg-blue-500/12',
               },
               {
                 icon: CheckCircle2,
                 value: `${tutor.completion_rate ?? 100}%`,
                 label: 'Tamamlama',
-                color: 'text-emerald-500',
-                bg: 'bg-emerald-50',
+                color: 'text-emerald-400',
+                bg: 'bg-emerald-500/12',
               },
               {
                 icon: Clock,
                 value: `${tutor.response_time_minutes ?? '<5'} dəq`,
                 label: 'Cavab müddəti',
-                color: 'text-violet-500',
-                bg: 'bg-violet-50',
+                color: 'text-violet-400',
+                bg: 'bg-violet-500/12',
               },
             ].map((stat) => (
               <div key={stat.label} className={`rounded-xl ${stat.bg} px-3 py-2.5 flex items-center gap-2.5`}>
@@ -344,7 +344,7 @@ export default function TutorProfilePage() {
               </div>
 
               {tutor.instant_booking && (
-                <div className="flex items-start gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+                <div className="flex items-start gap-2 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
                   <Zap className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                   <span>Bu müəllim ani rezervi dəstəkləyir — dərsiniz dərhal təsdiqlənir</span>
                 </div>

@@ -34,7 +34,7 @@ export default function RecommendedTutors() {
         {isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
                 <Skeleton className="h-10 w-10 rounded-full shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <Skeleton className="h-4 w-28" />
@@ -51,7 +51,7 @@ export default function RecommendedTutors() {
               const isOnline = profile?.is_online ?? false
               return (
                 <Link key={tutor.id} href={`/tutors/${tutor.id}`}>
-                  <div className="group flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer border border-transparent hover:border-border/50">
+                  <div className="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all duration-200 cursor-pointer border border-transparent hover:border-white/15">
                     <div className="relative shrink-0">
                       <Avatar className="h-10 w-10 ring-2 ring-background">
                         <AvatarImage src={profile?.avatar_url ?? ''} />

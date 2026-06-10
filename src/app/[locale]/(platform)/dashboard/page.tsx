@@ -16,11 +16,13 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('full_name')
-    .eq('id', user!.id)
-    .single()
+  const { data: profileData } = user
+    ? await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single()
+    : { data: null }
 
   const profile = profileData as { full_name: string } | null
   const firstName = profile?.full_name?.split(' ')[0] ?? 'İstifadəçi'
@@ -94,20 +96,22 @@ export default async function DashboardPage() {
       <StatsCards />
 
       {/* Progress teaser */}
-      <div className="rounded-2xl border border-border bg-card px-5 py-4 flex items-center gap-4">
-        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-          <TrendingUp className="h-4.5 w-4.5 text-primary" />
+      <div className="rounded-2xl border border-border bg-card px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+            <TrendingUp className="h-4.5 w-4.5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">İrəliləyişiniz</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Hər dərs sizi hədəfinizə bir addım yaxınlaşdırır</p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold">İrəliləyişiniz</p>
-          <p className="text-xs text-muted-foreground mt-0.5">Hər dərs sizi hədəfinizə bir addım yaxınlaşdırır</p>
-        </div>
-        <div className="flex-1 max-w-xs">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+        <div className="w-full sm:max-w-xs sm:shrink-0">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
             <span>Bu həftə</span>
             <span className="font-medium text-primary">0 / 3 dərs</span>
           </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div className="h-2 bg-white/8 rounded-full overflow-hidden">
             <div className="h-full w-0 gradient-bg rounded-full transition-all duration-700" />
           </div>
         </div>

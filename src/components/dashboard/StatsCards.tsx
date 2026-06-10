@@ -11,9 +11,8 @@ const stats = [
     icon: BookOpen,
     format: (v: number) => String(v),
     gradient: 'from-blue-500 to-indigo-600',
-    glow: 'shadow-blue-500/20',
-    bg: 'from-blue-50 to-indigo-50',
-    accent: 'text-blue-600',
+    glow: 'shadow-blue-500/30',
+    accent: 'text-blue-400',
     unit: 'dərs',
   },
   {
@@ -22,9 +21,8 @@ const stats = [
     icon: Clock,
     format: (v: number) => String(v),
     gradient: 'from-emerald-500 to-teal-600',
-    glow: 'shadow-emerald-500/20',
-    bg: 'from-emerald-50 to-teal-50',
-    accent: 'text-emerald-600',
+    glow: 'shadow-emerald-500/30',
+    accent: 'text-emerald-400',
     unit: 'saat',
   },
   {
@@ -33,9 +31,8 @@ const stats = [
     icon: Calendar,
     format: (v: number) => String(v),
     gradient: 'from-amber-500 to-orange-500',
-    glow: 'shadow-amber-500/20',
-    bg: 'from-amber-50 to-orange-50',
-    accent: 'text-amber-600',
+    glow: 'shadow-amber-500/30',
+    accent: 'text-amber-400',
     unit: 'planlanmış',
   },
   {
@@ -44,9 +41,8 @@ const stats = [
     icon: Wallet,
     format: (v: number) => `$${v.toFixed(2)}`,
     gradient: 'from-violet-500 to-purple-600',
-    glow: 'shadow-violet-500/20',
-    bg: 'from-violet-50 to-purple-50',
-    accent: 'text-violet-600',
+    glow: 'shadow-violet-500/30',
+    accent: 'text-violet-400',
     unit: 'USD',
   },
 ]
@@ -58,7 +54,7 @@ export default function StatsCards() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-border p-5 bg-card">
+          <div key={i} className="rounded-2xl border border-border bg-card p-5">
             <Skeleton className="h-11 w-11 rounded-xl mb-4" />
             <Skeleton className="h-8 w-20 mb-1.5" />
             <Skeleton className="h-4 w-28 mb-3" />
@@ -71,15 +67,14 @@ export default function StatsCards() {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat, idx) => {
+      {stats.map((stat) => {
         const value = data?.[stat.key] ?? 0
         return (
           <div
             key={stat.key}
-            className="group relative rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-            style={{ animationDelay: `${idx * 80}ms` }}
+            className="group relative rounded-2xl border border-border bg-card overflow-hidden hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
           >
-            {/* Subtle gradient top strip */}
+            {/* Gradient top strip */}
             <div className={`h-1 w-full bg-gradient-to-r ${stat.gradient}`} />
 
             <div className="p-5">
@@ -96,15 +91,12 @@ export default function StatsCards() {
               {/* Label */}
               <p className="text-sm text-muted-foreground mt-0.5 font-medium">{stat.label}</p>
 
-              {/* Unit badge */}
+              {/* Unit */}
               <div className="flex items-center gap-1.5 mt-3">
                 <TrendingUp className={`h-3 w-3 ${stat.accent}`} />
                 <span className={`text-xs font-semibold ${stat.accent}`}>{stat.unit}</span>
               </div>
             </div>
-
-            {/* Hover glow bg */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${stat.bg} opacity-0 group-hover:opacity-40 transition-opacity duration-300 pointer-events-none`} />
           </div>
         )
       })}

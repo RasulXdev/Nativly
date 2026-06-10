@@ -73,7 +73,7 @@ export default function TopBar() {
                 </div>
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-52" align="end" sideOffset={8}>
+            <DropdownMenuContent className="dark bg-popover text-popover-foreground w-52" align="end" sideOffset={8}>
               <div className="flex flex-col space-y-0.5 p-2.5 border-b border-border mb-1">
                 <p className="text-sm font-semibold leading-tight">{profile.full_name}</p>
                 <p className="text-xs leading-tight text-muted-foreground">{profile.email}</p>

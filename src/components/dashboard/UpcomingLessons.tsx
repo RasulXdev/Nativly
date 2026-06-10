@@ -48,7 +48,7 @@ export default function UpcomingLessons() {
         {isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
                 <Skeleton className="h-10 w-10 rounded-full shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <Skeleton className="h-4 w-32" />
@@ -72,7 +72,7 @@ export default function UpcomingLessons() {
               return (
                 <div
                   key={lesson.id}
-                  className="group flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/20 hover:bg-primary/3 transition-all duration-200"
+                  className="group flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-white/5 transition-all duration-200"
                 >
                   {/* Left accent bar */}
                   <div className={`w-1 self-stretch rounded-full shrink-0 ${joinable ? 'bg-emerald-400' : 'gradient-bg'}`} />
