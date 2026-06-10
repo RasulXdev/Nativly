@@ -8,10 +8,25 @@ import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
+import type { FeaturedTutor } from '@/lib/data/landing'
 
 const FILTERS = ['all', 'english', 'ielts', 'german', 'french', 'turkish'] as const
 
-const TUTORS = [
+type TutorCard = {
+  id: string
+  name: string
+  flag: string
+  country: string
+  rating: number
+  reviews: number
+  lessons: number
+  price: number
+  tags: string[]
+  filter: string
+  online: boolean
+}
+
+const DEMO_TUTORS: TutorCard[] = [
   { id: '1', name: 'Sarah Mitchell', flag: '🇬🇧', country: 'London, UK', rating: 4.9, reviews: 312, lessons: 1840, price: 18, tags: ['IELTS', 'Business'], filter: 'english', online: true },
   { id: '2', name: 'Mikhail Ivanov', flag: '🇷🇺', country: 'Moscow, RU', rating: 4.8, reviews: 198, lessons: 920, price: 12, tags: ['Grammar', 'Speaking'], filter: 'english', online: true },
   { id: '3', name: 'Elif Kaya', flag: '🇹🇷', country: 'Istanbul, TR', rating: 5.0, reviews: 87, lessons: 430, price: 10, tags: ['Beginner', 'Speaking'], filter: 'turkish', online: false },
@@ -29,14 +44,31 @@ const FILTER_LABELS: Record<string, string> = {
   turkish: 'Türk dili',
 }
 
-export default function TutorShowcase() {
+export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[] }) {
   const t = useTranslations('landing.tutorShowcase')
   const tc = useTranslations('tutors.card')
   const [activeFilter, setActiveFilter] = useState<string>('all')
 
+  // Real featured tutors from the DB, mapped to the showcase card shape.
+  // Falls back to the curated demo set until real tutors are approved.
+  const dbTutors: TutorCard[] = tutors.map((t) => ({
+    id: t.id,
+    name: t.name,
+    flag: '🎓',
+    country: t.headline,
+    rating: t.rating,
+    reviews: t.reviews,
+    lessons: t.lessons,
+    price: t.price,
+    tags: t.specializations,
+    filter: 'all',
+    online: true,
+  }))
+  const allTutors = dbTutors.length > 0 ? dbTutors : DEMO_TUTORS
+
   const filtered = activeFilter === 'all'
-    ? TUTORS
-    : TUTORS.filter(t => t.filter === activeFilter)
+    ? allTutors
+    : allTutors.filter(t => t.filter === activeFilter)
 
   return (
     <section className="py-24 sm:py-28 px-4 bg-background relative overflow-hidden" id="tutors">

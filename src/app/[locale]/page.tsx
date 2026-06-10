@@ -11,8 +11,11 @@ import Pricing from '@/components/landing/Pricing'
 import Testimonials from '@/components/landing/Testimonials'
 import FAQ from '@/components/landing/FAQ'
 import CTA from '@/components/landing/CTA'
+import { getLandingPackages, getFeaturedTutors } from '@/lib/data/landing'
 
 const APP_URL = 'https://nativly.az'
+
+type Locale = 'az' | 'en' | 'ru'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('landing')
@@ -46,7 +49,13 @@ const courseJsonLd = {
   provider: { '@type': 'Organization', name: 'Nativly', url: APP_URL },
 }
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params
+  const [packages, tutors] = await Promise.all([
+    getLandingPackages(locale),
+    getFeaturedTutors(),
+  ])
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
@@ -56,9 +65,9 @@ export default function HomePage() {
         <Hero />
         <Features />
         <HowItWorks />
-        <TutorShowcase />
+        <TutorShowcase tutors={tutors} />
         <DashboardPreview />
-        <Pricing />
+        <Pricing packages={packages} />
         <Testimonials />
         <FAQ />
         <CTA />

@@ -9,20 +9,17 @@ import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
+import type { LandingPackage } from '@/lib/data/landing'
 
 const AZN_RATE = 1.7
 
-const PACKAGES = [
-  { id: 1, name: 'Başlanğıc', lessons: 4, minutes: 30, price: 49.99, originalPrice: 59.96, discount: 15, popular: false, features: 4 },
-  { id: 2, name: 'Populyar', lessons: 8, minutes: 30, price: 89.99, originalPrice: 119.92, discount: 25, popular: true, features: 5 },
-  { id: 3, name: 'Premium', lessons: 12, minutes: 30, price: 119.99, originalPrice: 179.88, discount: 33, popular: false, features: 6 },
-]
-
 const featureKeys = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'] as const
 
-export default function Pricing() {
+export default function Pricing({ packages }: { packages: LandingPackage[] }) {
   const t = useTranslations('landing.pricing')
   const [currency, setCurrency] = useState<'USD' | 'AZN'>('USD')
+
+  const PACKAGES = packages
 
   const formatPrice = (usd: number) => {
     if (currency === 'AZN') return `₼${(usd * AZN_RATE).toFixed(0)}`
