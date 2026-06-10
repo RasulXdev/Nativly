@@ -75,11 +75,11 @@ export default function SocialButtons({ mode }: SocialButtonsProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       {/* Google */}
       <Button
         variant="outline"
-        className="w-full"
+        className="w-full h-11 rounded-xl border-border/70 bg-white/60 font-semibold hover:bg-primary/5 hover:border-primary/30 transition-all"
         onClick={handleGoogleAuth}
         disabled={isGoogleLoading}
         type="button"
@@ -120,13 +120,14 @@ export default function SocialButtons({ mode }: SocialButtonsProps) {
             onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
             disabled={isMagicLoading}
             autoFocus
+            className="h-11 rounded-xl border-border/70 bg-white/60"
           />
           <Button
             variant="outline"
             onClick={handleMagicLink}
             disabled={isMagicLoading}
             type="button"
-            className="shrink-0"
+            className="shrink-0 h-11 w-11 rounded-xl border-border/70 bg-white/60 hover:bg-primary/5 hover:border-primary/30"
           >
             {isMagicLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -138,7 +139,7 @@ export default function SocialButtons({ mode }: SocialButtonsProps) {
       ) : (
         <Button
           variant="outline"
-          className="w-full"
+          className="w-full h-11 rounded-xl border-border/70 bg-white/60 font-semibold hover:bg-primary/5 hover:border-primary/30 transition-all"
           onClick={handleMagicLink}
           disabled={isMagicLoading}
           type="button"

@@ -6,19 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Mail, Lock, User } from 'lucide-react'
 import SocialButtons from './SocialButtons'
-import Logo from '@/components/shared/Logo'
+import AuthField from './AuthField'
+import AuthDivider from './AuthDivider'
 
 export default function RegisterForm() {
   const t = useTranslations('auth')
@@ -43,9 +40,7 @@ export default function RegisterForm() {
         email: data.email,
         password: data.password,
         options: {
-          data: {
-            full_name: data.full_name,
-          },
+          data: { full_name: data.full_name },
           emailRedirectTo: `${window.location.origin}/api/auth/callback`,
         },
       })
@@ -55,10 +50,7 @@ export default function RegisterForm() {
         return
       }
 
-      toast.success(t('emailSent'), {
-        description: t('checkEmail'),
-      })
-
+      toast.success(t('emailSent'), { description: t('checkEmail') })
       router.push(`/${locale}/login`)
     } catch {
       toast.error('Xəta baş verdi')
@@ -68,120 +60,109 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader className="space-y-1 text-center">
-        <div className="flex justify-center mb-2">
-          <Logo />
-        </div>
-        <CardTitle className="text-2xl">{t('register')}</CardTitle>
-        <CardDescription>
-          {t('hasAccount')}{' '}
-          <Link href="/login" className="text-primary hover:underline font-medium">
-            {t('loginNow')}
-          </Link>
-        </CardDescription>
-      </CardHeader>
+    <div className="space-y-5">
+      <SocialButtons mode="register" />
 
-      <CardContent className="space-y-4">
-        <SocialButtons mode="register" />
+      <AuthDivider label={t('orDivider')} />
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">və ya</span>
-          </div>
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <AuthField
+          id="full_name"
+          label={t('fullName')}
+          icon={User}
+          placeholder="Adınız Soyadınız"
+          autoComplete="name"
+          error={errors.full_name?.message}
+          disabled={isLoading}
+          {...register('full_name')}
+        />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="full_name">{t('fullName')}</Label>
-            <Input
-              id="full_name"
-              placeholder="Adınız Soyadınız"
-              {...register('full_name')}
-              disabled={isLoading}
-            />
-            {errors.full_name && (
-              <p className="text-sm text-destructive">{errors.full_name.message}</p>
-            )}
-          </div>
+        <AuthField
+          id="email"
+          type="email"
+          label={t('email')}
+          icon={Mail}
+          placeholder="email@example.com"
+          autoComplete="email"
+          error={errors.email?.message}
+          disabled={isLoading}
+          {...register('email')}
+        />
 
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="email@example.com"
-              {...register('email')}
-              disabled={isLoading}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
+        <AuthField
+          id="password"
+          label={t('password')}
+          icon={Lock}
+          password
+          placeholder="••••••••"
+          autoComplete="new-password"
+          showLabel={t('showPassword')}
+          hideLabel={t('hidePassword')}
+          error={errors.password?.message}
+          disabled={isLoading}
+          {...register('password')}
+        />
 
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              disabled={isLoading}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
+        <AuthField
+          id="confirm_password"
+          label={t('confirmPassword')}
+          icon={Lock}
+          password
+          placeholder="••••••••"
+          autoComplete="new-password"
+          showLabel={t('showPassword')}
+          hideLabel={t('hidePassword')}
+          error={errors.confirm_password?.message}
+          disabled={isLoading}
+          {...register('confirm_password')}
+        />
 
-          <div className="space-y-2">
-            <Label htmlFor="confirm_password">{t('confirmPassword')}</Label>
-            <Input
-              id="confirm_password"
-              type="password"
-              {...register('confirm_password')}
-              disabled={isLoading}
-            />
-            {errors.confirm_password && (
-              <p className="text-sm text-destructive">{errors.confirm_password.message}</p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
+        <div className="space-y-1.5">
+          <div className="flex items-start gap-2.5">
             <input
               type="checkbox"
               id="agree_terms"
               {...register('agree_terms')}
-              className="h-4 w-4 rounded border-gray-300"
+              className="mt-0.5 h-4 w-4 rounded border-border accent-primary cursor-pointer"
             />
-            <Label htmlFor="agree_terms" className="text-sm font-normal">
+            <Label htmlFor="agree_terms" className="text-[0.8rem] font-normal leading-relaxed text-foreground/65">
               {t('agreeToTerms')}{' '}
-              <Link href="/terms" className="text-primary hover:underline">
+              <Link href="/terms" className="text-primary hover:underline font-medium">
                 {t('termsOfService')}
               </Link>{' '}
               və{' '}
-              <Link href="/privacy" className="text-primary hover:underline">
+              <Link href="/privacy" className="text-primary hover:underline font-medium">
                 {t('privacyPolicy')}
               </Link>
             </Label>
           </div>
           {errors.agree_terms && (
-            <p className="text-sm text-destructive">{errors.agree_terms.message}</p>
+            <p className="text-xs text-destructive font-medium">{errors.agree_terms.message}</p>
           )}
+        </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Yüklənir...
-              </>
-            ) : (
-              t('register')
-            )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="btn-glow w-full h-11 rounded-xl gradient-bg border-0 font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.01] transition-all duration-200"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Yüklənir...
+            </>
+          ) : (
+            t('register')
+          )}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-foreground/55">
+        {t('hasAccount')}{' '}
+        <Link href="/login" className="font-semibold text-primary hover:underline">
+          {t('loginNow')}
+        </Link>
+      </p>
+    </div>
   )
 }

@@ -6,18 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Mail, Lock } from 'lucide-react'
 import SocialButtons from './SocialButtons'
-import Logo from '@/components/shared/Logo'
+import AuthField from './AuthField'
+import AuthDivider from './AuthDivider'
 
 export default function LoginForm() {
   const t = useTranslations('auth')
@@ -49,7 +46,6 @@ export default function LoginForm() {
         return
       }
 
-      // Get user role for redirect
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data: profile } = await supabase
@@ -75,80 +71,65 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader className="space-y-1 text-center">
-        <div className="flex justify-center mb-2">
-          <Logo />
-        </div>
-        <CardTitle className="text-2xl">{t('login')}</CardTitle>
-        <CardDescription>
-          {t('noAccount')}{' '}
-          <Link href="/register" className="text-primary hover:underline font-medium">
-            {t('registerNow')}
-          </Link>
-        </CardDescription>
-      </CardHeader>
+    <div className="space-y-5">
+      <SocialButtons mode="login" />
 
-      <CardContent className="space-y-4">
-        <SocialButtons mode="login" />
+      <AuthDivider label={t('orDivider')} />
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">{t('orDivider')}</span>
-          </div>
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <AuthField
+          id="email"
+          type="email"
+          label={t('email')}
+          icon={Mail}
+          placeholder="email@example.com"
+          autoComplete="email"
+          error={errors.email?.message}
+          disabled={isLoading}
+          {...register('email')}
+        />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="email@example.com"
-              {...register('email')}
-              disabled={isLoading}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
+        <AuthField
+          id="password"
+          label={t('password')}
+          icon={Lock}
+          password
+          autoComplete="current-password"
+          placeholder="••••••••"
+          showLabel={t('showPassword')}
+          hideLabel={t('hidePassword')}
+          error={errors.password?.message}
+          disabled={isLoading}
+          labelAside={
+            <Link href="/forgot-password" className="text-xs font-semibold text-primary hover:underline">
+              {t('forgotPassword')}
+            </Link>
+          }
+          {...register('password')}
+        />
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">{t('password')}</Label>
-              <Link
-                href="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                {t('forgotPassword')}
-              </Link>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              disabled={isLoading}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="btn-glow w-full h-11 rounded-xl gradient-bg border-0 font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.01] transition-all duration-200"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('loading') ?? 'Yüklənir...'}
+            </>
+          ) : (
+            t('login')
+          )}
+        </Button>
+      </form>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('loading') ?? 'Yüklənir...'}
-              </>
-            ) : (
-              t('login')
-            )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <p className="text-center text-sm text-foreground/55">
+        {t('noAccount')}{' '}
+        <Link href="/register" className="font-semibold text-primary hover:underline">
+          {t('registerNow')}
+        </Link>
+      </p>
+    </div>
   )
 }

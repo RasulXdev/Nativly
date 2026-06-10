@@ -88,7 +88,22 @@
     "agreeToTerms": "Şərtləri qəbul edirəm",
     "termsOfService": "İstifadə şərtləri",
     "privacyPolicy": "Gizlilik siyasəti",
-    "orDivider": "və ya"
+    "orDivider": "və ya",
+    "welcomeBack": "Yenidən xoş gəldiniz",
+    "loginSubtitle": "Hesabınıza daxil olun və öyrənməyə davam edin",
+    "createAccount": "Hesabınızı yaradın",
+    "registerSubtitle": "Pulsuz başlayın — kart tələb olunmur",
+    "backHome": "Ana səhifə",
+    "showPassword": "Şifrəni göstər",
+    "hidePassword": "Şifrəni gizlət",
+    "brandTagline": "Dünya səndən bir dərs uzaqda",
+    "brandSubtext": "Native müəllimlərlə 1-on-1 canlı video dərslər. İstənilən vaxt, istənilən yerdən öyrən.",
+    "testimonialQuote": "Cəmi 3 ayda IELTS 7.0 aldım. Müəllimim hər addımda yanımda idi.",
+    "testimonialAuthor": "Aysel Məmmədova",
+    "testimonialRole": "IELTS 7.0 · Bakı",
+    "statStudents": "Tələbə",
+    "statTutors": "Müəllim",
+    "statRating": "Reytinq"
   },
   "landing": {
     "heroTitle": "İstənilən vaxt, istənilən yerdən dil öyrən",

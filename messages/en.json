@@ -88,7 +88,22 @@
     "agreeToTerms": "I agree to the terms",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "orDivider": "or"
+    "orDivider": "or",
+    "welcomeBack": "Welcome back",
+    "loginSubtitle": "Sign in to your account and keep learning",
+    "createAccount": "Create your account",
+    "registerSubtitle": "Start free — no card required",
+    "backHome": "Home",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "brandTagline": "The world is one lesson away",
+    "brandSubtext": "1-on-1 live video lessons with native tutors. Learn anytime, anywhere.",
+    "testimonialQuote": "I hit IELTS 7.0 in just 3 months. My tutor was with me every step of the way.",
+    "testimonialAuthor": "Aysel Mammadova",
+    "testimonialRole": "IELTS 7.0 · Baku",
+    "statStudents": "Students",
+    "statTutors": "Tutors",
+    "statRating": "Rating"
   },
   "landing": {
     "heroTitle": "Learn a language anytime, anywhere",

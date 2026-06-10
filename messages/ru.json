@@ -88,7 +88,22 @@
     "agreeToTerms": "Я согласен с условиями",
     "termsOfService": "Условия использования",
     "privacyPolicy": "Политика конфиденциальности",
-    "orDivider": "или"
+    "orDivider": "или",
+    "welcomeBack": "С возвращением",
+    "loginSubtitle": "Войдите в аккаунт и продолжайте учиться",
+    "createAccount": "Создайте аккаунт",
+    "registerSubtitle": "Начните бесплатно — карта не нужна",
+    "backHome": "На главную",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль",
+    "brandTagline": "Мир в одном уроке от вас",
+    "brandSubtext": "Видеоуроки 1-на-1 с носителями языка. Учитесь когда и где угодно.",
+    "testimonialQuote": "Я сдала IELTS на 7.0 всего за 3 месяца. Преподаватель был рядом на каждом шаге.",
+    "testimonialAuthor": "Айсель Мамедова",
+    "testimonialRole": "IELTS 7.0 · Баку",
+    "statStudents": "Студентов",
+    "statTutors": "Репетиторов",
+    "statRating": "Рейтинг"
   },
   "landing": {
     "heroTitle": "Учите языки в любое время, в любом месте",
