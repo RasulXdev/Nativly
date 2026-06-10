@@ -48,7 +48,19 @@ const stats = [
 ]
 
 export default function StatsCards() {
-  const { data, isLoading } = useStudentStats()
+  const { data, isLoading, isError } = useStudentStats()
+
+  if (isError) {
+    return (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="rounded-2xl border border-destructive/20 bg-card p-5 flex items-center justify-center min-h-[110px]">
+            <p className="text-xs text-muted-foreground text-center">Yüklənmədi</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

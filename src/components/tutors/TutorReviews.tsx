@@ -20,7 +20,7 @@ interface TutorReviewsProps {
 
 export default function TutorReviews({ tutorId, averageRating, totalReviews }: TutorReviewsProps) {
   const [page, setPage] = useState(0)
-  const { data, isLoading } = useTutorReviews(tutorId, page)
+  const { data, isLoading, isError } = useTutorReviews(tutorId, page)
 
   return (
     <div>
@@ -36,7 +36,9 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
         )}
       </div>
 
-      {isLoading ? (
+      {isError ? (
+        <p className="text-sm text-muted-foreground text-center py-4">Rəylər yüklənmədi</p>
+      ) : isLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-3">

@@ -3,7 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import StatsCards from '@/components/dashboard/StatsCards'
 import UpcomingLessons from '@/components/dashboard/UpcomingLessons'
 import RecommendedTutors from '@/components/dashboard/RecommendedTutors'
-import { Sparkles, BookOpen, TrendingUp } from 'lucide-react'
+import RecentActivity from '@/components/dashboard/RecentActivity'
+import ProgressChart from '@/components/dashboard/ProgressChart'
+import { Sparkles, BookOpen } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -95,32 +97,16 @@ export default async function DashboardPage() {
       {/* Stats */}
       <StatsCards />
 
-      {/* Progress teaser */}
-      <div className="rounded-2xl border border-border bg-card px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex items-center gap-4 min-w-0 flex-1">
-          <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-            <TrendingUp className="h-4.5 w-4.5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">İrəliləyişiniz</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Hər dərs sizi hədəfinizə bir addım yaxınlaşdırır</p>
-          </div>
-        </div>
-        <div className="w-full sm:max-w-xs sm:shrink-0">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-            <span>Bu həftə</span>
-            <span className="font-medium text-primary">0 / 3 dərs</span>
-          </div>
-          <div className="h-2 bg-white/8 rounded-full overflow-hidden">
-            <div className="h-full w-0 gradient-bg rounded-full transition-all duration-700" />
-          </div>
-        </div>
-      </div>
-
       {/* Two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <UpcomingLessons />
         <RecommendedTutors />
+      </div>
+
+      {/* Progress + Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ProgressChart />
+        <RecentActivity />
       </div>
     </div>
   )

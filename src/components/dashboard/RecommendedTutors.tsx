@@ -9,7 +9,7 @@ import OnlineStatus from '@/components/shared/OnlineStatus'
 import { Link } from '@/i18n/navigation'
 
 export default function RecommendedTutors() {
-  const { data, isLoading } = useTutors({ sortBy: 'rating' })
+  const { data, isLoading, isError } = useTutors({ sortBy: 'rating' })
   const tutors = data?.pages[0]?.slice(0, 4) ?? []
 
   return (
@@ -31,7 +31,9 @@ export default function RecommendedTutors() {
       </div>
 
       <div className="p-5">
-        {isLoading ? (
+        {isError ? (
+          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+        ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">

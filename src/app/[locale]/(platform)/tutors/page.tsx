@@ -19,7 +19,7 @@ export default function TutorsPage() {
     [filters, debouncedSearch]
   )
 
-  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useTutors(activeFilters)
+  const { data, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useTutors(activeFilters)
   const tutors = useMemo(() => data?.pages.flat() ?? [], [data])
 
   return (
@@ -102,6 +102,7 @@ export default function TutorsPage() {
           <TutorGrid
             tutors={tutors}
             isLoading={isLoading}
+            isError={isError}
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={!!hasNextPage}
             onLoadMore={fetchNextPage}

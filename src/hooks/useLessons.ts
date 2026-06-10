@@ -2,6 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { subWeeks, startOfWeek, format } from 'date-fns'
+import { az } from 'date-fns/locale'
 
 export function useUpcomingLessons() {
   const supabase = createClient()
@@ -58,6 +60,72 @@ export function useLessonHistory() {
 
       if (error) throw error
       return data ?? []
+    },
+  })
+}
+
+export function useRecentActivity() {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['recent-activity'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
+
+      const { data, error } = await supabase
+        .from('lessons')
+        .select(`
+          id, scheduled_at, status, duration_minutes,
+          tutor:tutor_profiles!lessons_tutor_id_fkey(id,
+            profiles!tutor_profiles_user_id_fkey(full_name, avatar_url)
+          )
+        `)
+        .eq('student_id', user.id)
+        .in('status', ['completed', 'cancelled', 'no_show'])
+        .order('scheduled_at', { ascending: false })
+        .limit(5)
+
+      if (error) throw error
+      return data ?? []
+    },
+  })
+}
+
+export function useWeeklyProgress() {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['weekly-progress'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
+
+      const sixWeeksAgo = subWeeks(new Date(), 5)
+
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('scheduled_at')
+        .eq('student_id', user.id)
+        .eq('status', 'completed')
+        .gte('scheduled_at', startOfWeek(sixWeeksAgo).toISOString())
+
+      if (error) throw error
+
+      const weeks: { label: string; count: number }[] = []
+      for (let i = 5; i >= 0; i--) {
+        const weekStart = startOfWeek(subWeeks(new Date(), i))
+        weeks.push({ label: format(weekStart, 'd MMM', { locale: az }), count: 0 })
+      }
+
+      for (const lesson of (data ?? []) as { scheduled_at: string }[]) {
+        const w = startOfWeek(new Date(lesson.scheduled_at))
+        const label = format(w, 'd MMM', { locale: az })
+        const entry = weeks.find((x) => x.label === label)
+        if (entry) entry.count++
+      }
+
+      return weeks
     },
   })
 }

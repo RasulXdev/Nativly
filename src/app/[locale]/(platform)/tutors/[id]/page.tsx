@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import {
   MapPin, Clock, CheckCircle2, Video, Star, Heart, MessageSquare,
-  GraduationCap, Award, Zap, ArrowLeft, Users, TrendingUp
+  GraduationCap, Award, Zap, ArrowLeft, Users, TrendingUp, CalendarDays, Play
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -33,6 +33,7 @@ export default function TutorProfilePage() {
 
   const profile = (tutor as any)?.profiles
   const languages: any[] = (tutor as any)?.user_languages ?? []
+  const availability: any[] = (tutor as any)?.tutor_availability ?? []
 
   const isFav = favorites.includes(id)
   const isOnline = profile?.is_online ?? false
@@ -208,6 +209,23 @@ export default function TutorProfilePage() {
       <div className="grid lg:grid-cols-3 gap-5">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-4">
+          {/* Video intro */}
+          {tutor.video_intro_url && (
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
+                  <Play className="h-3 w-3 text-white" />
+                </div>
+                Video tanıtım
+              </h2>
+              <video
+                src={tutor.video_intro_url}
+                controls
+                className="w-full rounded-xl max-h-64 object-cover bg-black"
+              />
+            </div>
+          )}
+
           {/* About */}
           {tutor.about && (
             <div className="rounded-2xl border border-border bg-card p-6">
@@ -282,6 +300,19 @@ export default function TutorProfilePage() {
                   </Badge>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Availability schedule */}
+          {availability.filter((a) => a.is_active).length > 0 && (
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h2 className="text-base font-bold mb-4 flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
+                  <CalendarDays className="h-3 w-3 text-white" />
+                </div>
+                Həftəlik cədvəl
+              </h2>
+              <AvailabilityGrid slots={availability.filter((a) => a.is_active)} />
             </div>
           )}
 
@@ -361,6 +392,48 @@ export default function TutorProfilePage() {
           onClose={() => setBookingOpen(false)}
         />
       )}
+    </div>
+  )
+}
+
+const DAY_LABELS: Record<string, string> = {
+  monday: 'B.e',
+  tuesday: 'Ç.a',
+  wednesday: 'Çər',
+  thursday: 'C.a',
+  friday: 'Cüm',
+  saturday: 'Şnb',
+  sunday: 'Baz',
+}
+
+const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+
+function AvailabilityGrid({ slots }: { slots: any[] }) {
+  const byDay = DAY_ORDER.reduce<Record<string, any[]>>((acc, d) => {
+    acc[d] = slots.filter((s) => s.day_of_week === d)
+    return acc
+  }, {} as Record<string, any[]>)
+
+  return (
+    <div className="grid grid-cols-7 gap-1.5">
+      {DAY_ORDER.map((day) => {
+        const daySlots = byDay[day]
+        const hasSlots = daySlots.length > 0
+        return (
+          <div key={day} className="flex flex-col items-center gap-1.5">
+            <span className={`text-[11px] font-semibold ${hasSlots ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+              {DAY_LABELS[day]}
+            </span>
+            <div className={`w-full rounded-lg p-1.5 min-h-[52px] flex flex-col gap-1 ${hasSlots ? 'bg-primary/10 border border-primary/20' : 'bg-white/4 border border-border/30'}`}>
+              {daySlots.map((slot, i) => (
+                <span key={i} className="text-[9px] font-medium text-primary text-center leading-tight">
+                  {slot.start_time.slice(0, 5)}–{slot.end_time.slice(0, 5)}
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

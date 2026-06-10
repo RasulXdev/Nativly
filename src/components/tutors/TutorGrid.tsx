@@ -55,6 +55,7 @@ const DEMO_TUTORS: TutorWithProfile[] = ([
 interface TutorGridProps {
   tutors: TutorWithProfile[]
   isLoading: boolean
+  isError?: boolean
   isFetchingNextPage: boolean
   hasNextPage: boolean
   onLoadMore: () => void
@@ -63,6 +64,7 @@ interface TutorGridProps {
 export default function TutorGrid({
   tutors,
   isLoading,
+  isError,
   isFetchingNextPage,
   hasNextPage,
   onLoadMore,
@@ -82,6 +84,14 @@ export default function TutorGrid({
     },
     [hasNextPage, isFetchingNextPage, onLoadMore]
   )
+
+  if (isError) {
+    return (
+      <div className="rounded-2xl border border-destructive/20 bg-card p-10 text-center">
+        <p className="text-sm text-muted-foreground">Müəllimlər yüklənmədi. Səhifəni yeniləyin.</p>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

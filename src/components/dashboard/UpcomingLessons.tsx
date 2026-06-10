@@ -12,7 +12,7 @@ import { Link } from '@/i18n/navigation'
 import EmptyState from '@/components/shared/EmptyState'
 
 export default function UpcomingLessons() {
-  const { data: rawLessons, isLoading } = useUpcomingLessons()
+  const { data: rawLessons, isLoading, isError } = useUpcomingLessons()
   const lessons = rawLessons as Array<{
     id: string
     scheduled_at: string
@@ -45,7 +45,9 @@ export default function UpcomingLessons() {
       </div>
 
       <div className="p-5">
-        {isLoading ? (
+        {isError ? (
+          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+        ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">

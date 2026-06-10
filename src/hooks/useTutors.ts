@@ -24,13 +24,15 @@ export function useTutors(filters: TutorFilters = {}) {
   return useInfiniteQuery({
     queryKey: ['tutors', filters],
     queryFn: async ({ pageParam = 0 }) => {
+      // Use !inner on user_languages when filtering by language so tutors without
+      // a matching language are excluded rather than returned with an empty array.
+      const langJoin = filters.languages?.length
+        ? 'user_languages!inner(*, languages!inner(*))'
+        : 'user_languages(*, languages(*))'
+
       let query = supabase
         .from('tutor_profiles')
-        .select(`
-          *,
-          profiles!inner(*),
-          user_languages(*, languages(*))
-        `)
+        .select(`*, profiles!inner(*), ${langJoin}`)
         .eq('application_status', 'approved')
         .eq('is_accepting_students', true)
         .range(pageParam * PAGE_SIZE, (pageParam + 1) * PAGE_SIZE - 1)
@@ -52,6 +54,12 @@ export function useTutors(filters: TutorFilters = {}) {
       }
       if (filters.search) {
         query = query.ilike('profiles.full_name', `%${filters.search}%`)
+      }
+      if (filters.languages?.length) {
+        query = query.in('user_languages.languages.code', filters.languages)
+      }
+      if (filters.specializations?.length) {
+        query = query.overlaps('specializations', filters.specializations)
       }
 
       switch (filters.sortBy) {
