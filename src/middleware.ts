@@ -7,7 +7,6 @@ const intlMiddleware = createMiddleware(routing)
 
 const protectedRoutes = [
   '/dashboard',
-  '/tutors',
   '/schedule',
   '/lessons',
   '/messages',
@@ -24,30 +23,25 @@ const protectedRoutes = [
 
 const authRoutes = ['/login', '/register', '/forgot-password']
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Strip locale prefix for route checking
   const pathnameWithoutLocale = pathname.replace(/^\/(az|en|ru)/, '') || '/'
 
-  // Handle Supabase session refresh
   const { response, user } = await updateSession(request)
 
-  // Check if it's a protected route
   const isProtected = protectedRoutes.some(
     (route) =>
       pathnameWithoutLocale === route ||
       pathnameWithoutLocale.startsWith(`${route}/`)
   )
 
-  // Check if it's an auth route
   const isAuthRoute = authRoutes.some(
     (route) =>
       pathnameWithoutLocale === route ||
       pathnameWithoutLocale.startsWith(`${route}/`)
   )
 
-  // Redirect unauthenticated users from protected routes
   if (isProtected && !user) {
     const locale = pathname.split('/')[1] || 'az'
     const loginUrl = new URL(`/${locale}/login`, request.url)
@@ -55,13 +49,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Redirect authenticated users away from auth pages
   if (isAuthRoute && user) {
     const locale = pathname.split('/')[1] || 'az'
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
-  // Apply intl middleware for locale routing
   const intlResponse = intlMiddleware(request)
   if (intlResponse) return intlResponse
 
