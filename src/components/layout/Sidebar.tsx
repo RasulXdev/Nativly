@@ -12,6 +12,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   BookOpen,
   Users,
   BarChart3,
@@ -81,10 +82,11 @@ export default function Sidebar() {
         sidebarCollapsed ? 'w-[72px]' : 'w-[248px]'
       )}
     >
-      {/* Logo */}
-      <div
+      {/* Logo — ana səhifəyə link */}
+      <Link
+        href="/"
         className={cn(
-          'flex items-center h-[60px] border-b border-border/60 transition-all',
+          'flex items-center h-[60px] border-b border-border/60 transition-all hover:opacity-75',
           sidebarCollapsed ? 'justify-center px-0' : 'px-5'
         )}
       >
@@ -100,7 +102,7 @@ export default function Sidebar() {
             <span className="font-extrabold text-lg tracking-tight text-foreground">Nativly</span>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-2.5 space-y-0.5">
@@ -148,8 +150,25 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom — Profile + Collapse */}
+      {/* Bottom — Back to site + Profile + Collapse */}
       <div className="border-t border-border/60 p-2.5 space-y-2">
+        <Link
+          href="/"
+          title={sidebarCollapsed ? 'Ana səhifə' : undefined}
+          className={cn(
+            'relative flex items-center rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/6 transition-all duration-150 group',
+            sidebarCollapsed ? 'h-10 w-10 mx-auto justify-center' : 'h-10 px-3 gap-3'
+          )}
+        >
+          <ArrowLeft className={cn('shrink-0', sidebarCollapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4')} />
+          {!sidebarCollapsed && <span className="flex-1 truncate">Ana səhifə</span>}
+          {sidebarCollapsed && (
+            <span className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-popover border border-border text-foreground text-xs font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
+              Ana səhifə
+            </span>
+          )}
+        </Link>
+
         {!sidebarCollapsed && profile && (
           <div className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/8 transition-colors cursor-pointer">
             <Avatar className="h-7 w-7 shrink-0 ring-1 ring-white/20">

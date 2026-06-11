@@ -60,12 +60,12 @@ export default function TutorsPage() {
           </div>
 
           {/* Search bar */}
-          <div className="relative sm:w-72">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative sm:w-72 group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
             <input
               type="text"
               placeholder="Müəllim axtar..."
-              className="w-full h-10 pl-10 pr-4 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+              className="w-full h-10 pl-10 pr-4 rounded-xl border border-border/70 bg-background/80 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 hover:border-border transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

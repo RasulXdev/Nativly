@@ -133,6 +133,9 @@
   .gradient-text {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, oklch(0.395 0.195 262), oklch(0.50 0.22 265), oklch(0.55 0.21 270));
+    padding-bottom: 2px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
   .gradient-bg {

@@ -27,17 +27,14 @@ export default function TopBar() {
   return (
     <header className="sticky top-0 z-40 flex h-[60px] items-center gap-4 border-b border-border bg-background/80 backdrop-blur-xl px-4 sm:px-6 shrink-0">
       {/* Search bar */}
-      <div className="flex-1 max-w-sm">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+      <div className="flex-1 max-w-xs">
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
           <input
             type="text"
-            placeholder="Axtar..."
-            className="platform-input w-full h-9 pl-9 pr-9 text-sm"
+            placeholder="Axtar... (⌘K)"
+            className="platform-input w-full h-9 pl-10 pr-4 text-sm"
           />
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
-            <kbd className="text-[10px] text-muted-foreground/60 font-mono border border-white/10 rounded px-1 py-0.5 leading-none">⌘K</kbd>
-          </div>
         </div>
       </div>
 

@@ -74,6 +74,17 @@ export default function Navbar() {
             <LanguageSwitcher />
 
             {user && profile ? (
+              <>
+              <Link
+                href={`/${locale}/${profile.role === 'tutor' ? 'tutor-dashboard' : profile.role === 'admin' ? 'admin' : 'dashboard'}`}
+                className={cn(
+                  buttonVariants({ variant: 'ghost', size: 'sm' }),
+                  'hidden md:inline-flex rounded-full gap-1.5 font-semibold text-foreground hover:text-primary hover:bg-primary/6'
+                )}
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {t('dashboard')}
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger className="rounded-full outline-none">
                   <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/15 hover:ring-primary/35 transition-all">
@@ -103,6 +114,7 @@ export default function Navbar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </>
             ) : (
               <div className="hidden md:flex items-center gap-2">
                 <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'default' }), 'rounded-full px-5 font-semibold text-foreground hover:text-primary hover:bg-primary/6')}>
@@ -133,6 +145,16 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {user && profile && (
+              <Link
+                href={`/${locale}/${profile.role === 'tutor' ? 'tutor-dashboard' : profile.role === 'admin' ? 'admin' : 'dashboard'}`}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-[0.9rem] font-semibold rounded-xl text-primary bg-primary/8 hover:bg-primary/14 transition-all"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {t('dashboard')}
+              </Link>
+            )}
             {!user && (
               <div className="flex gap-2 pt-3 border-t border-border/40 mt-2">
                 <Link href="/login" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex-1 rounded-full')} onClick={() => setMobileOpen(false)}>
