@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Loader2, GraduationCap } from 'lucide-react'
+import { Loader2, GraduationCap, Eye, EyeOff } from 'lucide-react'
 import SocialButtons from './SocialButtons'
 import Logo from '@/components/shared/Logo'
 
@@ -24,6 +24,8 @@ export default function TutorRegisterForm() {
   const locale = useLocale()
   const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
+  const [showPass, setShowPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
 
   const {
     register,
@@ -129,12 +131,18 @@ export default function TutorRegisterForm() {
 
           <div className="space-y-2">
             <Label htmlFor="password">Şifrə</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPass ? 'text' : 'password'}
+                {...register('password')}
+                disabled={isLoading}
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
@@ -142,12 +150,18 @@ export default function TutorRegisterForm() {
 
           <div className="space-y-2">
             <Label htmlFor="confirm_password">Şifrəni təsdiqlə</Label>
-            <Input
-              id="confirm_password"
-              type="password"
-              {...register('confirm_password')}
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="confirm_password"
+                type={showConfirmPass ? 'text' : 'password'}
+                {...register('confirm_password')}
+                disabled={isLoading}
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowConfirmPass(!showConfirmPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                {showConfirmPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             {errors.confirm_password && (
               <p className="text-sm text-destructive">{errors.confirm_password.message}</p>
             )}

@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import {
   Loader2, ChevronRight, ChevronLeft, GraduationCap, Check,
-  Globe, User, FileText, Video, CalendarDays, Eye, Upload, X,
+  Globe, User, FileText, Video, CalendarDays, Eye, EyeOff, Upload, X,
   Sparkles, Clock, Zap, Shield,
 } from 'lucide-react'
 import Logo from '@/components/shared/Logo'
@@ -96,6 +96,8 @@ export default function TutorOnboardingForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [certUploading, setCertUploading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [showPass, setShowPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
 
   const [form, setForm] = useState<FormData>({
     full_name: '', email: '', password: '', confirm_password: '',
@@ -124,31 +126,21 @@ export default function TutorOnboardingForm() {
 
     setIsLoading(true)
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: form.email, password: form.password,
-        options: {
-          data: { full_name: form.full_name, role: 'tutor' },
-          emailRedirectTo: `${window.location.origin}/api/auth/callback`,
-        },
+      const res = await fetch('/api/register/tutor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: form.full_name, email: form.email, password: form.password,
+          phone: form.phone, city: form.city, country: form.country,
+        }),
       })
-      if (error) { toast.error(error.message); return false }
-      if (!data.user) { toast.error('Qeydiyyat uğursuz oldu'); return false }
+      const result = await res.json()
+      if (!res.ok) { toast.error(result.error ?? 'Qeydiyyat uğursuz oldu'); return false }
 
-      if (!data.user.identities?.length) {
-        toast.error('Bu email artıq qeydiyyatdadır. Daxil olun.')
-        return false
-      }
+      setUserId(result.userId)
+      setTutorProfileId(result.tutorProfileId)
 
-      setUserId(data.user.id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('profiles') as any).update({
-        phone: form.phone || null, city: form.city, country: form.country,
-      }).eq('id', data.user.id)
-
-      const { data: tp, error: tpErr } = await db
-        .from('tutor_profiles').select('id').eq('user_id', data.user.id).single()
-      if (tpErr) { toast.error('Profil yaradılmadı'); return false }
-      setTutorProfileId(tp.id)
+      await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
       return true
     } catch { toast.error('Xəta baş verdi'); return false }
     finally { setIsLoading(false) }
@@ -391,12 +383,22 @@ export default function TutorOnboardingForm() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Şifrə *</Label>
-              <Input type="password" value={form.password} onChange={(e) => set('password', e.target.value)} className="rounded-xl h-11" />
+              <div className="relative">
+                <Input type={showPass ? 'text' : 'password'} value={form.password} onChange={(e) => set('password', e.target.value)} className="rounded-xl h-11 pr-10" />
+                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                  {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Şifrəni təsdiqlə *</Label>
-              <Input type="password" value={form.confirm_password} onChange={(e) => set('confirm_password', e.target.value)} className="rounded-xl h-11" />
+              <div className="relative">
+                <Input type={showConfirmPass ? 'text' : 'password'} value={form.confirm_password} onChange={(e) => set('confirm_password', e.target.value)} className="rounded-xl h-11 pr-10" />
+                <button type="button" onClick={() => setShowConfirmPass(!showConfirmPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                  {showConfirmPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {errors.confirm_password && <p className="text-xs text-destructive">{errors.confirm_password}</p>}
             </div>
             <div className="space-y-1.5">
