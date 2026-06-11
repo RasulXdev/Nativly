@@ -134,6 +134,11 @@ export default function TutorOnboardingForm() {
       if (error) { toast.error(error.message); return false }
       if (!data.user) { toast.error('Qeydiyyat uğursuz oldu'); return false }
 
+      if (!data.user.identities?.length) {
+        toast.error('Bu email artıq qeydiyyatdadır. Daxil olun.')
+        return false
+      }
+
       setUserId(data.user.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.from('profiles') as any).update({
@@ -141,8 +146,7 @@ export default function TutorOnboardingForm() {
       }).eq('id', data.user.id)
 
       const { data: tp, error: tpErr } = await db
-        .from('tutor_profiles').insert({ user_id: data.user.id, application_status: 'pending' })
-        .select('id').single()
+        .from('tutor_profiles').select('id').eq('user_id', data.user.id).single()
       if (tpErr) { toast.error('Profil yaradılmadı'); return false }
       setTutorProfileId(tp.id)
       return true
