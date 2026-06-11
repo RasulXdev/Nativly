@@ -75,3 +75,46 @@ export function getInitialsFromName(name: string): string {
     .toUpperCase()
     .slice(0, 2)
 }
+
+export type CancellationTier = 'free' | 'half' | 'full'
+
+/**
+ * Cancellation policy (NATIVLY §5.4):
+ *   24h+   → free (lesson credit refunded)
+ *   12-24h → 50% charge (no refund)
+ *   <12h   → full charge (no refund)
+ */
+export function getCancellationTier(scheduledAt: string | Date): CancellationTier {
+  const hoursUntil =
+    (new Date(scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60)
+  if (hoursUntil >= 24) return 'free'
+  if (hoursUntil >= 12) return 'half'
+  return 'full'
+}
+
+export function cancellationTierMessage(tier: CancellationTier): string {
+  switch (tier) {
+    case 'free':
+      return 'Pulsuz ləğv — dərs krediti geri qaytarılacaq.'
+    case 'half':
+      return 'Dərsə 24 saatdan az qalıb — dərs krediti geri qaytarılmayacaq (50% tutulur).'
+    case 'full':
+      return 'Dərsə 12 saatdan az qalıb — dərs krediti tam tutulacaq.'
+  }
+}
+
+/** Short, human-readable timezone label, e.g. "GMT+4 (Asia/Baku)". */
+export function timezoneLabel(timezone?: string | null): string {
+  const tz = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+  try {
+    const offset = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      timeZoneName: 'shortOffset',
+    })
+      .formatToParts(new Date())
+      .find((p) => p.type === 'timeZoneName')?.value
+    return offset ? `${offset} (${tz})` : tz
+  } catch {
+    return tz
+  }
+}

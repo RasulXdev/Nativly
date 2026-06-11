@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { subWeeks, startOfWeek, format } from 'date-fns'
 import { az } from 'date-fns/locale'
@@ -17,7 +17,7 @@ export function useUpcomingLessons() {
       const { data, error } = await supabase
         .from('lessons')
         .select(`
-          id, scheduled_at, status, duration_minutes, room_id, price, currency,
+          id, booking_id, scheduled_at, status, duration_minutes, room_id, price, currency,
           student_id, tutor_id,
           student:profiles!lessons_student_id_fkey(id, full_name, avatar_url),
           tutor:tutor_profiles!lessons_tutor_id_fkey(id, user_id,
@@ -126,6 +126,48 @@ export function useWeeklyProgress() {
       }
 
       return weeks
+    },
+  })
+}
+
+/**
+ * Cancels a lesson by cancelling its underlying booking. The DB trigger
+ * (on_booking_status_change) cancels the lesson, notifies the tutor, and
+ * refunds a lesson credit when cancelled >=24h before start.
+ */
+export function useCancelLesson() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      bookingId,
+      reason,
+    }: {
+      bookingId: string
+      reason?: string
+    }) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error('Daxil olun')
+
+      const { error } = await supabase
+        .from('bookings')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .update({
+          status: 'cancelled',
+          cancelled_by: user.id,
+          cancelled_at: new Date().toISOString(),
+          cancelled_reason: reason ?? null,
+        } as any)
+        .eq('id', bookingId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lessons'] })
+      queryClient.invalidateQueries({ queryKey: ['active-subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['student-stats'] })
     },
   })
 }

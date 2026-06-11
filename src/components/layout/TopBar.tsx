@@ -2,7 +2,8 @@
 
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Bell, Search, LogOut, Settings, LayoutDashboard } from 'lucide-react'
+import { Search, LogOut, Settings, LayoutDashboard } from 'lucide-react'
+import NotificationBell from '@/components/notifications/NotificationBell'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,11 +41,7 @@ export default function TopBar() {
 
       <div className="flex items-center gap-1.5 ml-auto">
         {/* Notification bell */}
-        <button className="relative h-9 w-9 flex items-center justify-center rounded-xl hover:bg-white/6 text-muted-foreground hover:text-foreground transition-colors">
-          <Bell className="h-4 w-4" />
-          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500 ring-1 ring-background" />
-          <span className="sr-only">Bildirişlər</span>
-        </button>
+        <NotificationBell />
 
         {/* Divider */}
         <div className="h-5 w-px bg-border mx-1" />

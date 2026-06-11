@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CalendarOff, Save, Plus, Trash2, CalendarCheck, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { CalendarOff, Save, Plus, Trash2, CalendarCheck, Clock, CheckCircle2, XCircle, CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   useTutorAvailability,
   useUpdateAvailability,
@@ -16,9 +17,19 @@ import {
   type DayOfWeek,
   type AvailabilitySlot,
 } from '@/hooks/useTutorSchedule'
+import { useTutorUpcomingLessons } from '@/hooks/useTutorLessons'
+import { getInitials } from '@/lib/utils'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { az } from 'date-fns/locale'
+
+interface TutorUpcomingLesson {
+  id: string
+  scheduled_at: string
+  duration_minutes: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  student: any
+}
 
 const DAYS: { key: DayOfWeek; label: string; short: string }[] = [
   { key: 'monday',    label: 'Bazar ertəsi',       short: 'B.E' },
@@ -44,6 +55,8 @@ const DEFAULT_SLOT = (day: DayOfWeek): AvailabilitySlot => ({
 
 export default function TutorSchedulePage() {
   const { data: savedSlots, isLoading } = useTutorAvailability()
+  const { data: upcomingRaw, isLoading: loadingUpcoming } = useTutorUpcomingLessons()
+  const upcomingLessons = (upcomingRaw ?? []) as TutorUpcomingLesson[]
   const { data: unavailDates, isLoading: loadingUnavail } = useTutorUnavailability()
   const updateAvailability = useUpdateAvailability()
   const addUnavail = useAddUnavailability()
@@ -122,6 +135,65 @@ export default function TutorSchedulePage() {
             <Save className="h-4 w-4 mr-2" />
             {updateAvailability.isPending ? 'Saxlanılır...' : 'Yadda saxla'}
           </Button>
+        </div>
+      </div>
+
+      {/* ── Upcoming lessons ─────────────────────────────── */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+            <CalendarClock className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm">Yaxınlaşan dərslər</h2>
+            <p className="text-xs text-muted-foreground">Təsdiqlənmiş gələcək dərsləriniz</p>
+          </div>
+        </div>
+        <div className="p-5">
+          {loadingUpcoming ? (
+            <div className="space-y-3">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <Skeleton key={i} className="h-14 rounded-xl" />
+              ))}
+            </div>
+          ) : upcomingLessons.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-6">
+              Yaxınlaşan dərs yoxdur
+            </p>
+          ) : (
+            <div className="space-y-2.5">
+              {upcomingLessons.map((lesson) => {
+                const student = lesson.student
+                return (
+                  <div
+                    key={lesson.id}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:bg-white/5 transition-colors"
+                  >
+                    <div className="w-1 self-stretch rounded-full shrink-0 gradient-bg" />
+                    <Avatar className="h-9 w-9 shrink-0">
+                      <AvatarImage src={student?.avatar_url ?? ''} />
+                      <AvatarFallback className="gradient-bg text-white text-xs font-bold">
+                        {getInitials(student?.full_name ?? '?')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate">
+                        {student?.full_name ?? 'Tələbə'}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                        <Clock className="h-3 w-3" />
+                        <span>
+                          {format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: az })}
+                        </span>
+                        <span className="text-border">·</span>
+                        <span>{lesson.duration_minutes} dəq</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 

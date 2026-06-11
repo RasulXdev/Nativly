@@ -1174,13 +1174,13 @@ CREATE POLICY "Users can view own documents" ON storage.objects FOR SELECT USING
 - Mark as read / Mark all as read
 
 ### 5.6 Gün 5 Gözlənilən Nəticə
-- [ ] Booking flow start to finish
-- [ ] Availability calculation engine
-- [ ] Schedule views (student + tutor)
-- [ ] TimeSlotPicker component
-- [ ] Cancellation with policy enforcement
-- [ ] Notifications (in-app, realtime)
-- [ ] Email notifications (booking confirmed, reminder, cancelled)
+- [x] Booking flow start to finish
+- [x] Availability calculation engine
+- [x] Schedule views (student + tutor)
+- [x] TimeSlotPicker component
+- [x] Cancellation with policy enforcement
+- [x] Notifications (in-app, realtime)
+- [x] Email notifications (booking confirmed, reminder, cancelled)
 
 ---
 

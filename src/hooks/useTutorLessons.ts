@@ -42,6 +42,43 @@ export function useTutorTodayLessons() {
   })
 }
 
+export function useTutorUpcomingLessons() {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['tutor-upcoming-lessons'],
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
+
+      const { data: tp } = await db
+        .from('tutor_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (!tp) return []
+
+      const { data, error } = await db
+        .from('lessons')
+        .select(`
+          id, scheduled_at, status, duration_minutes, room_id,
+          student:profiles!lessons_student_id_fkey(id, full_name, avatar_url)
+        `)
+        .eq('tutor_id', (tp as { id: string }).id)
+        .in('status', ['scheduled', 'in_progress'])
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true })
+        .limit(10)
+
+      if (error) throw error
+      return data ?? []
+    },
+  })
+}
+
 export function usePendingBookings() {
   const supabase = createClient()
 
