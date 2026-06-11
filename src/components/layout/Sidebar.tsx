@@ -106,13 +106,6 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden px-2.5 space-y-0.5">
-        {/* Section label */}
-        {!sidebarCollapsed && (
-          <p className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/60 px-3 pb-2">
-            Naviqasiya
-          </p>
-        )}
-
         {navItems.map((item) => {
           const active = isActive(item.href)
           return (
