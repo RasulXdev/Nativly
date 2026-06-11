@@ -76,7 +76,7 @@ export default function Navbar() {
             {user && profile ? (
               <>
               <Link
-                href={`/${locale}/${profile.role === 'tutor' ? 'tutor-dashboard' : profile.role === 'admin' ? 'admin' : 'dashboard'}`}
+                href={(profile.role === 'tutor' ? '/tutor-dashboard' : profile.role === 'admin' ? '/admin' : '/dashboard') as Parameters<typeof Link>[0]['href']}
                 className={cn(
                   buttonVariants({ variant: 'ghost', size: 'sm' }),
                   'hidden md:inline-flex rounded-full gap-1.5 font-semibold text-foreground hover:text-primary hover:bg-primary/6'
@@ -147,7 +147,7 @@ export default function Navbar() {
             ))}
             {user && profile && (
               <Link
-                href={`/${locale}/${profile.role === 'tutor' ? 'tutor-dashboard' : profile.role === 'admin' ? 'admin' : 'dashboard'}`}
+                href={(profile.role === 'tutor' ? '/tutor-dashboard' : profile.role === 'admin' ? '/admin' : '/dashboard') as Parameters<typeof Link>[0]['href']}
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 px-4 py-2.5 text-[0.9rem] font-semibold rounded-xl text-primary bg-primary/8 hover:bg-primary/14 transition-all"
               >

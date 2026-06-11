@@ -11,7 +11,7 @@ export default async function TutorLayout({ children }: { children: React.ReactN
   if (!user) redirect('/login')
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="dark flex h-screen overflow-hidden bg-background text-foreground">
       <Sidebar />
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <TopBar />

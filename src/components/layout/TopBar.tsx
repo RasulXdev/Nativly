@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Bell, Search, LogOut, Settings, LayoutDashboard, Command } from 'lucide-react'
+import { Bell, Search, LogOut, Settings, LayoutDashboard } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,11 +29,11 @@ export default function TopBar() {
       {/* Search bar */}
       <div className="flex-1 max-w-xs">
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary pointer-events-none transition-colors" />
           <input
             type="text"
-            placeholder="Axtar... (⌘K)"
-            className="platform-input w-full h-9 pl-10 pr-4 text-sm"
+            placeholder="Axtar..."
+            className="w-full h-9 pl-10 pr-4 text-sm rounded-xl border border-border bg-muted/40 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 focus:bg-background hover:border-border/80 transition-all"
           />
         </div>
       </div>
