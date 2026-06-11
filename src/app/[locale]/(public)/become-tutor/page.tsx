@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { getLocale } from 'next-intl/server'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import {
   DollarSign, Clock, Users, Star, CheckCircle, ArrowRight,
   GraduationCap, Globe, Headphones, TrendingUp, Shield, Zap
@@ -95,8 +94,6 @@ const PROCESS = [
 ]
 
 export default async function BecomeTutorPage() {
-  const locale = await getLocale()
-
   return (
     <div className="min-h-screen">
       {/* ─── Hero ─────────────────────────────────────────────────── */}
@@ -149,7 +146,7 @@ export default async function BecomeTutorPage() {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                    href={`/${locale}/register/tutor`}
+                    href="/register/tutor"
                     className={cn(
                       buttonVariants({ size: 'lg' }),
                       'gradient-bg border-0 rounded-xl h-12 px-8 text-[0.95rem] font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-300'
@@ -159,7 +156,7 @@ export default async function BecomeTutorPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                   <Link
-                    href={`/${locale}/contact`}
+                    href="/contact"
                     className={cn(
                       buttonVariants({ size: 'lg', variant: 'outline' }),
                       'rounded-xl h-12 px-8 text-[0.95rem] border-white/15 text-white/80 hover:bg-white/10 hover:text-white bg-transparent'
@@ -281,7 +278,7 @@ export default async function BecomeTutorPage() {
                   Aşağıdakı şərtlərə cavab verirsinizsə, müraciət edə bilərsiniz.
                 </p>
                 <Link
-                  href={`/${locale}/register/tutor`}
+                  href="/register/tutor"
                   className={cn(buttonVariants({ size: 'default' }), 'gradient-bg border-0 rounded-xl font-semibold')}
                 >
                   Müraciət et
@@ -334,7 +331,7 @@ export default async function BecomeTutorPage() {
             </p>
             <div className="pt-4">
               <Link
-                href={`/${locale}/register/tutor`}
+                href="/register/tutor"
                 className={cn(
                   buttonVariants({ size: 'lg' }),
                   'gradient-bg border-0 rounded-xl h-12 px-10 text-[0.95rem] font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-300'
