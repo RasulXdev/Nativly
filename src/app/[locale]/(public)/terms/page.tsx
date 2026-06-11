@@ -3,7 +3,7 @@ import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'İstifadə Şərtləri',
-  description: 'Nativly platformasının istifadə şərtləri. Tələbə və müəllim öhdəlikləri, ödəniş şərtləri, ləğvetmə siyasəti.',
+  description: 'Nativly platformasının istifadə şərtləri.',
 }
 
 const SECTIONS = [
@@ -52,14 +52,24 @@ const SECTIONS = [
 export default function TermsPage() {
   return (
     <div className="min-h-screen">
-      <section className="py-16 px-4 bg-muted/30 text-center">
-        <AnimateOnScroll className="container mx-auto max-w-2xl space-y-3">
-          <h1 className="text-4xl font-bold">İstifadə Şərtləri</h1>
-          <p className="text-muted-foreground">Son yenilənmə: Yanvar 2026</p>
-        </AnimateOnScroll>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[oklch(0.13_0.04_265)]" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 50% 50% at 50% 50%, oklch(0.25 0.12 262 / 0.3) 0%, transparent 60%)`,
+          }}
+        />
+        <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-20 text-center space-y-3">
+          <AnimateOnScroll>
+            <h1 className="text-4xl font-extrabold text-white tracking-tight">İstifadə Şərtləri</h1>
+            <p className="text-white/40 mt-2">Son yenilənmə: Yanvar 2026</p>
+          </AnimateOnScroll>
+        </div>
       </section>
 
-      <section className="py-16 px-4">
+      <section className="py-16 md:py-20 px-4">
         <div className="container mx-auto max-w-3xl space-y-8">
           <AnimateOnScroll>
             <p className="text-muted-foreground leading-relaxed">
@@ -70,16 +80,16 @@ export default function TermsPage() {
 
           {SECTIONS.map((section, i) => (
             <AnimateOnScroll key={i} delay={i * 40}>
-              <div className="space-y-3">
-                <h2 className="text-xl font-semibold">{section.title}</h2>
+              <div className="space-y-3 p-5 rounded-xl border border-border/40 bg-card/50 hover:border-border/60 transition-colors">
+                <h2 className="text-lg font-bold">{section.title}</h2>
                 <p className="text-muted-foreground leading-relaxed text-sm">{section.content}</p>
               </div>
             </AnimateOnScroll>
           ))}
 
           <AnimateOnScroll>
-            <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
-              Suallarınız üçün: <a href="mailto:legal@nativly.az" className="text-primary hover:underline">legal@nativly.az</a>
+            <div className="rounded-xl bg-muted/50 border border-border/40 p-4 text-sm text-muted-foreground">
+              Suallarınız üçün: <a href="mailto:legal@nativly.az" className="text-primary hover:underline font-medium">legal@nativly.az</a>
             </div>
           </AnimateOnScroll>
         </div>

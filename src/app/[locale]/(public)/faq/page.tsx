@@ -4,7 +4,7 @@ import FAQ from '@/components/landing/FAQ'
 
 export const metadata: Metadata = {
   title: 'FAQ — Tez-tez verilən suallar',
-  description: 'Nativly haqqında ən çox verilən suallar və cavablar. Dərs, ödəniş, müəllim, ləğvetmə siyasəti.',
+  description: 'Nativly haqqında ən çox verilən suallar və cavablar.',
 }
 
 const EXTRA_FAQS = [
@@ -37,29 +37,41 @@ const EXTRA_FAQS = [
 export default function FAQPage() {
   return (
     <div className="min-h-screen">
-      <section className="py-16 px-4 bg-gradient-to-b from-primary/5 to-background text-center">
-        <AnimateOnScroll className="container mx-auto max-w-2xl space-y-4">
-          <h1 className="text-4xl font-bold">Tez-tez verilən suallar</h1>
-          <p className="text-muted-foreground text-lg">
-            Sualınızı tapmırsınızsa, <a href="mailto:info@nativly.az" className="text-primary hover:underline">info@nativly.az</a> ünvanına yazın.
-          </p>
-        </AnimateOnScroll>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[oklch(0.13_0.04_265)]" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 50% 50% at 50% 50%, oklch(0.28 0.16 262 / 0.35) 0%, transparent 60%)`,
+          }}
+        />
+        <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-24 text-center space-y-4">
+          <AnimateOnScroll>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Tez-tez verilən suallar</h1>
+            <p className="text-white/50 text-lg mt-3">
+              Sualınızı tapmırsınızsa,{' '}
+              <a href="mailto:info@nativly.az" className="text-primary hover:underline">info@nativly.az</a>{' '}
+              ünvanına yazın.
+            </p>
+          </AnimateOnScroll>
+        </div>
       </section>
 
-      {/* Embedded FAQ from landing (core questions) */}
+      {/* FAQ from landing */}
       <div className="py-4">
         <FAQ />
       </div>
 
-      {/* Additional FAQs */}
+      {/* Extra FAQs */}
       <section className="py-8 px-4 pb-20">
         <div className="container mx-auto max-w-3xl space-y-4">
           <AnimateOnScroll className="mb-8">
-            <h2 className="text-2xl font-bold">Əlavə suallar</h2>
+            <h2 className="text-2xl font-extrabold tracking-tight">Əlavə suallar</h2>
           </AnimateOnScroll>
           {EXTRA_FAQS.map((item, i) => (
             <AnimateOnScroll key={i} delay={i * 60}>
-              <div className="bg-card border rounded-lg p-5 space-y-2 hover:shadow-sm transition-shadow">
+              <div className="rounded-xl border border-border/60 bg-card p-5 space-y-2 hover:border-primary/20 transition-colors">
                 <h3 className="font-semibold">{item.q}</h3>
                 <p className="text-sm text-muted-foreground">{item.a}</p>
               </div>

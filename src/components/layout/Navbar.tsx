@@ -39,6 +39,7 @@ export default function Navbar() {
     { href: '/pricing' as const, label: t('pricing') },
     { href: '/how-it-works' as const, label: t('howItWorks') },
     { href: '/about' as const, label: t('about') },
+    { href: '/become-tutor' as const, label: t('becomeTutor'), highlight: true },
   ]
 
   return (
@@ -57,7 +58,12 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-[0.9rem] font-semibold text-foreground hover:text-primary rounded-full hover:bg-primary/6 transition-all duration-200"
+                className={cn(
+                  "px-4 py-2 text-[0.9rem] font-semibold rounded-full transition-all duration-200",
+                  link.highlight
+                    ? "text-primary bg-primary/8 hover:bg-primary/14 ring-1 ring-primary/20"
+                    : "text-foreground hover:text-primary hover:bg-primary/6"
+                )}
               >
                 {link.label}
               </Link>
@@ -118,7 +124,12 @@ export default function Navbar() {
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-border/40 px-4 py-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
-                className="block px-4 py-2.5 text-[0.9rem] font-semibold text-foreground/78 hover:text-primary hover:bg-primary/6 rounded-xl transition-all">
+                className={cn(
+                  "block px-4 py-2.5 text-[0.9rem] font-semibold rounded-xl transition-all",
+                  link.highlight
+                    ? "text-primary bg-primary/8 hover:bg-primary/14"
+                    : "text-foreground/78 hover:text-primary hover:bg-primary/6"
+                )}>
                 {link.label}
               </Link>
             ))}
