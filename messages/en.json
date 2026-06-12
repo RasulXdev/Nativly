@@ -1257,6 +1257,7 @@
     "min": "min",
     "scheduleSaved": "Schedule saved",
     "errorOccurred": "An error occurred",
+    "invalidTimeRange": "Start time must be before end time",
     "selectDate": "Select a date",
     "dayOffAdded": "Day off added",
     "weeklyHours": "Weekly working hours",

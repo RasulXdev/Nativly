@@ -5,6 +5,31 @@ import { createClient } from '@/lib/supabase/client'
 
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 
+/**
+ * Returns the caller's tutor_profiles.id, creating the row if it is missing.
+ * Some tutor-role accounts predate the auto-create trigger and have no
+ * tutor_profiles row, which previously made schedule saves fail outright.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getOrCreateTutorProfileId(db: any, userId: string): Promise<string> {
+  const { data: tp } = await db
+    .from('tutor_profiles')
+    .select('id')
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  if (tp) return (tp as { id: string }).id
+
+  const { data: created, error } = await db
+    .from('tutor_profiles')
+    .insert({ user_id: userId, application_status: 'pending' })
+    .select('id')
+    .single()
+
+  if (error) throw error
+  return (created as { id: string }).id
+}
+
 export interface AvailabilitySlot {
   id?: string
   day_of_week: DayOfWeek
@@ -54,15 +79,7 @@ export function useUpdateAvailability() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { data: tp } = await db
-        .from('tutor_profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (!tp) throw new Error('Tutor profile not found')
-
-      const tutorId = (tp as { id: string }).id
+      const tutorId = await getOrCreateTutorProfileId(db, user.id)
       await db.from('tutor_availability').delete().eq('tutor_id', tutorId)
 
       const active = slots.filter((s) => s.is_active)
@@ -128,16 +145,9 @@ export function useAddUnavailability() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { data: tp } = await db
-        .from('tutor_profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (!tp) throw new Error('Tutor profile not found')
-
+      const tutorId = await getOrCreateTutorProfileId(db, user.id)
       const { error } = await db.from('tutor_unavailability').insert({
-        tutor_id: (tp as { id: string }).id,
+        tutor_id: tutorId,
         date,
         reason,
       })

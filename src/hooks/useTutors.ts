@@ -22,15 +22,16 @@ export function useTutors(filters: TutorFilters = {}) {
   return useInfiniteQuery({
     queryKey: ['tutors', filters],
     queryFn: async ({ pageParam = 0 }) => {
-      // Use !inner on user_languages when filtering by language so tutors without
-      // a matching language are excluded rather than returned with an empty array.
+      // user_languages relates to profiles (not tutor_profiles), so it must be
+      // embedded through the profiles join. Use !inner when filtering by language
+      // so tutors without a matching language are excluded.
       const langJoin = filters.languages?.length
         ? 'user_languages!inner(*, languages!inner(*))'
         : 'user_languages(*, languages(*))'
 
       let query = supabase
         .from('tutor_profiles')
-        .select(`*, profiles!inner(*), ${langJoin}`)
+        .select(`*, profiles!inner(*, ${langJoin})`)
         .eq('application_status', 'approved')
         .eq('is_accepting_students', true)
         .range(pageParam * PAGE_SIZE, (pageParam + 1) * PAGE_SIZE - 1)
@@ -48,7 +49,7 @@ export function useTutors(filters: TutorFilters = {}) {
         query = query.ilike('profiles.full_name', `%${filters.search}%`)
       }
       if (filters.languages?.length) {
-        query = query.in('user_languages.languages.code', filters.languages)
+        query = query.in('profiles.user_languages.languages.code', filters.languages)
       }
       if (filters.specializations?.length) {
         query = query.overlaps('specializations', filters.specializations)
@@ -67,7 +68,13 @@ export function useTutors(filters: TutorFilters = {}) {
 
       const { data, error } = await query
       if (error) throw error
-      return (data ?? []) as unknown as TutorWithProfile[]
+      // Lift user_languages from the nested profiles join back to the top level
+      // so consumers can read tutor.user_languages directly.
+      const rows = (data ?? []).map((t: Record<string, unknown>) => ({
+        ...t,
+        user_languages: (t.profiles as { user_languages?: unknown[] } | null)?.user_languages ?? [],
+      }))
+      return rows as unknown as TutorWithProfile[]
     },
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === PAGE_SIZE ? allPages.length : undefined,
@@ -85,8 +92,7 @@ export function useTutor(id: string) {
         .from('tutor_profiles')
         .select(`
           *,
-          profiles!inner(*),
-          user_languages(*, languages(*)),
+          profiles!inner(*, user_languages(*, languages(*))),
           tutor_availability(*)
         `)
         .eq('id', id)
@@ -94,7 +100,12 @@ export function useTutor(id: string) {
         .single()
 
       if (error) throw error
-      return data as unknown as TutorWithProfile & { tutor_availability: any[] }
+      // Lift user_languages from the nested profiles join to the top level.
+      const tutor = data as Record<string, unknown>
+      return {
+        ...tutor,
+        user_languages: (tutor.profiles as { user_languages?: unknown[] } | null)?.user_languages ?? [],
+      } as unknown as TutorWithProfile & { tutor_availability: any[] }
     },
     enabled: !!id,
   })

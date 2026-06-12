@@ -1257,6 +1257,7 @@
     "min": "dəq",
     "scheduleSaved": "Cədvəl saxlanıldı",
     "errorOccurred": "Xəta baş verdi",
+    "invalidTimeRange": "Başlama vaxtı bitmə vaxtından əvvəl olmalıdır",
     "selectDate": "Tarix seçin",
     "dayOffAdded": "Qeyri-iş günü əlavə edildi",
     "weeklyHours": "Həftəlik iş saatları",

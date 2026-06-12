@@ -81,6 +81,10 @@ export default function TutorSchedulePage() {
     setSlots((prev) => prev.map((s) => (s.day_of_week === day ? { ...s, [field]: value } : s)))
 
   const handleSave = async () => {
+    // DB enforces start_time < end_time; validate up front for a clear message.
+    if (slots.some((s) => s.is_active && s.start_time >= s.end_time)) {
+      return toast.error(t('invalidTimeRange'))
+    }
     try {
       await updateAvailability.mutateAsync(slots)
       toast.success(t('scheduleSaved'))

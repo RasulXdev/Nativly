@@ -17,12 +17,17 @@ export function useTutorProfile() {
 
       const { data, error } = await db
         .from('tutor_profiles')
-        .select(`*, profiles!inner(*), user_languages(*, languages(*))`)
+        .select(`*, profiles!inner(*, user_languages(*, languages(*)))`)
         .eq('user_id', user.id)
         .single()
 
       if (error && error.code !== 'PGRST116') throw error
-      return data as (TutorWithProfile & { tutor_availability: unknown[] }) | null
+      if (!data) return null
+      // Lift user_languages from the nested profiles join to the top level.
+      return {
+        ...data,
+        user_languages: data.profiles?.user_languages ?? [],
+      } as (TutorWithProfile & { tutor_availability: unknown[] })
     },
   })
 }
