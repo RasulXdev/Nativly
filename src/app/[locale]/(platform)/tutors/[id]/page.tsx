@@ -47,15 +47,15 @@ export default function TutorProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-5">
+      <div className="max-w-5xl mx-auto space-y-6">
         <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-52 w-full rounded-2xl" />
-        <div className="grid lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2 space-y-4">
-            <Skeleton className="h-40 w-full rounded-2xl" />
-            <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <div className="grid lg:grid-cols-[1fr_340px] gap-6">
+          <div className="space-y-5">
+            <Skeleton className="h-44 w-full rounded-2xl" />
+            <Skeleton className="h-36 w-full rounded-2xl" />
           </div>
-          <Skeleton className="h-64 w-full rounded-2xl" />
+          <Skeleton className="h-72 w-full rounded-2xl" />
         </div>
       </div>
     )
@@ -75,40 +75,79 @@ export default function TutorProfilePage() {
     )
   }
 
+  const stats = [
+    {
+      icon: Star,
+      value: (tutor.average_rating ?? 0).toFixed(1),
+      label: `${tutor.total_reviews ?? 0} ${t('reviewsCount')}`,
+      accent: 'text-amber-400',
+      glow: 'bg-amber-400/10 ring-1 ring-amber-400/20',
+    },
+    {
+      icon: Video,
+      value: String(tutor.total_lessons ?? 0),
+      label: t('totalLesson'),
+      accent: 'text-sky-400',
+      glow: 'bg-sky-400/10 ring-1 ring-sky-400/20',
+    },
+    {
+      icon: CheckCircle2,
+      value: `${tutor.completion_rate ?? 100}%`,
+      label: t('completion'),
+      accent: 'text-emerald-400',
+      glow: 'bg-emerald-400/10 ring-1 ring-emerald-400/20',
+    },
+    {
+      icon: Clock,
+      value: `<5 ${t('min')}`,
+      label: t('responseTime'),
+      accent: 'text-violet-400',
+      glow: 'bg-violet-400/10 ring-1 ring-violet-400/20',
+    },
+  ]
+
   return (
-    <div className="max-w-4xl mx-auto space-y-5">
-      {/* Back link */}
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Back */}
       <Link
         href="/tutors"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
         {tNav('tutors')}
       </Link>
 
-      {/* Hero profile card */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
-        {/* Gradient header strip */}
-        <div className="h-24 gradient-bg relative">
+      {/* ─── Hero Card ─── */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-card">
+        {/* Tall gradient banner */}
+        <div className="relative h-36 sm:h-44">
+          <div className="absolute inset-0 gradient-bg" />
           <div
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-0"
             style={{
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
-              backgroundSize: '20px 20px'
+              background: `
+                radial-gradient(ellipse 80% 70% at 20% 0%, oklch(0.45 0.22 270 / 0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 60% at 90% 80%, oklch(0.30 0.15 250 / 0.4) 0%, transparent 50%)
+              `,
             }}
           />
-          <div className="absolute inset-0" style={{
-            background: 'radial-gradient(ellipse 60% 100% at 100% 0%, rgba(255,255,255,0.1) 0%, transparent 70%)'
-          }} />
-          {/* Favorite button on banner */}
+          <div
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+              backgroundSize: '22px 22px',
+            }}
+          />
+
+          {/* Favorite */}
           {user && (
             <button
               onClick={() => toggleFav({ tutorId: id, isFav })}
               className={cn(
-                'absolute top-4 right-4 p-2.5 rounded-full border transition-all duration-200',
+                'absolute top-5 right-5 z-10 p-2.5 rounded-xl backdrop-blur-sm transition-all duration-200',
                 isFav
-                  ? 'border-white/50 bg-white/20 text-white'
-                  : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
+                  ? 'bg-white/20 text-white ring-1 ring-white/30'
+                  : 'bg-white/10 text-white/70 ring-1 ring-white/15 hover:bg-white/20 hover:text-white'
               )}
             >
               <Heart className={cn('h-4 w-4', isFav && 'fill-current')} />
@@ -116,93 +155,76 @@ export default function TutorProfilePage() {
           )}
         </div>
 
-        <div className="px-6 pb-6">
-          {/* Avatar overlapping header */}
-          <div className="flex items-end gap-4 -mt-10 mb-5">
+        {/* Profile info */}
+        <div className="relative px-6 sm:px-8 pb-7">
+          {/* Avatar */}
+          <div className="flex items-end gap-5 -mt-12 mb-5">
             <div className="relative shrink-0">
-              <Avatar className="h-20 w-20 ring-4 ring-card shadow-xl">
-                <AvatarImage src={profile?.avatar_url ?? ''} alt={profile?.full_name} />
-                <AvatarFallback className="gradient-bg text-white text-2xl font-extrabold">
-                  {getInitials(profile?.full_name ?? '?')}
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-1 -right-1 p-0.5 bg-card rounded-full shadow">
+              <div className="p-1 rounded-2xl bg-card shadow-2xl shadow-black/40">
+                <Avatar className="h-24 w-24 rounded-xl">
+                  <AvatarImage src={profile?.avatar_url ?? ''} alt={profile?.full_name} className="rounded-xl" />
+                  <AvatarFallback className="gradient-bg text-white text-2xl font-extrabold rounded-xl">
+                    {getInitials(profile?.full_name ?? '?')}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="absolute -bottom-1 -right-1 p-1 bg-card rounded-full shadow-lg">
                 <OnlineStatus isOnline={isOnline} size="md" />
               </div>
             </div>
 
-            <div className="mb-1 flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-extrabold tracking-tight">{profile?.full_name}</h1>
+            <div className="flex-1 min-w-0 pb-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-2xl font-extrabold tracking-tight leading-tight">
+                  {profile?.full_name}
+                </h1>
                 {tutor.instant_booking && (
-                  <Badge variant="outline" className="text-emerald-400 border-emerald-500/30 bg-emerald-500/12 gap-1 text-xs">
+                  <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/25 gap-1 text-[11px] font-semibold px-2.5 py-0.5">
                     <Zap className="h-3 w-3" />
                     {t('instantBadge')}
                   </Badge>
                 )}
               </div>
               {profile?.country && (
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
-                  <MapPin className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground/60" />
                   {profile.city ? `${profile.city}, ` : ''}{profile.country}
                 </div>
+              )}
+              {tutor.headline && (
+                <p className="text-sm text-muted-foreground/80 mt-2.5 leading-relaxed max-w-xl">
+                  {tutor.headline}
+                </p>
               )}
             </div>
           </div>
 
-          {/* Headline */}
-          {tutor.headline && (
-            <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{tutor.headline}</p>
-          )}
-
-          {/* Stats strip */}
+          {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              {
-                icon: Star,
-                value: (tutor.average_rating ?? 0).toFixed(1),
-                label: `${tutor.total_reviews ?? 0} ${t('reviewsCount')}`,
-                color: 'text-amber-400',
-                bg: 'bg-amber-500/12',
-              },
-              {
-                icon: Video,
-                value: String(tutor.total_lessons ?? 0),
-                label: t('totalLesson'),
-                color: 'text-blue-400',
-                bg: 'bg-blue-500/12',
-              },
-              {
-                icon: CheckCircle2,
-                value: `${tutor.completion_rate ?? 100}%`,
-                label: t('completion'),
-                color: 'text-emerald-400',
-                bg: 'bg-emerald-500/12',
-              },
-              {
-                icon: Clock,
-                value: `${tutor.response_time_minutes ?? '<5'} ${t('min')}`,
-                label: t('responseTime'),
-                color: 'text-violet-400',
-                bg: 'bg-violet-500/12',
-              },
-            ].map((stat) => (
-              <div key={stat.label} className={`rounded-xl ${stat.bg} px-3 py-2.5 flex items-center gap-2.5`}>
-                <stat.icon className={`h-4 w-4 ${stat.color} shrink-0`} />
-                <div>
-                  <p className="text-sm font-bold leading-tight">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className={cn('rounded-xl px-4 py-3 flex items-center gap-3', stat.glow)}
+              >
+                <stat.icon className={cn('h-5 w-5 shrink-0', stat.accent)} />
+                <div className="min-w-0">
+                  <p className="text-base font-bold leading-none">{stat.value}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1 truncate">{stat.label}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Teaching languages */}
+          {/* Languages */}
           {teachingLangs.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
+            <div className="flex flex-wrap gap-2 mt-5">
               {teachingLangs.map((lang: any) => (
-                <Badge key={lang.id} variant="secondary" className="gap-1.5 text-sm py-1">
-                  <span>{lang.flag_emoji}</span>
+                <Badge
+                  key={lang.id}
+                  variant="secondary"
+                  className="gap-1.5 text-sm py-1.5 px-3 bg-white/[0.05] border-white/[0.08] hover:bg-white/[0.08] transition-colors"
+                >
+                  <span className="text-base leading-none">{lang.flag_emoji}</span>
                   {lang.name_az}
                 </Badge>
               ))}
@@ -211,118 +233,93 @@ export default function TutorProfilePage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-5">
-        {/* Main content */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Video intro */}
+      {/* ─── Content + Sidebar ─── */}
+      <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
+        {/* Main */}
+        <div className="space-y-5">
+          {/* Video */}
           {tutor.video_intro_url && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
-                  <Play className="h-3 w-3 text-white" />
-                </div>
-                {t('videoIntro')}
-              </h2>
+            <ProfileSection icon={Play} title={t('videoIntro')}>
               <video
                 src={tutor.video_intro_url}
                 controls
-                className="w-full rounded-xl max-h-64 object-cover bg-black"
+                className="w-full rounded-xl aspect-video object-cover bg-black/50"
               />
-            </div>
+            </ProfileSection>
           )}
 
           {/* About */}
           {tutor.about && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
-                  <Users className="h-3 w-3 text-white" />
-                </div>
-                {t('about')}
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+            <ProfileSection icon={Users} title={t('about')}>
+              <p className="text-sm text-muted-foreground leading-[1.75] whitespace-pre-line">
                 {tutor.about}
               </p>
-            </div>
+            </ProfileSection>
           )}
 
           {/* Specializations */}
           {(tutor.specializations?.length ?? 0) > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
-                  <TrendingUp className="h-3 w-3 text-white" />
-                </div>
-                {t('specializations')}
-              </h2>
+            <ProfileSection icon={TrendingUp} title={t('specializations')}>
               <div className="flex flex-wrap gap-2">
                 {tutor.specializations!.map((spec) => (
                   <span
                     key={spec}
-                    className="text-sm px-3 py-1 rounded-full border border-border bg-muted/40 font-medium"
+                    className="text-sm px-3.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] font-medium text-foreground/80 hover:bg-white/[0.07] transition-colors"
                   >
                     {ts.has(spec) ? ts(spec) : spec}
                   </span>
                 ))}
               </div>
-            </div>
+            </ProfileSection>
           )}
 
           {/* Education */}
           {(tutor.education?.length ?? 0) > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
-                  <GraduationCap className="h-3 w-3 text-white" />
-                </div>
-                {t('education')}
-              </h2>
-              <ul className="space-y-2.5">
+            <ProfileSection icon={GraduationCap} title={t('education')}>
+              <ul className="space-y-3">
                 {tutor.education!.map((edu, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <span>{edu}</span>
+                  <li key={i} className="flex items-start gap-3 text-sm">
+                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-foreground/85">{edu}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </ProfileSection>
           )}
 
           {/* Certificates */}
           {(tutor.certificates?.length ?? 0) > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-3 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                  <Award className="h-3 w-3 text-white" />
-                </div>
-                {t('certificates')}
-              </h2>
+            <ProfileSection
+              icon={Award}
+              title={t('certificates')}
+              iconClassName="bg-gradient-to-br from-amber-500 to-orange-600"
+            >
               <div className="flex flex-wrap gap-2">
                 {tutor.certificates!.map((cert) => (
-                  <Badge key={cert} variant="secondary" className="gap-1.5 text-sm py-1">
-                    <Award className="h-3 w-3 text-amber-500" />
+                  <Badge
+                    key={cert}
+                    variant="secondary"
+                    className="gap-1.5 text-sm py-1.5 px-3 bg-amber-500/8 border-amber-500/15 text-foreground/85"
+                  >
+                    <Award className="h-3.5 w-3.5 text-amber-500" />
                     {cert}
                   </Badge>
                 ))}
               </div>
-            </div>
+            </ProfileSection>
           )}
 
-          {/* Availability schedule */}
+          {/* Weekly Schedule */}
           {availability.filter((a) => a.is_active).length > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-base font-bold mb-4 flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
-                  <CalendarDays className="h-3 w-3 text-white" />
-                </div>
-                {t('weeklySchedule')}
-              </h2>
+            <ProfileSection icon={CalendarDays} title={t('weeklySchedule')}>
               <AvailabilityGrid slots={availability.filter((a) => a.is_active)} />
-            </div>
+            </ProfileSection>
           )}
 
           {/* Reviews */}
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-2xl border border-white/[0.06] bg-card p-6">
             <TutorReviews
               tutorId={id}
               averageRating={tutor.average_rating ?? 0}
@@ -331,54 +328,66 @@ export default function TutorProfilePage() {
           </div>
         </div>
 
-        {/* Booking sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4 rounded-2xl border border-border bg-card overflow-hidden">
-            {/* Subscription header */}
-            <div className="gradient-bg px-5 py-4 text-white">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-extrabold">{t('subscriptionLesson')}</span>
+        {/* ─── Sidebar ─── */}
+        <div className="lg:sticky lg:top-4">
+          <div className="rounded-2xl border border-white/[0.06] bg-card overflow-hidden">
+            {/* Header */}
+            <div className="relative px-6 py-5">
+              <div className="absolute inset-0 gradient-bg opacity-90" />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'radial-gradient(ellipse 80% 100% at 100% 0%, oklch(0.5 0.2 270 / 0.35) 0%, transparent 60%)',
+                }}
+              />
+              <div className="relative z-10">
+                <span className="text-xl font-extrabold text-white">{t('subscriptionLesson')}</span>
+                <p className="text-xs text-white/65 mt-1.5 leading-relaxed">
+                  {t('subscriptionDesc')}
+                </p>
               </div>
-              <p className="text-xs text-white/80 mt-1">
-                {t('subscriptionDesc')}
-              </p>
             </div>
 
-            <div className="p-5 space-y-4">
-              {/* Mini stats */}
-              <div className="grid grid-cols-2 gap-2.5">
+            <div className="p-5 space-y-5">
+              {/* Mini Stats */}
+              <div className="grid grid-cols-3 gap-2">
                 {[
                   { label: t('lessonsStat'), value: tutor.total_lessons ?? 0 },
                   { label: t('reviewsStat'), value: tutor.total_reviews ?? 0 },
                   { label: t('experienceStat'), value: `${tutor.years_experience ?? 0} ${t('yearsUnit')}` },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-muted/50 rounded-xl p-3 text-center">
-                    <p className="text-base font-extrabold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{stat.label}</p>
+                  <div key={stat.label} className="rounded-xl bg-white/[0.04] ring-1 ring-white/[0.06] p-3 text-center">
+                    <p className="text-lg font-extrabold leading-none">{stat.value}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1.5">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
-              <Separator />
+              <Separator className="bg-white/[0.06]" />
 
-              {/* CTA buttons */}
+              {/* CTAs */}
               <div className="space-y-2.5">
                 <Button
-                  className="w-full rounded-xl gradient-bg border-0 text-white h-11 font-semibold shadow-md btn-glow"
+                  className="w-full rounded-xl gradient-bg border-0 text-white h-11 font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/25 hover:scale-[1.01] transition-all duration-200"
                   onClick={() => setBookingOpen(true)}
                 >
                   {t('bookLesson')}
                 </Button>
-                <Button variant="outline" className="w-full rounded-xl h-11">
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl h-11 border-white/[0.08] hover:bg-white/[0.04]"
+                >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   {t('sendMessage')}
                 </Button>
               </div>
 
               {tutor.instant_booking && (
-                <div className="flex items-start gap-2 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
-                  <Zap className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                  <span>{t('instantSupports')}</span>
+                <div className="flex items-start gap-2.5 text-xs bg-emerald-500/8 border border-emerald-500/15 rounded-xl p-3.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <Zap className="h-3 w-3 text-emerald-400" />
+                  </div>
+                  <span className="text-emerald-300/90 leading-relaxed">{t('instantSupports')}</span>
                 </div>
               )}
             </div>
@@ -396,6 +405,36 @@ export default function TutorProfilePage() {
     </div>
   )
 }
+
+
+/* ─── Reusable Section Wrapper ─── */
+
+function ProfileSection({
+  icon: Icon,
+  title,
+  iconClassName,
+  children,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  iconClassName?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-2xl border border-white/[0.06] bg-card p-6">
+      <h2 className="text-base font-bold mb-4 flex items-center gap-2.5">
+        <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center', iconClassName ?? 'gradient-bg')}>
+          <Icon className="h-3.5 w-3.5 text-white" />
+        </div>
+        {title}
+      </h2>
+      {children}
+    </div>
+  )
+}
+
+
+/* ─── Availability Grid ─── */
 
 const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 const DAY_KEYS: Record<string, string> = {
@@ -416,10 +455,18 @@ function AvailabilityGrid({ slots }: { slots: any[] }) {
         const hasSlots = daySlots.length > 0
         return (
           <div key={day} className="flex flex-col items-center gap-1.5">
-            <span className={`text-[11px] font-semibold ${hasSlots ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+            <span className={cn(
+              'text-[11px] font-semibold tracking-wide',
+              hasSlots ? 'text-foreground' : 'text-muted-foreground/40'
+            )}>
               {td(DAY_KEYS[day])}
             </span>
-            <div className={`w-full rounded-lg p-1.5 min-h-[52px] flex flex-col gap-1 ${hasSlots ? 'bg-primary/10 border border-primary/20' : 'bg-white/4 border border-border/30'}`}>
+            <div className={cn(
+              'w-full rounded-lg p-1.5 min-h-[52px] flex flex-col gap-1 transition-colors',
+              hasSlots
+                ? 'bg-primary/8 ring-1 ring-primary/20'
+                : 'bg-white/[0.02] ring-1 ring-white/[0.04]'
+            )}>
               {daySlots.map((slot, i) => (
                 <span key={i} className="text-[9px] font-medium text-primary text-center leading-tight">
                   {slot.start_time.slice(0, 5)}–{slot.end_time.slice(0, 5)}
