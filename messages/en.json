@@ -59,7 +59,8 @@
     "copied": "Copied!",
     "copy": "Copy",
     "share": "Share",
-    "download": "Download"
+    "download": "Download",
+    "underConstruction": "This section is under construction"
   },
   "nav": {
     "home": "Home",
@@ -363,7 +364,9 @@
       "reviewsStat": "Reviews",
       "experienceStat": "Experience",
       "yearsUnit": "yr",
-      "instantSupports": "This tutor supports instant booking — your lesson is confirmed immediately"
+      "instantSupports": "This tutor supports instant booking — your lesson is confirmed immediately",
+      "instantBadge": "Instant booking",
+      "videoIntro": "Video intro"
     },
     "comingTitle": "Opening soon",
     "comingDesc": "Tutors are completing registration. Check back shortly — the first profiles go live soon.",
@@ -388,7 +391,8 @@
       "fri": "Fri",
       "sat": "Sat",
       "sun": "Sun"
-    }
+    },
+    "notFound2": "Tutor not found"
   },
   "booking": {
     "title": "Book a lesson",
@@ -923,18 +927,126 @@
       "faq4a": "Lesson credits reset each month. It is recommended to use all lessons before the month ends."
     },
     "howItWorks": {
-      "title": "How Nativly works",
-      "subtitle": "Simple steps to start learning"
+      "title": "How it works",
+      "subtitle": "Start learning a language in 4 steps — you’ll feel the difference from the first lesson",
+      "whyTitle": "Why Nativly?",
+      "ctaTitle": "Ready? Let’s start!",
+      "ctaSubtitle": "Your first trial lesson is just $5 — risk-free.",
+      "ctaButton": "Start now",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Sign up",
+          "desc": "Create a free account. Name, email, your level — takes 2 minutes.",
+          "detail": "You can sign up with your Google account in one click. No credit card needed."
+        },
+        {
+          "number": "02",
+          "title": "Choose a tutor",
+          "desc": "Filter by language, price, rating and specialization.",
+          "detail": "Read each tutor’s profile, intro video and reviews. Pick the one that fits you."
+        },
+        {
+          "number": "03",
+          "title": "Book a time",
+          "desc": "Pick a time that suits you and book a 30- or 60-minute lesson.",
+          "detail": "Pay just $5 for a trial lesson. Continue if you like it, get your money back if you don’t."
+        },
+        {
+          "number": "04",
+          "title": "Join the lesson",
+          "desc": "High-quality video call, lesson materials and notes.",
+          "detail": "Join straight from your browser — no software to install."
+        }
+      ],
+      "features": [
+        "No hidden fees",
+        "Free cancellation 24h before",
+        "Join from any device",
+        "Automatic lesson notes",
+        "Homework + materials",
+        "30-day money-back guarantee"
+      ]
     },
     "becomeTutor": {
-      "title": "Become a tutor",
-      "subtitle": "Share your knowledge and earn money",
+      "metaTitle": "Become a tutor — Nativly",
+      "metaDesc": "Register as a tutor on Nativly. Flexible hours, high earnings, a base of 5000+ students.",
+      "badge": "500+ tutors already with us",
+      "heroTitle1": "Start earning as",
+      "heroTitleHighlight": "a tutor",
+      "heroSubtitle": "With Nativly, get flexible working hours, high earning potential and access to a base of 5000+ students.",
       "applyNow": "Apply now",
-      "benefits": "Benefits",
-      "benefit1": "Set your own hours",
-      "benefit2": "Teach from anywhere",
-      "benefit3": "Get paid regularly",
-      "benefit4": "Access to students platform-wide"
+      "askQuestion": "Ask a question",
+      "apply": "Apply",
+      "earningsTitle": "Monthly earning potential",
+      "earningsNote": "* Based on platform-managed prices",
+      "earningPartLabel": "Part-time (10 h/week)",
+      "earningFullLabel": "Full-time (25 h/week)",
+      "earningExpertLabel": "Expert (40+ h/week)",
+      "whyTitle": "Why Nativly?",
+      "whySubtitle": "We work to create the best conditions for our tutors",
+      "processTitle": "How do you start?",
+      "processSubtitle": "Simple 4 steps — complete your application in 10 minutes",
+      "requirementsTitle": "Requirements",
+      "requirementsSubtitle": "If you meet the conditions below, you can apply.",
+      "ctaTitle1": "Ready?",
+      "ctaHighlight": "Start!",
+      "ctaSubtitle": "The application takes 5 minutes. Our team replies within 1–3 business days.",
+      "benefits": [
+        {
+          "title": "High Earnings",
+          "desc": "A fixed payout for every lesson you teach. Monthly earning potential of $500–$3000."
+        },
+        {
+          "title": "Flexible Schedule",
+          "desc": "Plan your own time. You can work 5 hours or 40 hours a week."
+        },
+        {
+          "title": "Large Student Base",
+          "desc": "5000+ active students are waiting for you. Start quickly after registration."
+        },
+        {
+          "title": "Platform Support",
+          "desc": "Technical support, payment system, lesson scheduling — all ready."
+        },
+        {
+          "title": "Secure Payments",
+          "desc": "Your earnings are transferred to your account automatically every month. No hidden fees."
+        },
+        {
+          "title": "Career Growth",
+          "desc": "As your rating grows, you attract more students. Success is in your hands."
+        }
+      ],
+      "requirements": [
+        "Native-level language proficiency (C2 or native)",
+        "Teaching experience (TEFL/TESOL/CELTA certificate preferred)",
+        "Stable internet, webcam and microphone",
+        "Regular working hours (minimum 5 hours per week)",
+        "Positive communication skills"
+      ],
+      "process": [
+        {
+          "step": "01",
+          "title": "Apply",
+          "desc": "Fill out the online form — just 5 minutes."
+        },
+        {
+          "step": "02",
+          "title": "Interview",
+          "desc": "A 20-minute video interview with our team."
+        },
+        {
+          "step": "03",
+          "title": "Trial lesson",
+          "desc": "An evaluated trial lesson with a real student."
+        },
+        {
+          "step": "04",
+          "title": "Start teaching!",
+          "desc": "Complete your profile and start getting students."
+        }
+      ]
     },
     "faq": {
       "title": "Frequently Asked Questions",
@@ -1216,5 +1328,194 @@
       "marketingLabel": "News emails",
       "marketingDesc": "Nativly news and offers"
     }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: January 2026",
+    "intro": "This Privacy Policy explains how your personal data is collected, used and protected when you use the Nativly platform (nativly.az). By using the platform you accept this policy.",
+    "sections": [
+      {
+        "title": "1. Data collected",
+        "content": "During registration we collect personal data such as first name, last name, email address and date of birth. While using the platform, lesson history, payment information (encrypted via Stripe) and communication records are stored. Technical data (IP address, browser type, device info) is collected for analytics."
+      },
+      {
+        "title": "2. Use of data",
+        "content": "Collected data is used to provide the service, match partners, process payments, send service notifications, improve platform quality and fulfil legal obligations. Data is never sold to any third party."
+      },
+      {
+        "title": "3. Data sharing",
+        "content": "Data may be shared only: (a) with service providers (Supabase, Stripe, LiveKit) to the extent necessary, (b) with government authorities upon lawful request, (c) with your explicit consent. Third-party tutors only access student data from their own lessons."
+      },
+      {
+        "title": "4. Data retention",
+        "content": "Personal data is kept until the account is deleted. Payment data is kept for 7 years in accordance with financial legislation. Video recordings (when agreed) are deleted after 7 days."
+      },
+      {
+        "title": "5. Cookies",
+        "content": "The platform uses cookies for session management, remembering user preferences and analytics. You can disable cookies in your browser settings, but this may affect some features."
+      },
+      {
+        "title": "6. Children's privacy",
+        "content": "The platform does not collect personal data from children under 13. Users aged 13–18 may register with parental consent."
+      },
+      {
+        "title": "7. Your rights",
+        "content": "You have the following rights regarding your data: to access, correct, request deletion, object to processing, and portability. To exercise these rights, write to info@nativly.az."
+      },
+      {
+        "title": "8. Contact",
+        "content": "For questions about this privacy policy: info@nativly.az | Nativly LLC, Baku, Azerbaijan"
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: January 2026",
+    "intro": "Welcome to the Nativly platform. The following terms govern the use of the platform. Please read them carefully.",
+    "contact": "For questions:",
+    "sections": [
+      {
+        "title": "1. General provisions",
+        "content": "These Terms of Service govern the legal relationship between the Nativly platform (nativly.az) and the user. By using the platform you are deemed to accept these terms. If you are under 18, parental consent is required."
+      },
+      {
+        "title": "2. Account creation",
+        "content": "You must provide accurate information to create an account. Keeping your account credentials confidential is your responsibility. You may not transfer your account to a third party. We reserve the right to suspend accounts when suspicious activity is detected."
+      },
+      {
+        "title": "3. Booking lessons",
+        "content": "When you book a lesson, a certain amount is reserved. The booking takes effect once confirmed by the tutor. Tutors with instant booking enabled are confirmed automatically."
+      },
+      {
+        "title": "4. Payment terms",
+        "content": "All payments are processed via Stripe. After purchasing a package, cancellation is possible within 30 days (for unused lessons). Payment data is not stored on our platform."
+      },
+      {
+        "title": "5. Cancellation policy",
+        "content": "24+ hours before the lesson: full refund. 12–24 hours: 50% refund. Less than 12 hours: no refund. If the tutor cancels: full refund + compensation. In case of a technical problem (on our side): full refund."
+      },
+      {
+        "title": "6. Tutor obligations",
+        "content": "Tutors are obliged to: provide accurate information, manage their schedule, join lessons on time, and prepare quality teaching materials. The tutor–student relationship must be maintained through the platform."
+      },
+      {
+        "title": "7. Student obligations",
+        "content": "Students are obliged to: leave honest reviews, treat tutors respectfully, and join lessons on time. Any abuse detected may result in account closure."
+      },
+      {
+        "title": "8. Restrictions",
+        "content": "The following are prohibited on the platform: illegal activity, deceiving other users, sending spam, interfering with the platform’s technical infrastructure, and bypassing the platform by paying tutors directly."
+      },
+      {
+        "title": "9. Limitation of liability",
+        "content": "Nativly is not liable for damages arising from tutor–student relationships. Compensation for the platform’s technical failures is in the form of lesson credit. Maximum liability is limited to the amount paid in the last 3 months."
+      },
+      {
+        "title": "10. Changes to terms",
+        "content": "When these terms change, registered users are notified by email. New terms take effect after 30 days. If you do not agree with the terms, you may delete your account."
+      }
+    ]
+  },
+  "tutorOnboarding": {
+    "badge": "Tutor registration",
+    "joinTitle": "Join as a tutor",
+    "stepTitles": [
+      "Account details",
+      "Which languages do you teach?",
+      "Your profile",
+      "Education & Certificates",
+      "Intro video",
+      "Work schedule",
+      "Final review"
+    ],
+    "stepSubs": [
+      "Used to sign in",
+      "Choose one or more languages",
+      "Students will see this information",
+      "Optional, but strengthens your profile",
+      "So students get to know you (optional)",
+      "Which days and until what time do you work?",
+      "Check your details and submit"
+    ],
+    "stepNames": [
+      "Account",
+      "Languages",
+      "Profile",
+      "Education",
+      "Video",
+      "Schedule",
+      "Submit"
+    ],
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "phone": "Phone",
+    "city": "City",
+    "selectedLevels": "Level in selected languages",
+    "levelNative": "Native",
+    "levelAdvanced": "Advanced",
+    "levelUpper": "Upper intermediate",
+    "levelIntermediate": "Intermediate",
+    "levelElementary": "Beginner",
+    "headline": "Headline",
+    "headlinePlaceholder": "IELTS Expert | Certified English Teacher",
+    "chars": "chars",
+    "about": "About me",
+    "aboutPlaceholder": "Write about yourself in detail — your experience, method, why you became a tutor...",
+    "specializations": "Specializations",
+    "education": "Education",
+    "eduPlaceholder": "BSc Information Technology, BSU",
+    "addMore": "+ Add",
+    "certificates": "Certificates (file)",
+    "fileSelect": "Select a file",
+    "uploading": "Uploading...",
+    "fileHint": "PDF, JPG, PNG — max 5MB",
+    "fileUploadedN": "File {n} uploaded",
+    "accountFirst": "Create an account first to upload files (step 1)",
+    "videoLink": "Video link (YouTube / Vimeo)",
+    "videoLinkHint": "A 1–2 minute intro — who you are, what you teach and your method.",
+    "or": "or",
+    "uploadVideo": "Upload a video file",
+    "videoSelect": "Select a video",
+    "videoHint": "MP4, MOV, WebM — max 100MB",
+    "videoAccountFirst": "Create an account first to upload a video (step 1)",
+    "videoPreview": "Video preview",
+    "enterVideoUrl": "Enter a video URL",
+    "instantBooking": "Instant booking",
+    "instantBookingDesc": "Students can book a time without prior approval",
+    "priceNote": "Prices are managed by the platform — you do not set prices. You receive a fixed payout for each lesson.",
+    "closed": "Closed",
+    "rName": "Name",
+    "rEmail": "Email",
+    "rCity": "City",
+    "rLanguages": "Languages",
+    "rHeadline": "Headline",
+    "rSpecializations": "Specializations",
+    "rVideo": "Video",
+    "rVideoAdded": "Added",
+    "rInstant": "Instant",
+    "rActive": "On",
+    "rInactive": "Off",
+    "rWorkDays": "Work days",
+    "pendingApproval": "Awaiting approval",
+    "pendingApprovalDesc": "Your application will be reviewed by an admin within 1–3 business days. You will receive an email about the result.",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "regFailed": "Registration failed",
+    "error": "An error occurred",
+    "selectLang": "Select at least one language",
+    "enterHeadline": "Enter a headline",
+    "fillAbout": "Fill in the About section",
+    "selectWorkDay": "Select at least one work day",
+    "fileUploaded": "File uploaded",
+    "fileFailed": "File upload failed",
+    "videoUploaded": "Video uploaded",
+    "videoFailed": "Video upload failed",
+    "passwordMin": "Password must be at least 6 characters",
+    "passwordsMismatch": "Passwords do not match"
   }
 }

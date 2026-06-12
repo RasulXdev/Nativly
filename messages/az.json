@@ -59,7 +59,8 @@
     "copied": "Kopyalandı!",
     "copy": "Kopyala",
     "share": "Paylaş",
-    "download": "Yüklə"
+    "download": "Yüklə",
+    "underConstruction": "Bu bölmə hazırlanır"
   },
   "nav": {
     "home": "Ana səhifə",
@@ -363,7 +364,9 @@
       "reviewsStat": "Rəylər",
       "experienceStat": "Təcrübə",
       "yearsUnit": "il",
-      "instantSupports": "Bu müəllim ani rezervi dəstəkləyir — dərsiniz dərhal təsdiqlənir"
+      "instantSupports": "Bu müəllim ani rezervi dəstəkləyir — dərsiniz dərhal təsdiqlənir",
+      "instantBadge": "Ani rezerv",
+      "videoIntro": "Video tanıtım"
     },
     "comingTitle": "Tezliklə açılır",
     "comingDesc": "Müəllimlər qeydiyyatı tamamlayır. Bir azdan yenidən yoxla — ilk profillər tezliklə yayımlanır.",
@@ -388,7 +391,8 @@
       "fri": "Cüm",
       "sat": "Şnb",
       "sun": "Baz"
-    }
+    },
+    "notFound2": "Müəllim tapılmadı"
   },
   "booking": {
     "title": "Dərs rezerv et",
@@ -923,18 +927,126 @@
       "faq4a": "Hər ay dərs hüququ yenilənir."
     },
     "howItWorks": {
-      "title": "Nativly necə işləyir",
-      "subtitle": "Öyrənməyə başlamaq üçün asan addımlar"
+      "title": "Necə işləyir?",
+      "subtitle": "4 addımda dil öyrənməyə başla — ilk dərsdən fərq hiss edəcəksən",
+      "whyTitle": "Niyə Nativly?",
+      "ctaTitle": "Hazırsansa, başla!",
+      "ctaSubtitle": "İlk sınaq dərsin cəmi $5 — riskisiz.",
+      "ctaButton": "İndi başla",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Qeydiyyatdan keç",
+          "desc": "Pulsuz hesab yarat. Ad, email, dil səviyyən — 2 dəqiqə çəkir.",
+          "detail": "Google hesabınla bir klikdə qeydiyyatdan keçə bilərsiniz. Heç bir kredit kartı lazım deyil."
+        },
+        {
+          "number": "02",
+          "title": "Müəllim seç",
+          "desc": "Dil, qiymət, reytinq, ixtisas üzrə filtr et.",
+          "detail": "Hər müəllimin profilini, intro videosunu, rəylərini oxu. Sənə uyğun olanı seç."
+        },
+        {
+          "number": "03",
+          "title": "Vaxt rezerv et",
+          "desc": "Sənə uyğun vaxtı seç, 30 və ya 60 dəq dərs sifariş et.",
+          "detail": "Sınaq dərsi üçün cəmi $5 ödə. Bəyənsən davam et, bəyənməsən — pul geri."
+        },
+        {
+          "number": "04",
+          "title": "Dərsə qoşul",
+          "desc": "Yüksək keyfiyyətli video zəng, dərs materialları, qeydlər.",
+          "detail": "Brauzerindən birbaşa qoşul — heç bir proqram yükləmə lazım deyil."
+        }
+      ],
+      "features": [
+        "Heç bir gizli ödəniş yoxdur",
+        "24 saat əvvəl pulsuz ləğvetmə",
+        "İstənilən cihazdan qoşulma",
+        "Avtomatik dərs qeydləri",
+        "Ev tapşırığı + materiallar",
+        "30 gün pul-geri zəmanəti"
+      ]
     },
     "becomeTutor": {
-      "title": "Müəllim ol",
-      "subtitle": "Biliklerinizi paylaşın və pul qazanın",
+      "metaTitle": "Müəllim ol — Nativly",
+      "metaDesc": "Nativly-də müəllim olaraq qeydiyyatdan keçin. Elastik iş saatları, yüksək qazanc, 5000+ tələbə bazası.",
+      "badge": "500+ müəllim artıq bizimlə",
+      "heroTitle1": "Müəllim olaraq",
+      "heroTitleHighlight": "qazanmağa başla",
+      "heroSubtitle": "Nativly ilə elastik iş saatları, yüksək qazanc potensialı və 5000+ tələbə bazasına çıxış əldə edin.",
       "applyNow": "İndi müraciət et",
-      "benefits": "Üstünlüklər",
-      "benefit1": "Öz iş saatlarınızı təyin edin",
-      "benefit2": "İstənilən yerdən dərs keçin",
-      "benefit3": "Mütəmadi ödəniş alın",
-      "benefit4": "Platform boyu tələbələrə çıxış"
+      "askQuestion": "Sual ver",
+      "apply": "Müraciət et",
+      "earningsTitle": "Aylıq qazanc potensialı",
+      "earningsNote": "* Platform tərəfindən idarə olunan qiymətlər əsasında",
+      "earningPartLabel": "Part-time (10 saat/həftə)",
+      "earningFullLabel": "Full-time (25 saat/həftə)",
+      "earningExpertLabel": "Ekspert (40+ saat/həftə)",
+      "whyTitle": "Niyə Nativly?",
+      "whySubtitle": "Müəllimlərimizə ən yaxşı şəraiti yaratmaq üçün çalışırıq",
+      "processTitle": "Necə başlayırsan?",
+      "processSubtitle": "Sadə 4 addım — 10 dəqiqəyə müraciətini tamamla",
+      "requirementsTitle": "Tələblər",
+      "requirementsSubtitle": "Aşağıdakı şərtlərə cavab verirsinizsə, müraciət edə bilərsiniz.",
+      "ctaTitle1": "Hazırsan?",
+      "ctaHighlight": "Başla!",
+      "ctaSubtitle": "Müraciət prosesi 5 dəqiqə çəkir. Komandamız 1-3 iş günü ərzində cavab verir.",
+      "benefits": [
+        {
+          "title": "Yüksək Qazanc",
+          "desc": "Hər keçirdiyiniz dərs üçün sabit ödəniş. Aylıq $500–$3000 qazanc potensialı."
+        },
+        {
+          "title": "Elastik Cədvəl",
+          "desc": "Öz vaxtını özün planla. Həftədə 5 saat da, 40 saat da işləyə bilərsiniz."
+        },
+        {
+          "title": "Geniş Tələbə Bazası",
+          "desc": "5000+ aktiv tələbə sizi gözləyir. Qeydiyyatdan sonra sürətlə başlayın."
+        },
+        {
+          "title": "Platforma Dəstəyi",
+          "desc": "Texniki dəstək, ödəniş sistemi, dərs planlaşdırma — hamısı hazırdır."
+        },
+        {
+          "title": "Təhlükəsiz Ödəniş",
+          "desc": "Qazancınız hər ay avtomatik hesabınıza köçürülür. Gizli ödəniş yoxdur."
+        },
+        {
+          "title": "Karyera İnkişafı",
+          "desc": "Reytinqiniz artdıqca daha çox tələbə cəlb edirsiniz. Uğur sizin əlinizdədir."
+        }
+      ],
+      "requirements": [
+        "Native səviyyəsində dil biliyi (C2 və ya native)",
+        "Dərs vermə təcrübəsi (TEFL/TESOL/CELTA sertifikatı üstünlükdür)",
+        "Sabit internet, vebkamera və mikrofon",
+        "Müntəzəm iş saatları (həftədə minimum 5 saat)",
+        "Müsbət ünsiyyət bacarıqları"
+      ],
+      "process": [
+        {
+          "step": "01",
+          "title": "Müraciət et",
+          "desc": "Onlayn formu doldurun — cəmi 5 dəqiqə."
+        },
+        {
+          "step": "02",
+          "title": "Müsahibə keç",
+          "desc": "Komandamızla 20 dəqiqəlik video müsahibə."
+        },
+        {
+          "step": "03",
+          "title": "Sınaq dərsi ver",
+          "desc": "Real tələbə ilə qiymətləndirilmiş sınaq dərsi."
+        },
+        {
+          "step": "04",
+          "title": "Dərslərə başla!",
+          "desc": "Profilinizi doldurun, tələbə almağa başlayın."
+        }
+      ]
     },
     "faq": {
       "title": "Tez-tez verilən suallar",
@@ -1216,5 +1328,194 @@
       "marketingLabel": "Xəbər emailləri",
       "marketingDesc": "Nativly yenilikləri və təklifləri"
     }
+  },
+  "privacy": {
+    "title": "Gizlilik Siyasəti",
+    "lastUpdated": "Son yenilənmə: Yanvar 2026",
+    "intro": "Bu Gizlilik Siyasəti, Nativly platformasını (nativly.az) istifadə etdikdə şəxsi məlumatlarınızın necə toplanıldığını, istifadə edildiyini və qorunduğunu izah edir. Platformanı istifadə etməklə bu siyasəti qəbul etdiyinizi bildirirsiniz.",
+    "sections": [
+      {
+        "title": "1. Toplanılan məlumatlar",
+        "content": "Qeydiyyat zamanı ad, soyad, email ünvanı, doğum tarixi kimi şəxsi məlumatlar toplanır. Platforma istifadəsi zamanı dərs tarixçəsi, ödəniş məlumatları (Stripe vasitəsilə şifrələnmiş) və ünsiyyət qeydləri saxlanılır. Texniki məlumatlar (IP ünvanı, brauzer növü, cihaz məlumatı) analitika məqsədilə toplanır."
+      },
+      {
+        "title": "2. Məlumatların istifadəsi",
+        "content": "Toplanılan məlumatlar xidmət göstərilməsi, tərəfdaşların uyğunlaşdırılması, ödənişlərin işlənməsi, xidmət bildirişlərinin göndərilməsi, platforma keyfiyyətinin yaxşılaşdırılması və qanuni öhdəliklərin yerinə yetirilməsi üçün istifadə olunur. Məlumatlar heç bir üçüncü şəxsə satılmır."
+      },
+      {
+        "title": "3. Məlumatların paylaşılması",
+        "content": "Məlumatlar yalnız: (a) xidmət provayderlər (Supabase, Stripe, LiveKit) ilə lazımi həddə, (b) qanuni tələb halında dövlət orqanları ilə, (c) sizin açıq razılığınızla paylaşıla bilər. Üçüncü tərəf müəllimlər yalnız öz dərslərindəki tələbə məlumatlarına çıxış əldə edir."
+      },
+      {
+        "title": "4. Məlumatların saxlanılması",
+        "content": "Şəxsi məlumatlar hesab silinənə qədər saxlanılır. Ödəniş məlumatları maliyyə qanunvericiliyinə uyğun olaraq 7 il saxlanılır. Video çəkilişlər (razılaşma olduqda) 7 gün sonra silinir."
+      },
+      {
+        "title": "5. Çərəzlər (Cookies)",
+        "content": "Platforma sessiya idarəsi, istifadəçi seçimlərinin yadda saxlanması və analitika üçün çərəzlərdən istifadə edir. Brauzer tənzimləmələrindən çərəzləri söndürə bilərsiniz, lakin bu bəzi funksiyalara təsir edə bilər."
+      },
+      {
+        "title": "6. Uşaqların məxfiliyi",
+        "content": "Platforma 13 yaşından kiçik uşaqlardan şəxsi məlumat toplamır. 13–18 yaş arası istifadəçilər valideyn icazəsi ilə qeydiyyatdan keçə bilər."
+      },
+      {
+        "title": "7. Hüquqlarınız",
+        "content": "Məlumatlarınıza dair aşağıdakı hüquqlara sahibsiniz: məlumatlara baxmaq, düzəliş etmək, silmək tələb etmək, işlənməyə etiraz etmək, daşıma hüququ. Bu hüquqları həyata keçirmək üçün info@nativly.az ünvanına yazın."
+      },
+      {
+        "title": "8. Əlaqə",
+        "content": "Gizlilik siyasəti ilə bağlı suallarınız üçün: info@nativly.az | Nativly MMC, Bakı, Azərbaycan"
+      }
+    ]
+  },
+  "terms": {
+    "title": "İstifadə Şərtləri",
+    "lastUpdated": "Son yenilənmə: Yanvar 2026",
+    "intro": "Nativly platformasına xoş gəlmisiniz. Aşağıdakı şərtlər platformanın istifadəsini tənzimləyir. Xahiş edirik bu şərtləri diqqətlə oxuyun.",
+    "contact": "Suallarınız üçün:",
+    "sections": [
+      {
+        "title": "1. Ümumi müddəalar",
+        "content": "Bu İstifadə Şərtləri, Nativly platforması (nativly.az) ilə istifadəçi arasındakı hüquqi münasibəti tənzimləyir. Platformanı istifadə etməklə bu şərtləri qəbul etmiş sayılırsınız. 18 yaşdan kiçiksinizsə, valideyn icazəsi tələb olunur."
+      },
+      {
+        "title": "2. Hesab yaradılması",
+        "content": "Hesab yaratmaq üçün düzgün məlumatlar vermək məcburidir. Hesab məlumatlarınızın gizliliyini qorumaq sizin məsuliyyətinizdədir. Hesabınızı üçüncü şəxsə verə bilməzsiniz. Şübhəli fəaliyyət aşkar edildikdə hesabı dondurma hüququnu saxlayırıq."
+      },
+      {
+        "title": "3. Dərs sifariş etmə",
+        "content": "Dərs sifariş etdikdə müəyyən məbləğ tutulur. Müəllim tərəfindən təsdiq olunduqda sifariş qüvvəyə minir. Ani rezervasiya aktiv müəllimlər üçün avtomatik təsdiq alınır."
+      },
+      {
+        "title": "4. Ödəniş şərtləri",
+        "content": "Bütün ödənişlər Stripe vasitəsilə həyata keçirilir. Paket alındıqdan sonra ləğvetmə 30 gün ərzində mümkündür (istifadə olunmamış dərslər üçün). Ödəniş məlumatları platformamızda saxlanılmır."
+      },
+      {
+        "title": "5. Ləğvetmə siyasəti",
+        "content": "Dərsdən 24+ saat əvvəl: tam geri qaytarma. 12–24 saat: 50% geri qaytarma. 12 saatdan az: geri qaytarma yoxdur. Müəllim ləğv edərsə: tam geri qaytarma + kompensasiya. Texniki problem olduqda (platformamızdan asılı): tam geri qaytarma."
+      },
+      {
+        "title": "6. Müəllim öhdəlikləri",
+        "content": "Müəllimlər: doğru məlumat vermək, cədvəli idarə etmək, dərslərə vaxtında qoşulmaq, keyfiyyətli tədris materialı hazırlamaq öhdəliyindədirlər. Müəllim-tələbə münasibəti platforma vasitəsilə saxlanılmalıdır."
+      },
+      {
+        "title": "7. Tələbə öhdəlikləri",
+        "content": "Tələbələr: dürüst rəy vermək, müəllimlərə hörmətli davranmaq, vaxtında dərslərə qoşulmaq öhdəliyindədirlər. Hər hansı sui-istifadə aşkar edilərsə hesab bağlana bilər."
+      },
+      {
+        "title": "8. Məhdudiyyətlər",
+        "content": "Platformadan aşağıdakılar yasaqdır: qeyri-qanuni fəaliyyət, başqa istifadəçiləri aldatmaq, spam göndərmək, platformanın texniki infrastrukturuna müdaxilə etmək, müəllimlərə birbaşa ödəniş edərək platformanı bypass etmək."
+      },
+      {
+        "title": "9. Məsuliyyətin məhdudlaşdırılması",
+        "content": "Nativly, müəllim-tələbə münasibətlərindən yaranan zərərə görə məsuliyyət daşımır. Platformanın texniki nasazlıqları üçün kompensasiya dərs krediti şəklindədir. Maksimum məsuliyyət son 3 aylıq ödəniş məbləği ilə məhdudlaşır."
+      },
+      {
+        "title": "10. Şərtlərin dəyişdirilməsi",
+        "content": "Bu şərtlər dəyişdirildikdə qeydiyyatlı istifadəçilərə email bildirişi göndərilir. Yeni şərtlər 30 gün sonra qüvvəyə minir. Şərtlərlə razılaşmasanız, hesabınızı silə bilərsiniz."
+      }
+    ]
+  },
+  "tutorOnboarding": {
+    "badge": "Müəllim qeydiyyatı",
+    "joinTitle": "Müəllim kimi qoşul",
+    "stepTitles": [
+      "Hesab məlumatları",
+      "Hansı dilləri öyrədirsiz?",
+      "Profiliniz",
+      "Təhsil və Sertifikatlar",
+      "Təqdimat videosu",
+      "İş cədvəli",
+      "Son nəzərdən keçirmə"
+    ],
+    "stepSubs": [
+      "Giriş üçün istifadə ediləcək",
+      "Bir və ya bir neçə dil seçin",
+      "Tələbələr bu məlumatları görəcək",
+      "İxtiyari, lakin profili gücləndirir",
+      "Tələbələrin sizi tanıması üçün (ixtiyari)",
+      "Hansı günlər, neçəyə qədər işləyirsiniz?",
+      "Məlumatlarınızı yoxlayın və göndərin"
+    ],
+    "stepNames": [
+      "Hesab",
+      "Dillər",
+      "Profil",
+      "Təhsil",
+      "Video",
+      "Cədvəl",
+      "Göndər"
+    ],
+    "fullName": "Ad Soyad",
+    "fullNamePlaceholder": "Adınız Soyadınız",
+    "email": "Email",
+    "password": "Şifrə",
+    "confirmPassword": "Şifrəni təsdiqlə",
+    "phone": "Telefon",
+    "city": "Şəhər",
+    "selectedLevels": "Seçilmiş dillərdə səviyyə",
+    "levelNative": "Ana dili",
+    "levelAdvanced": "Təkmilləşmiş",
+    "levelUpper": "Yuxarı orta",
+    "levelIntermediate": "Orta",
+    "levelElementary": "Başlanğıc",
+    "headline": "Başlıq",
+    "headlinePlaceholder": "IELTS Expert | Certified English Teacher",
+    "chars": "simvol",
+    "about": "Haqqımda",
+    "aboutPlaceholder": "Özünüz haqqında ətraflı yazın — təcrübəniz, metod, niyə müəllim olduğunuz...",
+    "specializations": "İxtisaslar",
+    "education": "Təhsil",
+    "eduPlaceholder": "BSc İnformasiya Texnologiyaları, BDU",
+    "addMore": "+ Əlavə et",
+    "certificates": "Sertifikatlar (fayl)",
+    "fileSelect": "Fayl seçin",
+    "uploading": "Yüklənir...",
+    "fileHint": "PDF, JPG, PNG — maks. 5MB",
+    "fileUploadedN": "Fayl {n} yükləndi",
+    "accountFirst": "Fayl yükləmək üçün əvvəlcə hesab yaradın (addım 1)",
+    "videoLink": "Video link (YouTube / Vimeo)",
+    "videoLinkHint": "1-2 dəqiqəlik təqdimat — kim olduğunuz, nə öyrətdiyiniz və metodunuz haqqında.",
+    "or": "və ya",
+    "uploadVideo": "Video faylı yüklə",
+    "videoSelect": "Video seçin",
+    "videoHint": "MP4, MOV, WebM — maks. 100MB",
+    "videoAccountFirst": "Video yükləmək üçün əvvəlcə hesab yaradın (addım 1)",
+    "videoPreview": "Video önizləmə",
+    "enterVideoUrl": "Video URL daxil edin",
+    "instantBooking": "Ani rezervasiya",
+    "instantBookingDesc": "Tələbələr əvvəlcədən razılıq olmadan vaxt rezerv edə bilər",
+    "priceNote": "Qiymətlər platform tərəfindən idarə olunur — siz qiymət təyin etmirsiniz. Hər dərs üçün sabit ödəniş alırsınız.",
+    "closed": "Bağlı",
+    "rName": "Ad",
+    "rEmail": "Email",
+    "rCity": "Şəhər",
+    "rLanguages": "Dillər",
+    "rHeadline": "Başlıq",
+    "rSpecializations": "İxtisaslar",
+    "rVideo": "Video",
+    "rVideoAdded": "Əlavə edildi",
+    "rInstant": "Ani rezv.",
+    "rActive": "Aktiv",
+    "rInactive": "Deaktiv",
+    "rWorkDays": "İş günləri",
+    "pendingApproval": "Təsdiq gözləyir",
+    "pendingApprovalDesc": "Müraciətiniz 1-3 iş günü ərzində admin tərəfindən nəzərdən keçiriləcək. Nəticə haqqında email alacaqsınız.",
+    "back": "Geri",
+    "next": "İrəli",
+    "submit": "Göndər",
+    "loading": "Yüklənir...",
+    "regFailed": "Qeydiyyat uğursuz oldu",
+    "error": "Xəta baş verdi",
+    "selectLang": "Ən azı bir dil seçin",
+    "enterHeadline": "Başlıq daxil edin",
+    "fillAbout": "Haqqımda bölməsini doldurun",
+    "selectWorkDay": "Ən azı bir iş günü seçin",
+    "fileUploaded": "Fayl yükləndi",
+    "fileFailed": "Fayl yüklənmədi",
+    "videoUploaded": "Video yükləndi",
+    "videoFailed": "Video yüklənmədi",
+    "passwordMin": "Şifrə ən azı 6 simvol olmalıdır",
+    "passwordsMismatch": "Şifrələr uyğun gəlmir"
   }
 }

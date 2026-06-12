@@ -24,6 +24,8 @@ import { Link } from '@/i18n/navigation'
 export default function TutorProfilePage() {
   const t = useTranslations('tutors.profile')
   const ts = useTranslations('specs')
+  const tc = useTranslations('common')
+  const tNav = useTranslations('nav')
   const { id } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -62,11 +64,11 @@ export default function TutorProfilePage() {
   if (!tutor) {
     return (
       <div className="text-center py-20">
-        <p className="text-muted-foreground">Müəllim tapılmadı</p>
+        <p className="text-muted-foreground">{t('notFound2')}</p>
         <Link href="/tutors">
           <Button variant="outline" className="mt-4 rounded-full">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Geri qayıt
+            {tc('back')}
           </Button>
         </Link>
       </div>
@@ -81,7 +83,7 @@ export default function TutorProfilePage() {
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Müəllimlər
+        {tNav('tutors')}
       </Link>
 
       {/* Hero profile card */}
@@ -135,7 +137,7 @@ export default function TutorProfilePage() {
                 {tutor.instant_booking && (
                   <Badge variant="outline" className="text-emerald-400 border-emerald-500/30 bg-emerald-500/12 gap-1 text-xs">
                     <Zap className="h-3 w-3" />
-                    Ani rezerv
+                    {t('instantBadge')}
                   </Badge>
                 )}
               </div>
@@ -219,7 +221,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
                   <Play className="h-3 w-3 text-white" />
                 </div>
-                Video tanıtım
+                {t('videoIntro')}
               </h2>
               <video
                 src={tutor.video_intro_url}
