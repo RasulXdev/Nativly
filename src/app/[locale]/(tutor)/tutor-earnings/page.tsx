@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import {
   Wallet, ArrowDownLeft, Clock, TrendingUp,
   CheckCircle2, AlertCircle, BarChart2,
@@ -16,20 +17,23 @@ import {
   type TutorPayoutRow,
 } from '@/hooks/useTutorEarnings'
 
-const STATUS_CONFIG: Record<string, { label: string; cls: string; icon: typeof CheckCircle2 }> = {
-  paid: { label: 'Ödənildi', cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25', icon: CheckCircle2 },
-  pending: { label: 'Gözləyir', cls: 'bg-amber-500/15 text-amber-400 border-amber-500/25', icon: Clock },
-  cancelled: { label: 'Ləğv edildi', cls: 'bg-red-500/15 text-red-400 border-red-500/25', icon: AlertCircle },
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+const STATUS_CONFIG: Record<string, { labelKey: string; cls: string; icon: typeof CheckCircle2 }> = {
+  paid: { labelKey: 'statusPaid', cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25', icon: CheckCircle2 },
+  pending: { labelKey: 'statusPending', cls: 'bg-amber-500/15 text-amber-400 border-amber-500/25', icon: Clock },
+  cancelled: { labelKey: 'statusCancelled', cls: 'bg-red-500/15 text-red-400 border-red-500/25', icon: AlertCircle },
 }
 
 type FilterTab = 'all' | 'pending' | 'paid'
-const TABS: { key: FilterTab; label: string }[] = [
-  { key: 'all', label: 'Hamısı' },
-  { key: 'pending', label: 'Gözləyən' },
-  { key: 'paid', label: 'Ödənilmiş' },
+const TABS: { key: FilterTab; labelKey: string }[] = [
+  { key: 'all', labelKey: 'tabAll' },
+  { key: 'pending', labelKey: 'tabPending' },
+  { key: 'paid', labelKey: 'tabPaid' },
 ]
 
 export default function TutorEarningsPage() {
+  const t = useTranslations('tutorEarnings')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const { data: summary, isLoading: loadingSummary } = usePayoutSummary()
   const [tab, setTab] = useState<FilterTab>('all')
   const { data: payouts, isLoading: loadingPayouts } = useTutorPayouts(tab)
@@ -52,7 +56,7 @@ export default function TutorEarningsPage() {
               <Wallet className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-white/70 font-medium">Bu ay</p>
+              <p className="text-sm text-white/70 font-medium">{t('thisMonth')}</p>
             </div>
           </div>
 
@@ -66,11 +70,11 @@ export default function TutorEarningsPage() {
           <div className="flex flex-wrap gap-2">
             <div className="flex items-center gap-1.5 bg-amber-400/20 border border-amber-300/20 rounded-full px-3 py-1 text-xs font-medium">
               <Clock className="h-3 w-3" />
-              {loadingSummary ? '...' : fmt(summary?.pending ?? 0)} gözləyir
+              {loadingSummary ? '...' : fmt(summary?.pending ?? 0)} {t('pendingSuffix')}
             </div>
             <div className="flex items-center gap-1.5 bg-emerald-400/20 border border-emerald-300/20 rounded-full px-3 py-1 text-xs font-medium">
               <CheckCircle2 className="h-3 w-3" />
-              {loadingSummary ? '...' : fmt(summary?.paid ?? 0)} ödənilib
+              {loadingSummary ? '...' : fmt(summary?.paid ?? 0)} {t('paidSuffix')}
             </div>
           </div>
         </div>
@@ -80,8 +84,7 @@ export default function TutorEarningsPage() {
       <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 border-l-4 border-l-primary">
         <AlertCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Hər tamamlanmış dərs üçün sabit ödəniş hesablanır. Ödənişlər admin tərəfindən bank
-          hesabınıza köçürülür. Bank məlumatlarını dəyişmək üçün dəstəklə əlaqə saxlayın.
+          {t('infoText')}
         </p>
       </div>
 
@@ -96,23 +99,23 @@ export default function TutorEarningsPage() {
               <TrendingUp className="h-4 w-4 text-white" />
             </div>
             <div>
-              <h2 className="font-semibold text-sm">Ödəniş tarixçəsi</h2>
+              <h2 className="font-semibold text-sm">{t('payoutHistory')}</h2>
             </div>
           </div>
 
           {/* Filter tabs */}
           <div className="flex rounded-xl border border-border bg-muted/50 p-0.5 text-xs gap-0.5">
-            {TABS.map((t) => (
+            {TABS.map((tb) => (
               <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
+                key={tb.key}
+                onClick={() => setTab(tb.key)}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  tab === t.key
+                  tab === tb.key
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {t.label}
+                {t(tb.labelKey)}
               </button>
             ))}
           </div>
@@ -137,8 +140,8 @@ export default function TutorEarningsPage() {
               <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-3">
                 <BarChart2 className="h-6 w-6 text-muted-foreground" />
               </div>
-              <p className="text-sm font-medium">Hələ ödəniş yoxdur</p>
-              <p className="text-xs text-muted-foreground mt-1">Dərs tamamlandıqca burada görünəcək</p>
+              <p className="text-sm font-medium">{t('noPayouts')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('noPayoutsDesc')}</p>
             </div>
           ) : (
             <div className="space-y-1">
@@ -155,16 +158,16 @@ export default function TutorEarningsPage() {
                       <ArrowDownLeft className="h-4 w-4 text-emerald-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">Dərs ödənişi</p>
+                      <p className="text-sm font-medium">{t('lessonPayout')}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         {date && (
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(date), 'd MMM, HH:mm', { locale: az })}
+                            {format(new Date(date), 'd MMM, HH:mm', { locale: dfLocale })}
                           </span>
                         )}
                         <Badge className={`text-[10px] h-4 px-1.5 flex items-center gap-0.5 ${cfg.cls}`}>
                           <StatusIcon className="h-2.5 w-2.5" />
-                          {cfg.label}
+                          {t(cfg.labelKey)}
                         </Badge>
                       </div>
                     </div>

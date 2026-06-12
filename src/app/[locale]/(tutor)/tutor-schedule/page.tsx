@@ -1,5 +1,7 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { useState, useEffect } from 'react'
 import { CalendarOff, Save, Plus, Trash2, CalendarCheck, Clock, CheckCircle2, XCircle, CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -21,7 +23,7 @@ import { useTutorUpcomingLessons } from '@/hooks/useTutorLessons'
 import { getInitials } from '@/lib/utils'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 
 interface TutorUpcomingLesson {
   id: string
@@ -31,15 +33,7 @@ interface TutorUpcomingLesson {
   student: any
 }
 
-const DAYS: { key: DayOfWeek; label: string; short: string }[] = [
-  { key: 'monday',    label: 'Bazar ertəsi',       short: 'B.E' },
-  { key: 'tuesday',   label: 'Çərşənbə axşamı',    short: 'Ç.A' },
-  { key: 'wednesday', label: 'Çərşənbə',            short: 'Çər' },
-  { key: 'thursday',  label: 'Cümə axşamı',         short: 'C.A' },
-  { key: 'friday',    label: 'Cümə',                short: 'Cüm' },
-  { key: 'saturday',  label: 'Şənbə',               short: 'Şnb' },
-  { key: 'sunday',    label: 'Bazar',               short: 'Bzr' },
-]
+const DAY_KEYS: DayOfWeek[] = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
 
 const HOURS = Array.from({ length: 24 }, (_, i) => {
   const h = String(i).padStart(2, '0')
@@ -53,7 +47,11 @@ const DEFAULT_SLOT = (day: DayOfWeek): AvailabilitySlot => ({
   is_active: false,
 })
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function TutorSchedulePage() {
+  const t = useTranslations('tutorSchedule')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const { data: savedSlots, isLoading } = useTutorAvailability()
   const { data: upcomingRaw, isLoading: loadingUpcoming } = useTutorUpcomingLessons()
   const upcomingLessons = (upcomingRaw ?? []) as TutorUpcomingLesson[]
@@ -62,16 +60,16 @@ export default function TutorSchedulePage() {
   const addUnavail = useAddUnavailability()
   const deleteUnavail = useDeleteUnavailability()
 
-  const [slots, setSlots] = useState<AvailabilitySlot[]>(DAYS.map((d) => DEFAULT_SLOT(d.key)))
+  const [slots, setSlots] = useState<AvailabilitySlot[]>(DAY_KEYS.map((d) => DEFAULT_SLOT(d)))
   const [newBlockDate, setNewBlockDate] = useState('')
   const [newBlockReason, setNewBlockReason] = useState('')
 
   useEffect(() => {
     if (!savedSlots) return
     setSlots(
-      DAYS.map((d) => {
-        const saved = savedSlots.find((s) => s.day_of_week === d.key)
-        return saved ? { ...saved, is_active: true } : DEFAULT_SLOT(d.key)
+      DAY_KEYS.map((dk) => {
+        const saved = savedSlots.find((s) => s.day_of_week === dk)
+        return saved ? { ...saved, is_active: true } : DEFAULT_SLOT(dk)
       })
     )
   }, [savedSlots])
@@ -85,21 +83,21 @@ export default function TutorSchedulePage() {
   const handleSave = async () => {
     try {
       await updateAvailability.mutateAsync(slots)
-      toast.success('Cədvəl saxlanıldı')
+      toast.success(t('scheduleSaved'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
   const handleAddBlock = async () => {
-    if (!newBlockDate) return toast.error('Tarix seçin')
+    if (!newBlockDate) return toast.error(t('selectDate'))
     try {
       await addUnavail.mutateAsync({ date: newBlockDate, reason: newBlockReason || undefined })
       setNewBlockDate('')
       setNewBlockReason('')
-      toast.success('Qeyri-iş günü əlavə edildi')
+      toast.success(t('dayOffAdded'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
@@ -119,11 +117,11 @@ export default function TutorSchedulePage() {
               <CalendarCheck className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Cədvəl idarəsi</h1>
+              <h1 className="text-2xl font-extrabold tracking-tight">{t('title')}</h1>
               <p className="text-sm text-white/70 mt-0.5">
                 {activeCount > 0
-                  ? `${activeCount} iş günü aktiv`
-                  : 'İş saatlarınızı təyin edin'}
+                  ? `${activeCount} ${t('activeDays')}`
+                  : t('setHours')}
               </p>
             </div>
           </div>
@@ -133,7 +131,7 @@ export default function TutorSchedulePage() {
             className="bg-white text-primary hover:bg-white/90 border-0 rounded-xl h-10 px-6 font-semibold shadow-lg shrink-0"
           >
             <Save className="h-4 w-4 mr-2" />
-            {updateAvailability.isPending ? 'Saxlanılır...' : 'Yadda saxla'}
+            {updateAvailability.isPending ? t('saving') : t('save')}
           </Button>
         </div>
       </div>
@@ -145,8 +143,8 @@ export default function TutorSchedulePage() {
             <CalendarClock className="h-4 w-4 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-sm">Yaxınlaşan dərslər</h2>
-            <p className="text-xs text-muted-foreground">Təsdiqlənmiş gələcək dərsləriniz</p>
+            <h2 className="font-semibold text-sm">{t('upcomingTitle')}</h2>
+            <p className="text-xs text-muted-foreground">{t('upcomingSubtitle')}</p>
           </div>
         </div>
         <div className="p-5">
@@ -158,7 +156,7 @@ export default function TutorSchedulePage() {
             </div>
           ) : upcomingLessons.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-6">
-              Yaxınlaşan dərs yoxdur
+              {t('noUpcoming')}
             </p>
           ) : (
             <div className="space-y-2.5">
@@ -178,15 +176,15 @@ export default function TutorSchedulePage() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">
-                        {student?.full_name ?? 'Tələbə'}
+                        {student?.full_name ?? t('student')}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                         <Clock className="h-3 w-3" />
                         <span>
-                          {format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: az })}
+                          {format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: dfLocale })}
                         </span>
                         <span className="text-border">·</span>
-                        <span>{lesson.duration_minutes} dəq</span>
+                        <span>{lesson.duration_minutes} {t('min')}</span>
                       </div>
                     </div>
                   </div>
@@ -200,8 +198,8 @@ export default function TutorSchedulePage() {
       {/* ── Weekly availability grid ─────────────────────── */}
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="px-5 py-4 border-b border-border/60">
-          <h2 className="font-semibold text-sm">Həftəlik iş saatları</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Dərs qəbul etmək istədiyiniz günlər və saatları seçin</p>
+          <h2 className="font-semibold text-sm">{t('weeklyHours')}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{t('weeklyHoursDesc')}</p>
         </div>
 
         <div className="p-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
@@ -210,7 +208,7 @@ export default function TutorSchedulePage() {
                 <Skeleton key={i} className="h-32 rounded-2xl" />
               ))
             : slots.map((slot) => {
-                const day = DAYS.find((d) => d.key === slot.day_of_week)!
+                const dayKey = slot.day_of_week
                 return (
                   <div
                     key={slot.day_of_week}
@@ -224,10 +222,10 @@ export default function TutorSchedulePage() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-0.5 ${slot.is_active ? 'text-primary' : 'text-muted-foreground'}`}>
-                          {day.short}
+                          {t(`daysShort.${dayKey}`)}
                         </p>
                         <p className={`text-sm font-semibold ${slot.is_active ? 'text-foreground' : 'text-muted-foreground'}`}>
-                          {day.label}
+                          {t(`days.${dayKey}`)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -247,7 +245,7 @@ export default function TutorSchedulePage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                           <Clock className="h-3 w-3" />
-                          <span>İş saatları</span>
+                          <span>{t('workHours')}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Select
@@ -277,7 +275,7 @@ export default function TutorSchedulePage() {
                       </div>
                     ) : (
                       <div className="flex items-center justify-center h-11 rounded-xl border border-dashed border-border/50">
-                        <span className="text-xs text-muted-foreground">Bağlı</span>
+                        <span className="text-xs text-muted-foreground">{t('closed')}</span>
                       </div>
                     )}
                   </div>
@@ -293,18 +291,18 @@ export default function TutorSchedulePage() {
             <CalendarOff className="h-4 w-4 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-sm">Tətil / Qeyri-iş günləri</h2>
-            <p className="text-xs text-muted-foreground">Bu günlər tələbələrə görünməyəcək</p>
+            <h2 className="font-semibold text-sm">{t('blockedTitle')}</h2>
+            <p className="text-xs text-muted-foreground">{t('blockedSubtitle')}</p>
           </div>
         </div>
 
         <div className="p-5 space-y-4">
           {/* Add new blocked date */}
           <div className="p-4 rounded-2xl border border-dashed border-border/70 bg-muted/10 space-y-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Yeni qeyri-iş günü əlavə et</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('addDayOff')}</p>
             <div className="flex flex-wrap gap-3 items-end">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Tarix</label>
+                <label className="text-xs font-medium text-muted-foreground">{t('date')}</label>
                 <input
                   type="date"
                   value={newBlockDate}
@@ -314,12 +312,12 @@ export default function TutorSchedulePage() {
                 />
               </div>
               <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-                <label className="text-xs font-medium text-muted-foreground">Səbəb (ixtiyari)</label>
+                <label className="text-xs font-medium text-muted-foreground">{t('reasonOptional')}</label>
                 <input
                   type="text"
                   value={newBlockReason}
                   onChange={(e) => setNewBlockReason(e.target.value)}
-                  placeholder="Məzuniyyət, xəstəlik..."
+                  placeholder={t('reasonPlaceholder')}
                   className="h-9 px-3 rounded-xl border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
@@ -330,7 +328,7 @@ export default function TutorSchedulePage() {
                 className="h-9 gradient-bg border-0 text-white rounded-xl px-4"
               >
                 <Plus className="h-3.5 w-3.5 mr-1.5" />
-                Əlavə et
+                {t('add')}
               </Button>
             </div>
           </div>
@@ -344,7 +342,7 @@ export default function TutorSchedulePage() {
             </div>
           ) : !unavailDates?.length ? (
             <p className="text-sm text-muted-foreground text-center py-5">
-              Hələ qeyri-iş günü əlavə edilməyib
+              {t('noBlocked')}
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
@@ -354,7 +352,7 @@ export default function TutorSchedulePage() {
                   className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full border border-rose-500/30 bg-rose-500/8 text-sm"
                 >
                   <span className="text-rose-400 font-medium text-xs">
-                    {format(new Date(d.date + 'T12:00:00'), 'd MMM', { locale: az })}
+                    {format(new Date(d.date + 'T12:00:00'), 'd MMM', { locale: dfLocale })}
                   </span>
                   {d.reason && (
                     <span className="text-muted-foreground text-xs">· {d.reason}</span>
@@ -363,9 +361,9 @@ export default function TutorSchedulePage() {
                     onClick={async () => {
                       try {
                         await deleteUnavail.mutateAsync(d.id)
-                        toast.success('Silindi')
+                        toast.success(t('deleted'))
                       } catch {
-                        toast.error('Xəta baş verdi')
+                        toast.error(t('errorOccurred'))
                       }
                     }}
                     className="w-5 h-5 rounded-full hover:bg-rose-500/20 flex items-center justify-center text-rose-400/70 hover:text-rose-400 transition-colors"

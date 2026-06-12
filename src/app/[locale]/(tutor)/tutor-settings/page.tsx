@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Settings, User, Video, Bell, Camera, X,
   Link2, Zap, BellRing, BellOff, CheckCircle2,
@@ -18,22 +19,20 @@ import { useTutorProfile, useUpdateTutorProfile, useUpdateProfile } from '@/hook
 import { createClient } from '@/lib/supabase/client'
 import { getInitials } from '@/lib/utils'
 import { toast } from 'sonner'
-
-const SPECIALIZATION_OPTIONS = [
-  'IELTS', 'TOEFL', 'Business English', 'Uşaqlar üçün', 'Danışıq',
-  'Qrammatika', 'Tələffüz', 'Akademik yazı', 'Səyahət', 'İntervyu hazırlığı',
-]
+import { SPECIALIZATIONS } from '@/lib/constants/teaching'
 
 const NOTIFICATION_ITEMS = [
-  { key: 'booking', icon: CheckCircle2, label: 'Yeni rezervasiya', desc: 'Tələbə sizi rezerv etdikdə bildiriş al', color: 'text-emerald-400', bg: 'bg-emerald-500/10', default: true },
-  { key: 'reminder', icon: BellRing, label: 'Dərs xatırlatması', desc: '1 saat əvvəl avtomatik xatırlatma', color: 'text-blue-400', bg: 'bg-blue-500/10', default: true },
-  { key: 'cancel', icon: BellOff, label: 'Dərs ləğvi', desc: 'Tələbə dərsi ləğv etdikdə', color: 'text-rose-400', bg: 'bg-rose-500/10', default: true },
-  { key: 'review', icon: CheckCircle2, label: 'Yeni rəy', desc: 'Tələbə rəy bildirdikdə', color: 'text-amber-400', bg: 'bg-amber-500/10', default: true },
-  { key: 'payment', icon: CheckCircle2, label: 'Ödəniş', desc: 'Dərs ödənişi alındıqda', color: 'text-violet-400', bg: 'bg-violet-500/10', default: true },
-  { key: 'marketing', icon: Bell, label: 'Xəbər emailləri', desc: 'Nativly yenilikləri və təklifləri', color: 'text-muted-foreground', bg: 'bg-muted', default: false },
+  { key: 'booking', icon: CheckCircle2, labelKey: 'bookingLabel', descKey: 'bookingDesc', color: 'text-emerald-400', bg: 'bg-emerald-500/10', default: true },
+  { key: 'reminder', icon: BellRing, labelKey: 'reminderLabel', descKey: 'reminderDesc', color: 'text-blue-400', bg: 'bg-blue-500/10', default: true },
+  { key: 'cancel', icon: BellOff, labelKey: 'cancelLabel', descKey: 'cancelDesc', color: 'text-rose-400', bg: 'bg-rose-500/10', default: true },
+  { key: 'review', icon: CheckCircle2, labelKey: 'reviewLabel', descKey: 'reviewDesc', color: 'text-amber-400', bg: 'bg-amber-500/10', default: true },
+  { key: 'payment', icon: CheckCircle2, labelKey: 'paymentLabel', descKey: 'paymentDesc', color: 'text-violet-400', bg: 'bg-violet-500/10', default: true },
+  { key: 'marketing', icon: Bell, labelKey: 'marketingLabel', descKey: 'marketingDesc', color: 'text-muted-foreground', bg: 'bg-muted', default: false },
 ]
 
 export default function TutorSettingsPage() {
+  const t = useTranslations('tutorSettings')
+  const ts = useTranslations('specs')
   const { data: profile, isLoading } = useTutorProfile()
   const updateTutor = useUpdateTutorProfile()
   const updateProf = useUpdateProfile()
@@ -83,9 +82,9 @@ export default function TutorSettingsPage() {
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
       await updateProf.mutateAsync({ avatar_url: publicUrl })
       setAvatarUrl(publicUrl)
-      toast.success('Avatar yeniləndi')
+      toast.success(t('avatarUpdated'))
     } catch {
-      toast.error('Avatar yüklənmədi')
+      toast.error(t('avatarFailed'))
     } finally {
       setUploadingAvatar(false)
     }
@@ -97,18 +96,18 @@ export default function TutorSettingsPage() {
         updateProf.mutateAsync({ bio }),
         updateTutor.mutateAsync({ headline, about, specializations: specs }),
       ])
-      toast.success('Profil yeniləndi')
+      toast.success(t('profileUpdated'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
   const saveLesson = async () => {
     try {
       await updateTutor.mutateAsync({ video_intro_url: videoUrl, instant_booking: instantBooking })
-      toast.success('Dərs tənzimləmələri yeniləndi')
+      toast.success(t('lessonSettingsUpdated'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
@@ -152,9 +151,9 @@ export default function TutorSettingsPage() {
             </button>
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Tənzimləmələr</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight">{t('title')}</h1>
             <p className="text-sm text-white/70 mt-0.5">
-              {tutorProfile?.profiles?.full_name} · {headline || 'Başlıq əlavə et'}
+              {tutorProfile?.profiles?.full_name} · {headline || t('addHeadline')}
             </p>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
@@ -166,15 +165,15 @@ export default function TutorSettingsPage() {
         <TabsList className="rounded-2xl h-12 bg-card border border-border p-1 w-full sm:w-auto grid grid-cols-3 sm:inline-flex gap-1">
           <TabsTrigger value="profile" className="rounded-xl text-xs sm:text-sm gap-1.5 data-[state=active]:bg-blue-500 data-[state=active]:text-white">
             <User className="h-3.5 w-3.5" />
-            Profil
+            {t('tabProfile')}
           </TabsTrigger>
           <TabsTrigger value="lesson" className="rounded-xl text-xs sm:text-sm gap-1.5 data-[state=active]:bg-violet-500 data-[state=active]:text-white">
             <Video className="h-3.5 w-3.5" />
-            Dərs
+            {t('tabLesson')}
           </TabsTrigger>
           <TabsTrigger value="notifications" className="rounded-xl text-xs sm:text-sm gap-1.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
             <Bell className="h-3.5 w-3.5" />
-            Bildiriş
+            {t('tabNotifications')}
           </TabsTrigger>
         </TabsList>
 
@@ -185,45 +184,45 @@ export default function TutorSettingsPage() {
               <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
                 <User className="h-3.5 w-3.5 text-blue-500" />
               </div>
-              <h2 className="font-semibold text-sm">Profil məlumatları</h2>
+              <h2 className="font-semibold text-sm">{t('profileInfo')}</h2>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Başlıq</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('headline')}</Label>
               <Input
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
-                placeholder="IELTS Expert | Native English Speaker"
+                placeholder={t('headlinePlaceholder')}
                 className="rounded-xl h-11"
               />
-              <p className="text-xs text-muted-foreground">{headline.length} / 80 simvol</p>
+              <p className="text-xs text-muted-foreground">{headline.length} / 80 {t('chars')}</p>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Haqqımda</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('about')}</Label>
               <Textarea
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
-                placeholder="Özünüz haqqında ətraflı yazın — təcrübəniz, metodologiyanız, nailiyyətləriniz..."
+                placeholder={t('aboutPlaceholder')}
                 className="rounded-xl min-h-[120px] resize-none"
               />
-              <p className="text-xs text-muted-foreground">{about.length} simvol</p>
+              <p className="text-xs text-muted-foreground">{about.length} {t('chars')}</p>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Qısa bio</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('shortBio')}</Label>
               <Textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="Profil kartında görünəcək qısa bio..."
+                placeholder={t('bioPlaceholder')}
                 className="rounded-xl min-h-[80px] resize-none"
               />
             </div>
 
             <div className="space-y-3">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">İxtisaslar</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('specializations')}</Label>
               <div className="flex flex-wrap gap-2">
-                {SPECIALIZATION_OPTIONS.map((s) => {
+                {SPECIALIZATIONS.map((s) => {
                   const active = specs.includes(s)
                   return (
                     <button
@@ -237,7 +236,7 @@ export default function TutorSettingsPage() {
                       }`}
                     >
                       {active && <CheckCircle2 className="h-3 w-3" />}
-                      {s}
+                      {ts(s)}
                     </button>
                   )
                 })}
@@ -246,7 +245,7 @@ export default function TutorSettingsPage() {
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {specs.map((s) => (
                     <Badge key={s} className="text-xs bg-primary/10 text-primary border-primary/20 gap-1 pl-2 pr-1">
-                      {s}
+                      {ts.has(s) ? ts(s) : s}
                       <button
                         onClick={() => toggleSpec(s)}
                         className="rounded-full hover:bg-primary/20 p-0.5 transition-colors"
@@ -264,7 +263,7 @@ export default function TutorSettingsPage() {
               disabled={updateTutor.isPending || updateProf.isPending}
               className="gradient-bg border-0 text-white rounded-xl h-11 px-8"
             >
-              {updateTutor.isPending ? 'Saxlanılır...' : 'Profili yenilə'}
+              {updateTutor.isPending ? t('saving') : t('updateProfile')}
             </Button>
           </div>
         </TabsContent>
@@ -276,15 +275,15 @@ export default function TutorSettingsPage() {
               <div className="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center">
                 <Video className="h-3.5 w-3.5 text-violet-500" />
               </div>
-              <h2 className="font-semibold text-sm">Tanıtım videosu</h2>
+              <h2 className="font-semibold text-sm">{t('introVideo')}</h2>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              YouTube və ya Vimeo linkindən video əlavə edin. Profil səhifənizdə göstəriləcək.
+              {t('introVideoDesc')}
             </p>
 
             <div className="space-y-2">
-              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Video URL</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('videoUrl')}</Label>
               <div className="relative">
                 <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -302,14 +301,14 @@ export default function TutorSettingsPage() {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
                     <Video className="h-6 w-6 text-primary" />
                   </div>
-                  <p className="text-xs text-muted-foreground">Video önizləmə</p>
+                  <p className="text-xs text-muted-foreground">{t('videoPreview')}</p>
                 </div>
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-border/70 aspect-video bg-muted/20 flex items-center justify-center">
                 <div className="text-center">
                   <Video className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">Video URL daxil edin</p>
+                  <p className="text-xs text-muted-foreground">{t('enterVideoUrl')}</p>
                 </div>
               </div>
             )}
@@ -321,7 +320,7 @@ export default function TutorSettingsPage() {
               <div className="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center">
                 <Zap className="h-3.5 w-3.5 text-violet-500" />
               </div>
-              <h2 className="font-semibold text-sm">Ani rezervasiya</h2>
+              <h2 className="font-semibold text-sm">{t('instantBooking')}</h2>
             </div>
 
             <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/20">
@@ -330,9 +329,9 @@ export default function TutorSettingsPage() {
                   <Zap className="h-4 w-4 text-violet-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">Birbaşa rezervasiya</p>
+                  <p className="text-sm font-semibold">{t('directBooking')}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Tələbələr öncədən razılaşma olmadan dərs rezerv edə bilər
+                    {t('directBookingDesc')}
                   </p>
                 </div>
               </div>
@@ -342,8 +341,7 @@ export default function TutorSettingsPage() {
             <div className="mt-4 rounded-xl bg-amber-500/8 border border-amber-500/20 p-3 flex items-start gap-2">
               <span className="text-base shrink-0">💡</span>
               <p className="text-xs text-muted-foreground">
-                Qiymətlər platform tərəfindən idarə olunur — siz qiymət təyin etmirsiniz.
-                Hər tamamlanan dərs üçün sabit ödəniş alırsınız.
+                {t('priceNote')}
               </p>
             </div>
 
@@ -352,7 +350,7 @@ export default function TutorSettingsPage() {
               disabled={updateTutor.isPending}
               className="gradient-bg border-0 text-white rounded-xl h-11 px-8 mt-4"
             >
-              {updateTutor.isPending ? 'Saxlanılır...' : 'Yadda saxla'}
+              {updateTutor.isPending ? t('saving') : t('save')}
             </Button>
           </div>
         </TabsContent>
@@ -364,7 +362,7 @@ export default function TutorSettingsPage() {
               <div className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center">
                 <Bell className="h-3.5 w-3.5 text-amber-500" />
               </div>
-              <h2 className="font-semibold text-sm">Bildiriş tənzimləmələri</h2>
+              <h2 className="font-semibold text-sm">{t('notificationSettings')}</h2>
             </div>
 
             <div className="space-y-2">
@@ -379,8 +377,8 @@ export default function TutorSettingsPage() {
                       <Icon className={`h-4 w-4 ${item.color}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{item.label}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                      <p className="text-sm font-medium">{t(`notif.${item.labelKey}`)}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t(`notif.${item.descKey}`)}</p>
                     </div>
                     <Switch defaultChecked={item.default} />
                   </div>
@@ -389,7 +387,7 @@ export default function TutorSettingsPage() {
             </div>
 
             <Button className="gradient-bg border-0 text-white rounded-xl h-11 px-8">
-              Bildirişləri yenilə
+              {t('updateNotifications')}
             </Button>
           </div>
         </TabsContent>

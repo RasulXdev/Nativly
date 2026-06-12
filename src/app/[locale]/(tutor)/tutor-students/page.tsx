@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { Users, Search, BookOpen, GraduationCap, TrendingUp, Calendar } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -26,7 +27,11 @@ type Student = {
   lastLessonId: string
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function TutorStudentsPage() {
+  const t = useTranslations('tutorStudents')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const { data: rawStudents, isLoading } = useTutorStudents()
   const updateNotes = useUpdateTutorNotes()
 
@@ -51,10 +56,10 @@ export default function TutorStudentsPage() {
     if (!selected) return
     try {
       await updateNotes.mutateAsync({ lessonId: selected.lastLessonId, notes })
-      toast.success('Qeydlər saxlanıldı')
+      toast.success(t('notesSaved'))
       setSelected((prev) => prev ? { ...prev, tutorNotes: notes } : null)
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
@@ -72,19 +77,19 @@ export default function TutorStudentsPage() {
               <Users className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Tələbələrim</h1>
-              <p className="text-sm text-white/70 mt-0.5">{students?.length ?? 0} tələbə · {totalLessons} ümumi dərs</p>
+              <h1 className="text-2xl font-extrabold tracking-tight">{t('myStudents')}</h1>
+              <p className="text-sm text-white/70 mt-0.5">{students?.length ?? 0} {t('studentsCount')} · {totalLessons} {t('totalLessons')}</p>
             </div>
           </div>
           {/* Stats chips */}
           <div className="flex gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium">
               <TrendingUp className="h-3.5 w-3.5" />
-              {totalLessons} dərs
+              {totalLessons} {t('lessonsChip')}
             </div>
             <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium">
               <BookOpen className="h-3.5 w-3.5" />
-              {withNotes} qeyd
+              {withNotes} {t('notesChip')}
             </div>
           </div>
         </div>
@@ -97,13 +102,13 @@ export default function TutorStudentsPage() {
             <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center shrink-0">
               <GraduationCap className="h-4 w-4 text-white" />
             </div>
-            <h2 className="font-semibold text-sm">Tələbə siyahısı</h2>
+            <h2 className="font-semibold text-sm">{t('studentList')}</h2>
           </div>
           <div className="relative w-full sm:w-60 group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
             <input
               type="text"
-              placeholder="Tələbə axtar..."
+              placeholder={t('searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full h-9 pl-9 pr-4 rounded-xl border border-border/70 bg-background/80 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 hover:border-border transition-all"
@@ -133,8 +138,8 @@ export default function TutorStudentsPage() {
           ) : !filtered?.length ? (
             <EmptyState
               icon={Users}
-              title={search ? 'Tələbə tapılmadı' : 'Hələ tələbə yoxdur'}
-              description={search ? 'Axtarışı dəyişdirin' : 'İlk dərsi keçirdikdən sonra tələbələr burada görünəcək'}
+              title={search ? t('notFound') : t('noStudents')}
+              description={search ? t('adjustSearch') : t('firstLessonHint')}
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -161,18 +166,18 @@ export default function TutorStudentsPage() {
                   {/* Stats row */}
                   <div className="flex flex-wrap gap-1.5">
                     <Badge className="text-[10px] h-5 px-2 bg-primary/10 text-primary border-primary/20 font-medium">
-                      {student.lessonCount} dərs
+                      {student.lessonCount} {t('lessons')}
                     </Badge>
                     {student.lastLesson && (
                       <Badge className="text-[10px] h-5 px-2 bg-muted text-muted-foreground border-border">
                         <Calendar className="h-2.5 w-2.5 mr-1" />
-                        {format(new Date(student.lastLesson), 'd MMM', { locale: az })}
+                        {format(new Date(student.lastLesson), 'd MMM', { locale: dfLocale })}
                       </Badge>
                     )}
                     {student.tutorNotes && (
                       <Badge className="text-[10px] h-5 px-2 bg-amber-500/10 text-amber-500 border-amber-500/20">
                         <BookOpen className="h-2.5 w-2.5 mr-1" />
-                        Qeyd
+                        {t('note')}
                       </Badge>
                     )}
                   </div>
@@ -210,23 +215,23 @@ export default function TutorStudentsPage() {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
                   <p className="text-3xl font-black text-primary">{selected.lessonCount}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Tamamlanan dərs</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('completedLessons')}</p>
                 </div>
                 <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
                   <p className="text-sm font-bold">
                     {selected.lastLesson
-                      ? format(new Date(selected.lastLesson), 'd MMMM', { locale: az })
+                      ? format(new Date(selected.lastLesson), 'd MMMM', { locale: dfLocale })
                       : '—'}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">Son dərs</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('lastLesson')}</p>
                 </div>
               </div>
 
               {/* Progress bar */}
               <div className="mb-6 rounded-2xl border border-border bg-muted/20 p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium">Dərs tərəqqisi</span>
-                  <span className="text-xs text-muted-foreground">{selected.lessonCount} / 20 dərs</span>
+                  <span className="text-xs font-medium">{t('lessonProgress')}</span>
+                  <span className="text-xs text-muted-foreground">{selected.lessonCount} / 20 {t('lessons')}</span>
                 </div>
                 <div className="h-2 rounded-full bg-muted overflow-hidden">
                   <div
@@ -242,12 +247,12 @@ export default function TutorStudentsPage() {
                   <div className="w-6 h-6 rounded-lg gradient-bg flex items-center justify-center">
                     <BookOpen className="h-3 w-3 text-white" />
                   </div>
-                  <h3 className="font-semibold text-sm">Müəllim qeydləri</h3>
+                  <h3 className="font-semibold text-sm">{t('tutorNotes')}</h3>
                 </div>
                 <Textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Bu tələbə haqqında qeydlər..."
+                  placeholder={t('notesPlaceholder')}
                   className="min-h-[140px] rounded-xl text-sm resize-none"
                 />
                 <Button
@@ -255,7 +260,7 @@ export default function TutorStudentsPage() {
                   disabled={updateNotes.isPending}
                   className="w-full gradient-bg border-0 text-white rounded-xl"
                 >
-                  {updateNotes.isPending ? 'Saxlanılır...' : 'Qeydləri saxla'}
+                  {updateNotes.isPending ? t('saving') : t('saveNotes')}
                 </Button>
               </div>
             </>
