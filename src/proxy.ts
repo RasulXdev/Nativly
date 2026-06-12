@@ -48,6 +48,13 @@ export async function proxy(request: NextRequest) {
       pathnameWithoutLocale.startsWith(`${route}/`)
   )
 
+  // The tutor application flow lives under /register/tutor. Logged-in users must
+  // be able to reach it: a student applying to become a tutor, and a freshly
+  // registered tutor (signed in mid-flow) seeing the pending confirmation.
+  const isTutorApplication =
+    pathnameWithoutLocale === '/register/tutor' ||
+    pathnameWithoutLocale.startsWith('/register/tutor/')
+
   if (isProtected && !user) {
     const locale = pathname.split('/')[1] || 'az'
     const loginUrl = new URL(`/${locale}/login`, request.url)
@@ -55,7 +62,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  if (isAuthRoute && user) {
+  if (isAuthRoute && user && !isTutorApplication) {
     const locale = pathname.split('/')[1] || 'az'
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
