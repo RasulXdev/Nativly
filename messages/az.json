@@ -223,7 +223,15 @@
     },
     "testimonials": {
       "title": "Tələbələrimiz nə deyir",
-      "subtitle": "Minlərlə tələbə artıq Nativly ilə öyrənib"
+      "subtitle": "Minlərlə tələbə artıq Nativly ilə öyrənib",
+      "items": [
+        { "city": "Bakı", "text": "Nativly ilə 3 ayda IELTS 7.0 aldım. Sarah müəllimim mükəmməl idi — peşəkar, mehriban və çox səbirli." },
+        { "city": "Bakı", "text": "Hans ilə 6 ayda A2-dən B2-yə çatdım. İndi Münhendə universitetdə oxuyuram." },
+        { "city": "Gəncə", "text": "Biznes görüşlər üçün rus dili lazım idi. 2 ayda danışıq səviyyəsinə çatdım." },
+        { "city": "Sumqayıt", "text": "Carlos ilə həftədə 3 dərs alıram. Elastik cədvəl sistemi möhtəşəmdir." },
+        { "city": "Bakı", "text": "Marie ilə Fransız dili öyrənmək zövqlüdür. DELF imtahanını ilk cəhddə keçdim!" },
+        { "city": "Bakı", "text": "Peşəkar müəllimlər, rahat qiymətlər. 4 ayda hədəfimə çatdım. Çox tövsiyə edirəm." }
+      ]
     },
     "faq": {
       "title": "Tez-tez soruşulan suallar",
@@ -251,7 +259,10 @@
     "cta": {
       "title": "Bu gün dil öyrənməyə başla",
       "subtitle": "İlk sınaq dərsi sadəcə $5",
-      "button": "Başla"
+      "button": "Başla",
+      "trustNoCard": "Kredit kartı lazım deyil",
+      "trustCancel": "İstənilən vaxt ləğv et",
+      "trustGuarantee": "30 gün zəmanət"
     },
     "tutorShowcase": {
       "title": "Ən yaxşı müəllimlərimiz",
@@ -1300,6 +1311,13 @@
     "introVideo": "Tanıtım videosu",
     "introVideoDesc": "YouTube və ya Vimeo linkindən video əlavə edin. Profil səhifənizdə göstəriləcək.",
     "videoUrl": "Video URL",
+    "or": "və ya",
+    "uploadVideo": "Video yüklə",
+    "videoSelect": "Video faylı seçin",
+    "videoHint": "MP4, MOV və ya WEBM · maks 100MB",
+    "uploading": "Yüklənir...",
+    "videoUploaded": "Video yükləndi",
+    "videoFailed": "Video yüklənmədi",
     "videoPreview": "Video önizləmə",
     "enterVideoUrl": "Video URL daxil edin",
     "instantBooking": "Ani rezervasiya",
@@ -1453,6 +1471,7 @@
     "confirmPassword": "Şifrəni təsdiqlə",
     "phone": "Telefon",
     "city": "Şəhər",
+    "cityPlaceholder": "Bakı",
     "selectedLevels": "Seçilmiş dillərdə səviyyə",
     "levelNative": "Ana dili",
     "levelAdvanced": "Təkmilləşmiş",

@@ -19,7 +19,7 @@ import {
 import Logo from '@/components/shared/Logo'
 import { SPECIALIZATIONS, TEACHING_LANGUAGES } from '@/lib/constants/teaching'
 
-const LANGUAGES = TEACHING_LANGUAGES.map((l) => ({ code: l.code, flag: l.flag }))
+const LANGUAGES = TEACHING_LANGUAGES.map((l) => ({ code: l.code, flag: l.flag, available: l.available }))
 
 const LEVELS = [
   { value: 'native', key: 'levelNative' },
@@ -83,7 +83,7 @@ export default function TutorOnboardingForm() {
 
   const [form, setForm] = useState<FormData>({
     full_name: '', email: '', password: '', confirm_password: '',
-    phone: '', country: 'Azərbaycan', city: 'Bakı',
+    phone: '', country: 'Azərbaycan', city: '',
     languages: [],
     headline: '', about: '', specializations: [],
     education: [''], certificateUrls: [],
@@ -218,6 +218,7 @@ export default function TutorOnboardingForm() {
   }
 
   const toggleLanguage = (code: string) => {
+    if (!LANGUAGES.find((l) => l.code === code)?.available) return
     const exists = form.languages.find((l) => l.code === code)
     if (exists) set('languages', form.languages.filter((l) => l.code !== code))
     else set('languages', [...form.languages, { code, level: 'advanced' }])
@@ -393,7 +394,7 @@ export default function TutorOnboardingForm() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('city')}</Label>
-              <Input value={form.city} onChange={(e) => set('city', e.target.value)} className="rounded-xl h-11" />
+              <Input value={form.city} onChange={(e) => set('city', e.target.value)} placeholder={t('cityPlaceholder')} className="rounded-xl h-11" />
             </div>
           </div>
         )}
@@ -404,6 +405,21 @@ export default function TutorOnboardingForm() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {LANGUAGES.map((lang) => {
                 const sel = form.languages.find((l) => l.code === lang.code)
+                if (!lang.available) {
+                  return (
+                    <div
+                      key={lang.code}
+                      className="group flex items-center gap-2.5 p-3.5 rounded-xl border border-border/40 bg-muted/30 text-left cursor-not-allowed opacity-70"
+                      title={t('comingSoon')}
+                    >
+                      <span className="text-2xl shrink-0 grayscale">{lang.flag}</span>
+                      <span className="text-sm font-medium leading-tight flex-1 min-w-0 truncate text-muted-foreground">{tl(lang.code)}</span>
+                      <span className="text-[9px] font-semibold text-primary/70 bg-primary/8 rounded-full px-1.5 py-0.5 leading-none shrink-0">
+                        {t('comingSoon')}
+                      </span>
+                    </div>
+                  )
+                }
                 return (
                   <button
                     key={lang.code}
@@ -416,7 +432,7 @@ export default function TutorOnboardingForm() {
                     }`}
                   >
                     <span className="text-2xl shrink-0">{lang.flag}</span>
-                    <span className="text-sm font-medium leading-tight flex-1">{tl(lang.code)}</span>
+                    <span className="text-sm font-medium leading-tight flex-1 min-w-0 truncate">{tl(lang.code)}</span>
                     {sel && (
                       <div className="w-5 h-5 rounded-full gradient-bg flex items-center justify-center shrink-0">
                         <Check className="h-3 w-3 text-white" />

@@ -17,18 +17,21 @@ export const SPECIALIZATIONS = [
 export type Specialization = (typeof SPECIALIZATIONS)[number]
 
 // Languages taught on the platform. `available: true` means tutors/lessons are
-// live now; the rest are surfaced as "coming soon".
+// live now; the rest are surfaced as "coming soon". `name` is the native
+// endonym used for marketing surfaces (homepage, auth panel); UI-localized
+// names are resolved separately via t(`langNames.${code}`).
+// Single source of truth — the homepage, auth shell and tutor onboarding all
+// derive their language list from here so they never drift apart.
 export const TEACHING_LANGUAGES = [
-  { code: 'en', flag: '🇬🇧', available: true },
-  { code: 'ru', flag: '🇷🇺', available: true },
-  { code: 'tr', flag: '🇹🇷', available: false },
-  { code: 'de', flag: '🇩🇪', available: false },
-  { code: 'fr', flag: '🇫🇷', available: false },
-  { code: 'es', flag: '🇪🇸', available: false },
-  { code: 'it', flag: '🇮🇹', available: false },
-  { code: 'ar', flag: '🇸🇦', available: false },
-  { code: 'zh', flag: '🇨🇳', available: false },
-  { code: 'ja', flag: '🇯🇵', available: false },
-  { code: 'ko', flag: '🇰🇷', available: false },
-  { code: 'az', flag: '🇦🇿', available: false },
+  { code: 'en', flag: '🇬🇧', name: 'English', available: true },
+  { code: 'ru', flag: '🇷🇺', name: 'Русский', available: true },
+  { code: 'tr', flag: '🇹🇷', name: 'Türkçe', available: false },
+  { code: 'de', flag: '🇩🇪', name: 'Deutsch', available: false },
+  { code: 'fr', flag: '🇫🇷', name: 'Français', available: false },
+  { code: 'es', flag: '🇪🇸', name: 'Español', available: false },
+  { code: 'it', flag: '🇮🇹', name: 'Italiano', available: false },
+  { code: 'ar', flag: '🇸🇦', name: 'العربية', available: false },
+  { code: 'zh', flag: '🇨🇳', name: '中文', available: false },
+  { code: 'ja', flag: '🇯🇵', name: '日本語', available: false },
+  { code: 'ko', flag: '🇰🇷', name: '한국어', available: false },
 ] as const

@@ -223,7 +223,15 @@
     },
     "testimonials": {
       "title": "What our students say",
-      "subtitle": "Thousands of students already learned with Nativly"
+      "subtitle": "Thousands of students already learned with Nativly",
+      "items": [
+        { "city": "Baku", "text": "I got IELTS 7.0 in 3 months with Nativly. My teacher Sarah was perfect — professional, kind and very patient." },
+        { "city": "Baku", "text": "I went from A2 to B2 in 6 months with Hans. Now I study at a university in Munich." },
+        { "city": "Ganja", "text": "I needed Russian for business meetings. I reached conversational level in 2 months." },
+        { "city": "Sumgait", "text": "I take 3 lessons a week with Carlos. The flexible scheduling system is amazing." },
+        { "city": "Baku", "text": "Learning French with Marie is a joy. I passed the DELF exam on my first try!" },
+        { "city": "Baku", "text": "Professional teachers, affordable prices. I reached my goal in 4 months. Highly recommend." }
+      ]
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -251,7 +259,10 @@
     "cta": {
       "title": "Start learning a language today",
       "subtitle": "First trial lesson just $5",
-      "button": "Get started"
+      "button": "Get started",
+      "trustNoCard": "No credit card required",
+      "trustCancel": "Cancel anytime",
+      "trustGuarantee": "30-day guarantee"
     },
     "tutorShowcase": {
       "title": "Our top tutors",
@@ -1300,6 +1311,13 @@
     "introVideo": "Intro video",
     "introVideoDesc": "Add a video from a YouTube or Vimeo link. It will appear on your profile page.",
     "videoUrl": "Video URL",
+    "or": "or",
+    "uploadVideo": "Upload video",
+    "videoSelect": "Choose a video file",
+    "videoHint": "MP4, MOV or WEBM · max 100MB",
+    "uploading": "Uploading...",
+    "videoUploaded": "Video uploaded",
+    "videoFailed": "Video upload failed",
     "videoPreview": "Video preview",
     "enterVideoUrl": "Enter a video URL",
     "instantBooking": "Instant booking",
@@ -1453,6 +1471,7 @@
     "confirmPassword": "Confirm password",
     "phone": "Phone",
     "city": "City",
+    "cityPlaceholder": "Baku",
     "selectedLevels": "Level in selected languages",
     "levelNative": "Native",
     "levelAdvanced": "Advanced",

@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation'
 import { ArrowRight, Star, Play, Users, BookOpen, Award } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { TEACHING_LANGUAGES } from '@/lib/constants/teaching'
 
 export default function Hero() {
   const t = useTranslations('landing')
@@ -169,13 +170,9 @@ export default function Hero() {
 
         <div className="mt-16 pt-8 border-t border-border/30">
           <div className="flex flex-wrap justify-center gap-2">
-            {[
-              ['🇬🇧', 'English', true], ['🇷🇺', 'Русский', true], ['🇩🇪', 'Deutsch', false],
-              ['🇫🇷', 'Français', false], ['🇹🇷', 'Türkçe', false], ['🇪🇸', 'Español', false],
-              ['🇮🇹', 'Italiano', false], ['🇨🇳', '中文', false], ['🇯🇵', '日本語', false],
-            ].map(([flag, name, available]) => (
+            {TEACHING_LANGUAGES.map(({ flag, name, available }) => (
               <div
-                key={name as string}
+                key={name}
                 className={cn(
                   'flex items-center gap-1.5 border rounded-full px-3.5 py-1.5 text-xs transition-all duration-200 cursor-default shadow-sm',
                   available

@@ -39,9 +39,9 @@ export default function CTA() {
 
           <div className="flex flex-wrap justify-center gap-6 pt-4">
             {[
-              { icon: CreditCard, text: 'Kredit kartı lazım deyil' },
-              { icon: Clock, text: 'İstənilən vaxt ləğv et' },
-              { icon: Shield, text: '30 gün zəmanət' },
+              { icon: CreditCard, text: t('trustNoCard') },
+              { icon: Clock, text: t('trustCancel') },
+              { icon: Shield, text: t('trustGuarantee') },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-white/35 text-sm">
                 <item.icon className="h-4 w-4" />

@@ -4,8 +4,9 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { Star, ArrowLeft, Quote, BookOpen, Sparkles } from 'lucide-react'
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
+import { TEACHING_LANGUAGES } from '@/lib/constants/teaching'
 
-const FLAGS = ['🇬🇧', '🇷🇺', '🇩🇪', '🇫🇷', '🇹🇷', '🇪🇸', '🇮🇹', '🇨🇳', '🇯🇵']
+const FLAGS = TEACHING_LANGUAGES.map((l) => l.flag)
 
 export default function AuthShell({
   title,
@@ -62,7 +63,7 @@ export default function AuthShell({
           </Link>
           <div className="flex items-center gap-2 text-xs text-white/40 bg-white/[0.05] rounded-full px-3 py-1.5 ring-1 ring-white/[0.08]">
             <BookOpen className="h-3 w-3" />
-            <span>12+ dil</span>
+            <span>{FLAGS.length}+ dil</span>
           </div>
         </div>
 

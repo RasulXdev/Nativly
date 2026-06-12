@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Settings, User, Video, Bell, Camera, X,
-  Link2, Zap, BellRing, BellOff, CheckCircle2,
+  Link2, Zap, BellRing, BellOff, CheckCircle2, Upload,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -56,6 +56,7 @@ export default function TutorSettingsPage() {
   const [videoUrl, setVideoUrl] = useState(tutorProfile?.video_intro_url ?? '')
   const [avatarUrl, setAvatarUrl] = useState(tutorProfile?.profiles?.avatar_url ?? '')
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [videoUploading, setVideoUploading] = useState(false)
 
   const profileLoaded = !!tutorProfile
   useState(() => {
@@ -87,6 +88,28 @@ export default function TutorSettingsPage() {
       toast.error(t('avatarFailed'))
     } finally {
       setUploadingAvatar(false)
+    }
+  }
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 100 * 1024 * 1024) { toast.error('Max 100MB'); return }
+    setVideoUploading(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+      const path = `${user.id}/intro-${Date.now()}-${file.name}`
+      const { error: upErr } = await supabase.storage.from('documents').upload(path, file, { upsert: true })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+      setVideoUrl(publicUrl)
+      await updateTutor.mutateAsync({ video_intro_url: publicUrl })
+      toast.success(t('videoUploaded'))
+    } catch {
+      toast.error(t('videoFailed'))
+    } finally {
+      setVideoUploading(false)
     }
   }
 
@@ -293,6 +316,27 @@ export default function TutorSettingsPage() {
                   className="rounded-xl h-11 pl-10"
                 />
               </div>
+            </div>
+
+            {/* OR upload a file */}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">{t('or')}</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('uploadVideo')}</Label>
+              <label className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-border/60 hover:border-primary/40 cursor-pointer transition-all duration-200 bg-muted/10 hover:bg-primary/5">
+                <div className="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center">
+                  <Upload className="h-6 w-6 text-violet-500" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium">{videoUploading ? t('uploading') : t('videoSelect')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('videoHint')}</p>
+                </div>
+                <input type="file" accept="video/mp4,video/quicktime,video/webm" className="hidden" onChange={handleVideoUpload} disabled={videoUploading} />
+              </label>
             </div>
 
             {videoUrl ? (

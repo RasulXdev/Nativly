@@ -5,23 +5,26 @@ import { Star, Quote } from 'lucide-react'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
 const TESTIMONIALS = [
-  { id: 1, name: 'Aynur H.', city: 'Bakı', rating: 5, result: 'IELTS 7.0', text: 'Nativly ilə 3 ayda IELTS 7.0 aldım. Sarah müəllimim mükəmməl idi — peşəkar, mehriban və çox səbirli.' },
-  { id: 2, name: 'Rəşad Q.', city: 'Bakı', rating: 5, result: 'B2 Level', text: 'Hans ilə 6 ayda A2-dən B2-yə çatdım. İndi Münhendə universitetdə oxuyuram.' },
-  { id: 3, name: 'Leyla Ə.', city: 'Gəncə', rating: 5, result: 'Business RU', text: 'Biznes görüşlər üçün rus dili lazım idi. 2 ayda danışıq səviyyəsinə çatdım.' },
-  { id: 4, name: 'Tural M.', city: 'Sumqayıt', rating: 5, result: 'A1 → B1', text: 'Carlos ilə həftədə 3 dərs alıram. Elastik cədvəl sistemi möhtəşəmdir.' },
-  { id: 5, name: 'Nigar R.', city: 'Bakı', rating: 5, result: 'DELF B1', text: 'Marie ilə Fransız dili öyrənmək zövqlüdür. DELF imtahanını ilk cəhddə keçdim!' },
-  { id: 6, name: 'Kamran A.', city: 'Bakı', rating: 5, result: 'IELTS 8.0', text: 'Peşəkar müəllimlər, rahat qiymətlər. 4 ayda hədəfimə çatdım. Çox tövsiyə edirəm.' },
+  { id: 1, name: 'Aynur H.', rating: 5, result: 'IELTS 7.0' },
+  { id: 2, name: 'Rəşad Q.', rating: 5, result: 'B2 Level' },
+  { id: 3, name: 'Leyla Ə.', rating: 5, result: 'Business RU' },
+  { id: 4, name: 'Tural M.', rating: 5, result: 'A1 → B1' },
+  { id: 5, name: 'Nigar R.', rating: 5, result: 'DELF B1' },
+  { id: 6, name: 'Kamran A.', rating: 5, result: 'IELTS 8.0' },
 ]
 
 function TestimonialCard({ item }: { item: typeof TESTIMONIALS[0] }) {
+  const t = useTranslations('landing.testimonials')
+  const text = t(`items.${item.id - 1}.text`)
+  const city = t(`items.${item.id - 1}.city`)
   return (
     <div className="w-[320px] shrink-0 bg-card border border-border/50 rounded-2xl p-5 mx-2">
       <Quote className="h-5 w-5 text-primary/15 mb-3" />
-      <p className="text-sm text-muted-foreground leading-relaxed mb-4">&ldquo;{item.text}&rdquo;</p>
+      <p className="text-sm text-muted-foreground leading-relaxed mb-4">&ldquo;{text}&rdquo;</p>
       <div className="flex items-center justify-between pt-3 border-t border-border/40">
         <div>
           <p className="font-semibold text-sm">{item.name}</p>
-          <p className="text-xs text-muted-foreground">{item.city}</p>
+          <p className="text-xs text-muted-foreground">{city}</p>
         </div>
         <div className="text-right">
           <div className="flex gap-0.5 justify-end mb-0.5">
