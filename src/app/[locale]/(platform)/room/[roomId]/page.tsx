@@ -1,13 +1,24 @@
 'use client'
 
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef, use, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import {
   Mic, MicOff, Video, VideoOff, Monitor, MonitorOff,
   MessageSquare, FileText, PhoneOff, Users, Wifi, WifiOff,
-  Star, ChevronRight, ArrowLeft
+  Star, ChevronRight, ArrowLeft, Loader2
 } from 'lucide-react'
+import {
+  LiveKitRoom,
+  RoomAudioRenderer,
+  VideoTrack,
+  useTracks,
+  useTrackToggle,
+  useChat,
+  useConnectionState,
+  useLocalParticipant,
+} from '@livekit/components-react'
+import { Track, ConnectionState } from 'livekit-client'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -31,6 +42,7 @@ interface LessonInfo {
   scheduled_at: string
   duration_minutes: number
   status: string
+  shared_notes?: string | null
   tutor?: {
     profiles?: { full_name?: string; avatar_url?: string }
   }
@@ -49,13 +61,8 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   const [phase, setPhase] = useState<CallPhase>('pre')
   const [micEnabled, setMicEnabled] = useState(true)
   const [camEnabled, setCamEnabled] = useState(true)
-  const [screenSharing, setScreenSharing] = useState(false)
-  const [showChat, setShowChat] = useState(false)
-  const [showNotes, setShowNotes] = useState(false)
   const [showEndDialog, setShowEndDialog] = useState(false)
   const [sharedNotes, setSharedNotes] = useState('')
-  const [chatMessage, setChatMessage] = useState('')
-  const [chatMessages, setChatMessages] = useState<{ from: string; text: string; time: string }[]>([])
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [rating, setRating] = useState(0)
   const [reviewText, setReviewText] = useState('')
@@ -64,23 +71,43 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   const [loadingLesson, setLoadingLesson] = useState(true)
   const [networkGood, setNetworkGood] = useState(true)
 
+  // LiveKit connection
+  const [token, setToken] = useState<string | null>(null)
+  const [connecting, setConnecting] = useState(false)
+  const [participantName, setParticipantName] = useState('Guest')
+  const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startedAtRef = useRef<Date | null>(null)
+  const sharedNotesRef = useRef('')
+  const endedRef = useRef(false)
+
+  useEffect(() => { sharedNotesRef.current = sharedNotes }, [sharedNotes])
 
   useEffect(() => {
     async function fetchLesson() {
       const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single()
+        if (profile?.full_name) setParticipantName(profile.full_name)
+      }
       const { data } = await supabase
         .from('lessons')
         .select(`
-          id, room_id, scheduled_at, duration_minutes, status,
+          id, room_id, scheduled_at, duration_minutes, status, shared_notes,
           tutor:tutor_profiles!lessons_tutor_id_fkey(
             profiles(full_name, avatar_url)
           )
         `)
         .or(`room_id.eq.${roomId},id.eq.${roomId}`)
         .single()
-      setLesson(data as LessonInfo | null)
+      const lessonData = data as LessonInfo | null
+      setLesson(lessonData)
+      if (lessonData?.shared_notes) setSharedNotes(lessonData.shared_notes)
       setLoadingLesson(false)
     }
     fetchLesson()
@@ -92,15 +119,36 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
     }
   }, [])
 
-  const handleJoin = () => {
-    setPhase('in')
-    startedAtRef.current = new Date()
-    timerRef.current = setInterval(() => {
-      setElapsedSeconds(s => s + 1)
-    }, 1000)
+  const handleJoin = async () => {
+    if (!serverUrl) {
+      toast.error('LiveKit not configured')
+      return
+    }
+    setConnecting(true)
+    try {
+      const res = await fetch('/api/livekit/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId, participantName }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'Failed to get token')
+      }
+      const { token: t } = await res.json()
+      setToken(t)
+      setPhase('in')
+      timerRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Connection failed')
+    } finally {
+      setConnecting(false)
+    }
   }
 
   const handleEndCall = async () => {
+    if (endedRef.current) return
+    endedRef.current = true
     if (timerRef.current) clearInterval(timerRef.current)
     setShowEndDialog(false)
 
@@ -110,16 +158,11 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
         status: 'completed',
         ended_at: new Date().toISOString(),
         actual_duration_minutes: Math.round(elapsedSeconds / 60),
-        shared_notes: sharedNotes || null,
+        shared_notes: sharedNotesRef.current || null,
       }).eq('id', lesson.id)
     }
+    setToken(null) // unmounts LiveKitRoom -> disconnects
     setPhase('post')
-  }
-
-  const handleSendChat = () => {
-    if (!chatMessage.trim()) return
-    setChatMessages(prev => [...prev, { from: 'You', text: chatMessage, time: formatTimer(elapsedSeconds) }])
-    setChatMessage('')
   }
 
   const handleSubmitReview = async () => {
@@ -128,17 +171,17 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const { data: tutorProfile } = await supabase
-      .from('tutor_profiles')
-      .select('id')
-      .eq('user_id', lesson.tutor?.profiles ? Object.values(lesson)[0] : '')
+    const { data: tutorRow } = await supabase
+      .from('lessons')
+      .select('tutor_id')
+      .eq('id', lesson.id)
       .single()
 
-    if (tutorProfile) {
+    if (tutorRow?.tutor_id) {
       await supabase.from('reviews').insert({
         lesson_id: lesson.id,
         student_id: user.id,
-        tutor_id: tutorProfile.id,
+        tutor_id: tutorRow.tutor_id,
         rating,
         comment: reviewText,
       })
@@ -156,8 +199,6 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   const tutorName = lesson?.tutor?.profiles?.full_name ?? 'Tutor'
   const tutorAvatar = lesson?.tutor?.profiles?.avatar_url ?? ''
   const durationMins = lesson?.duration_minutes ?? 30
-  const remainingMins = Math.max(0, durationMins - Math.floor(elapsedSeconds / 60))
-  const lessonEndingWarning = remainingMins <= 5 && phase === 'in'
 
   if (loadingLesson) {
     return (
@@ -227,8 +268,8 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
               ))}
             </div>
 
-            <Button onClick={handleJoin} className="w-full gradient-bg border-0 text-white h-12 text-base font-semibold rounded-xl">
-              {t('preCall.join')}
+            <Button onClick={handleJoin} disabled={connecting} className="w-full gradient-bg border-0 text-white h-12 text-base font-semibold rounded-xl">
+              {connecting ? <Loader2 className="h-5 w-5 animate-spin" /> : t('preCall.join')}
             </Button>
           </div>
         </div>
@@ -300,6 +341,126 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   }
 
   /* ── IN-CALL ── */
+  if (!token || !serverUrl) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-zinc-950 dark">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <LiveKitRoom
+      token={token}
+      serverUrl={serverUrl}
+      connect
+      audio={micEnabled}
+      video={camEnabled}
+      onDisconnected={() => { if (phase === 'in') handleEndCall() }}
+      data-lk-theme="default"
+      className="h-screen"
+    >
+      <RoomAudioRenderer />
+      <InCallView
+        tutorName={tutorName}
+        tutorAvatar={tutorAvatar}
+        durationMins={durationMins}
+        elapsedSeconds={elapsedSeconds}
+        formatTimer={formatTimer}
+        sharedNotes={sharedNotes}
+        setSharedNotes={setSharedNotes}
+        onRequestEnd={() => setShowEndDialog(true)}
+      />
+
+      {/* End call dialog */}
+      <Dialog open={showEndDialog} onOpenChange={setShowEndDialog}>
+        <DialogContent className="dark bg-zinc-900 border-zinc-800 text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t('room.endCall')}</DialogTitle>
+            <DialogDescription className="text-zinc-400">
+              {t('room.endCallConfirm')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowEndDialog(false)} className="border-zinc-700 text-zinc-300">
+              {tc('cancel')}
+            </Button>
+            <Button variant="destructive" onClick={handleEndCall}>
+              {t('room.endCall')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </LiveKitRoom>
+  )
+}
+
+/* ── In-call view (inside LiveKitRoom context) ── */
+function InCallView({
+  tutorName,
+  tutorAvatar,
+  durationMins,
+  elapsedSeconds,
+  formatTimer,
+  sharedNotes,
+  setSharedNotes,
+  onRequestEnd,
+}: {
+  tutorName: string
+  tutorAvatar: string
+  durationMins: number
+  elapsedSeconds: number
+  formatTimer: (s: number) => string
+  sharedNotes: string
+  setSharedNotes: (v: string) => void
+  onRequestEnd: () => void
+}) {
+  const t = useTranslations('video')
+  const [showChat, setShowChat] = useState(false)
+  const [showNotes, setShowNotes] = useState(false)
+  const [chatInput, setChatInput] = useState('')
+
+  const connectionState = useConnectionState()
+  const { localParticipant } = useLocalParticipant()
+  const { toggle: toggleMic, enabled: micOn } = useTrackToggle({ source: Track.Source.Microphone })
+  const { toggle: toggleCam, enabled: camOn } = useTrackToggle({ source: Track.Source.Camera })
+  const { toggle: toggleScreen, enabled: screenOn } = useTrackToggle({ source: Track.Source.ScreenShare })
+  const { chatMessages, send } = useChat()
+
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false }
+  )
+
+  const localCameraTrack = useMemo(
+    () => tracks.find(tr => tr.participant.isLocal && tr.source === Track.Source.Camera),
+    [tracks]
+  )
+  const remoteCameraTrack = useMemo(
+    () => tracks.find(tr => !tr.participant.isLocal && tr.source === Track.Source.Camera),
+    [tracks]
+  )
+  const screenShareTrack = useMemo(
+    () => tracks.find(tr => tr.source === Track.Source.ScreenShare && tr.publication),
+    [tracks]
+  )
+
+  const remoteConnected = !!remoteCameraTrack?.participant
+  const remainingMins = Math.max(0, durationMins - Math.floor(elapsedSeconds / 60))
+  const lessonEndingWarning = remainingMins <= 5
+
+  const handleSendChat = () => {
+    if (!chatInput.trim()) return
+    send(chatInput)
+    setChatInput('')
+  }
+
+  // The main stage: screen share takes priority, then remote camera, else placeholder.
+  const mainTrack = (screenShareTrack?.publication && screenShareTrack) || (remoteCameraTrack?.publication && remoteCameraTrack) || null
+
   return (
     <div className="flex flex-col h-screen bg-zinc-950 dark overflow-hidden">
       {/* Top bar */}
@@ -316,13 +477,16 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
         </div>
 
         <div className="flex items-center gap-3">
+          {connectionState === ConnectionState.Reconnecting && (
+            <span className="text-xs text-amber-400 animate-pulse font-medium">{t('room.reconnecting')}</span>
+          )}
           {lessonEndingWarning && (
             <span className="text-xs text-amber-400 animate-pulse font-medium">
               {remainingMins} {t('room.minutesLeft')}
             </span>
           )}
           <div className="flex items-center gap-1.5 bg-zinc-800 rounded-full px-3 py-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className={`w-2 h-2 rounded-full ${connectionState === ConnectionState.Connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
             <span className="text-xs text-zinc-300 font-mono">{formatTimer(elapsedSeconds)}</span>
           </div>
         </div>
@@ -332,23 +496,25 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
       <div className="flex flex-1 min-h-0">
         {/* Video area */}
         <div className="flex-1 flex items-center justify-center bg-zinc-950 relative p-4">
-          {/* Remote video placeholder */}
-          <div className="w-full max-w-3xl aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800">
-            <div className="text-center space-y-3">
-              <Avatar className="h-20 w-20 mx-auto">
-                <AvatarImage src={tutorAvatar} />
-                <AvatarFallback className="gradient-bg text-white text-2xl font-bold">{getInitials(tutorName)}</AvatarFallback>
-              </Avatar>
-              <p className="text-zinc-400 text-sm">{t('room.waitingForParticipant')}</p>
-            </div>
+          {/* Remote / main video */}
+          <div className="w-full max-w-3xl aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800 overflow-hidden">
+            {mainTrack ? (
+              <VideoTrack trackRef={mainTrack} className="w-full h-full object-cover rounded-2xl" />
+            ) : (
+              <div className="text-center space-y-3">
+                <Avatar className="h-20 w-20 mx-auto">
+                  <AvatarImage src={tutorAvatar} />
+                  <AvatarFallback className="gradient-bg text-white text-2xl font-bold">{getInitials(tutorName)}</AvatarFallback>
+                </Avatar>
+                <p className="text-zinc-400 text-sm">{t('room.waitingForParticipant')}</p>
+              </div>
+            )}
           </div>
 
           {/* Self video (PiP) */}
           <div className="absolute bottom-6 right-6 w-32 sm:w-40 aspect-video bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center overflow-hidden">
-            {camEnabled ? (
-              <div className="w-full h-full bg-zinc-700 flex items-center justify-center">
-                <Users className="h-6 w-6 text-zinc-400" />
-              </div>
+            {camOn && localCameraTrack?.publication ? (
+              <VideoTrack trackRef={localCameraTrack} className="w-full h-full object-cover" />
             ) : (
               <VideoOff className="h-6 w-6 text-zinc-500" />
             )}
@@ -381,16 +547,18 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
                     <p className="text-zinc-500 text-xs text-center mt-4">{t('room.chat')}</p>
                   )}
                   {chatMessages.map((m, i) => (
-                    <div key={i} className="bg-zinc-800 rounded-xl p-2.5">
-                      <p className="text-xs text-zinc-400 mb-1">{m.from} · {m.time}</p>
-                      <p className="text-sm text-white">{m.text}</p>
+                    <div key={m.id ?? i} className="bg-zinc-800 rounded-xl p-2.5">
+                      <p className="text-xs text-zinc-400 mb-1">
+                        {m.from?.identity === localParticipant.identity ? 'You' : (m.from?.name || m.from?.identity || '—')} · {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                      <p className="text-sm text-white break-words">{m.message}</p>
                     </div>
                   ))}
                 </div>
                 <div className="p-3 border-t border-zinc-800 shrink-0 flex gap-2">
                   <input
-                    value={chatMessage}
-                    onChange={e => setChatMessage(e.target.value)}
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendChat()}
                     placeholder="Message..."
                     className="flex-1 bg-zinc-800 text-white text-sm rounded-xl px-3 py-2 outline-none border border-zinc-700 focus:border-primary"
@@ -428,29 +596,29 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
       <div className="shrink-0 bg-zinc-900/90 backdrop-blur border-t border-zinc-800 px-4 py-3">
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
-            onClick={() => setMicEnabled(v => !v)}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${micEnabled ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
-            title={micEnabled ? t('room.mute') : t('room.unmute')}
+            onClick={() => toggleMic()}
+            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${micOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
+            title={micOn ? t('room.mute') : t('room.unmute')}
           >
-            {micEnabled ? <Mic className="h-5 w-5 text-white" /> : <MicOff className="h-5 w-5 text-destructive" />}
-            <span className="text-[10px] text-zinc-400">{micEnabled ? t('room.mute') : t('room.unmute')}</span>
+            {micOn ? <Mic className="h-5 w-5 text-white" /> : <MicOff className="h-5 w-5 text-destructive" />}
+            <span className="text-[10px] text-zinc-400">{micOn ? t('room.mute') : t('room.unmute')}</span>
           </button>
 
           <button
-            onClick={() => setCamEnabled(v => !v)}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${camEnabled ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
-            title={camEnabled ? t('room.cameraOff') : t('room.cameraOn')}
+            onClick={() => toggleCam()}
+            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${camOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
+            title={camOn ? t('room.cameraOff') : t('room.cameraOn')}
           >
-            {camEnabled ? <Video className="h-5 w-5 text-white" /> : <VideoOff className="h-5 w-5 text-destructive" />}
-            <span className="text-[10px] text-zinc-400">{camEnabled ? t('room.cameraOff') : t('room.cameraOn')}</span>
+            {camOn ? <Video className="h-5 w-5 text-white" /> : <VideoOff className="h-5 w-5 text-destructive" />}
+            <span className="text-[10px] text-zinc-400">{camOn ? t('room.cameraOff') : t('room.cameraOn')}</span>
           </button>
 
           <button
-            onClick={() => setScreenSharing(v => !v)}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${screenSharing ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+            onClick={() => toggleScreen()}
+            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${screenOn ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            {screenSharing ? <MonitorOff className="h-5 w-5 text-primary" /> : <Monitor className="h-5 w-5 text-white" />}
-            <span className="text-[10px] text-zinc-400">{screenSharing ? t('room.stopShare') : t('room.screenShare')}</span>
+            {screenOn ? <MonitorOff className="h-5 w-5 text-primary" /> : <Monitor className="h-5 w-5 text-white" />}
+            <span className="text-[10px] text-zinc-400">{screenOn ? t('room.stopShare') : t('room.screenShare')}</span>
           </button>
 
           <button
@@ -470,7 +638,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
           </button>
 
           <button
-            onClick={() => setShowEndDialog(true)}
+            onClick={onRequestEnd}
             className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-destructive hover:bg-destructive/90 transition-colors ml-2"
           >
             <PhoneOff className="h-5 w-5 text-white" />
@@ -478,26 +646,6 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
           </button>
         </div>
       </div>
-
-      {/* End call dialog */}
-      <Dialog open={showEndDialog} onOpenChange={setShowEndDialog}>
-        <DialogContent className="dark bg-zinc-900 border-zinc-800 text-white max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t('room.endCall')}</DialogTitle>
-            <DialogDescription className="text-zinc-400">
-              {t('room.endCallConfirm')}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setShowEndDialog(false)} className="border-zinc-700 text-zinc-300">
-              {tc('cancel')}
-            </Button>
-            <Button variant="destructive" onClick={handleEndCall}>
-              {t('room.endCall')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
