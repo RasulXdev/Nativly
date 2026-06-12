@@ -409,12 +409,12 @@ export default function TutorOnboardingForm() {
                   return (
                     <div
                       key={lang.code}
-                      className="group flex items-center gap-2.5 p-3.5 rounded-xl border border-border/40 bg-muted/30 text-left cursor-not-allowed opacity-70"
+                      className="flex items-center gap-2 p-3.5 rounded-xl border border-border/40 bg-muted/30 text-left cursor-not-allowed opacity-60"
                       title={t('comingSoon')}
                     >
                       <span className="text-2xl shrink-0 grayscale">{lang.flag}</span>
-                      <span className="text-sm font-medium leading-tight flex-1 min-w-0 truncate text-muted-foreground">{tl(lang.code)}</span>
-                      <span className="text-[9px] font-semibold text-primary/70 bg-primary/8 rounded-full px-1.5 py-0.5 leading-none shrink-0">
+                      <span className="text-sm font-medium leading-tight text-muted-foreground truncate">{tl(lang.code)}</span>
+                      <span className="ml-auto text-[9px] font-semibold text-primary/70 bg-primary/8 rounded-full px-1.5 py-0.5 leading-none shrink-0 whitespace-nowrap">
                         {t('comingSoon')}
                       </span>
                     </div>

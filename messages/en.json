@@ -170,7 +170,7 @@
       },
       "price": {
         "title": "Affordable Prices",
-        "desc": "Packages for every budget, trial lesson from $5"
+        "desc": "Packages for every budget, trial lesson from 5 AZN"
       },
       "levels": {
         "title": "Every Level",
@@ -208,7 +208,7 @@
       "popular": "Popular",
       "discount": "off",
       "buyNow": "Buy now",
-      "trialLesson": "Trial lesson — $5",
+      "trialLesson": "Trial lesson — 5 AZN",
       "features": {
         "f1": "Choose your tutor",
         "f2": "Lesson materials included",
@@ -236,7 +236,7 @@
     "faq": {
       "title": "Frequently asked questions",
       "q1": "How much does the trial lesson cost?",
-      "a1": "The first trial lesson is only $5. If you like the tutor, you can purchase a package.",
+      "a1": "The first trial lesson is only 5 AZN. If you like the tutor, you can purchase a package.",
       "q2": "Can I cancel a lesson?",
       "a2": "Cancellation 24 hours before is free. 12-24 hours: 50% refunded. Less than 12 hours: no refund.",
       "q3": "What devices can I use?",
@@ -258,7 +258,7 @@
     },
     "cta": {
       "title": "Start learning a language today",
-      "subtitle": "First trial lesson just $5",
+      "subtitle": "First trial lesson just 5 AZN",
       "button": "Get started",
       "trustNoCard": "No credit card required",
       "trustCancel": "Cancel anytime",
@@ -942,7 +942,7 @@
       "subtitle": "Start learning a language in 4 steps — you’ll feel the difference from the first lesson",
       "whyTitle": "Why Nativly?",
       "ctaTitle": "Ready? Let’s start!",
-      "ctaSubtitle": "Your first trial lesson is just $5 — risk-free.",
+      "ctaSubtitle": "Your first trial lesson is just 5 AZN — risk-free.",
       "ctaButton": "Start now",
       "steps": [
         {
@@ -961,7 +961,7 @@
           "number": "03",
           "title": "Book a time",
           "desc": "Pick a time that suits you and book a 30- or 60-minute lesson.",
-          "detail": "Pay just $5 for a trial lesson. Continue if you like it, get your money back if you don’t."
+          "detail": "Pay just 5 AZN for a trial lesson. Continue if you like it, get your money back if you don’t."
         },
         {
           "number": "04",
@@ -1067,7 +1067,7 @@
       "q1": "What happens if there is a technical problem during the lesson?",
       "a1": "If a technical problem occurs, we reschedule the lesson. If it is the tutor's fault, a full refund is given.",
       "q2": "Can I have trial lessons with different tutors?",
-      "a2": "Yes, you can have a trial lesson with any tutor. Each trial costs $5.",
+      "a2": "Yes, you can have a trial lesson with any tutor. Each trial costs 5 AZN.",
       "q3": "Can a lesson be rescheduled?",
       "a3": "You can reschedule for free 24 hours in advance. Closer than that, the cancellation policy applies.",
       "q4": "Are there lessons for children?",
@@ -1472,6 +1472,7 @@
     "phone": "Phone",
     "city": "City",
     "cityPlaceholder": "Baku",
+    "comingSoon": "Coming soon",
     "selectedLevels": "Level in selected languages",
     "levelNative": "Native",
     "levelAdvanced": "Advanced",

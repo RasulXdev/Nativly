@@ -170,7 +170,7 @@
       },
       "price": {
         "title": "Əlçatan Qiymətlər",
-        "desc": "Hər büdcə üçün paketlər, sınaq dərsi sadəcə $5"
+        "desc": "Hər büdcə üçün paketlər, sınaq dərsi sadəcə 5 AZN"
       },
       "levels": {
         "title": "Hər Səviyyə",
@@ -208,7 +208,7 @@
       "popular": "Populyar",
       "discount": "endirim",
       "buyNow": "İndi al",
-      "trialLesson": "Sınaq dərsi — $5",
+      "trialLesson": "Sınaq dərsi — 5 AZN",
       "features": {
         "f1": "Müəllim seçin",
         "f2": "Dərs materialları daxildir",
@@ -236,7 +236,7 @@
     "faq": {
       "title": "Tez-tez soruşulan suallar",
       "q1": "Sınaq dərsi nə qədər başa gəlir?",
-      "a1": "İlk sınaq dərsi sadəcə $5-dır. Müəllimlə razı qalsanız, paket ala bilərsiniz.",
+      "a1": "İlk sınaq dərsi sadəcə 5 AZN-dır. Müəllimlə razı qalsanız, paket ala bilərsiniz.",
       "q2": "Dərsi ləğv edə bilərəm?",
       "a2": "24 saat əvvəl ləğv pulsuz. 12-24 saat: 50% qaytarılır. 12 saatdan az: geri qaytarılmır.",
       "q3": "Hansı cihazlardan istifadə edə bilərəm?",
@@ -258,7 +258,7 @@
     },
     "cta": {
       "title": "Bu gün dil öyrənməyə başla",
-      "subtitle": "İlk sınaq dərsi sadəcə $5",
+      "subtitle": "İlk sınaq dərsi sadəcə 5 AZN",
       "button": "Başla",
       "trustNoCard": "Kredit kartı lazım deyil",
       "trustCancel": "İstənilən vaxt ləğv et",
@@ -942,7 +942,7 @@
       "subtitle": "4 addımda dil öyrənməyə başla — ilk dərsdən fərq hiss edəcəksən",
       "whyTitle": "Niyə Nativly?",
       "ctaTitle": "Hazırsansa, başla!",
-      "ctaSubtitle": "İlk sınaq dərsin cəmi $5 — riskisiz.",
+      "ctaSubtitle": "İlk sınaq dərsin cəmi 5 AZN — riskisiz.",
       "ctaButton": "İndi başla",
       "steps": [
         {
@@ -961,7 +961,7 @@
           "number": "03",
           "title": "Vaxt rezerv et",
           "desc": "Sənə uyğun vaxtı seç, 30 və ya 60 dəq dərs sifariş et.",
-          "detail": "Sınaq dərsi üçün cəmi $5 ödə. Bəyənsən davam et, bəyənməsən — pul geri."
+          "detail": "Sınaq dərsi üçün cəmi 5 AZN ödə. Bəyənsən davam et, bəyənməsən — pul geri."
         },
         {
           "number": "04",
@@ -1067,7 +1067,7 @@
       "q1": "Dərs zamanı texniki problem yaranarsa nə olur?",
       "a1": "Texniki problem yaranarsa dərsi yenidən cədvəlləşdiririk. Müəllimin problemi olarsa tam geri ödəyirik.",
       "q2": "Fərqli müəllimlərlə sınaq dərsi keçirə bilərəmmi?",
-      "a2": "Bəli, istənilən müəllimlə sınaq dərsi keçirə bilərsiniz. Hər sınaq $5-dır.",
+      "a2": "Bəli, istənilən müəllimlə sınaq dərsi keçirə bilərsiniz. Hər sınaq 5 AZN-dır.",
       "q3": "Dərsin tarixi dəyişdirilə bilərmi?",
       "a3": "24 saat əvvəl dərsi pulsuz yenidən planlaşdıra bilərsiniz.",
       "q4": "Uşaqlar üçün dərslər varmı?",
@@ -1472,6 +1472,7 @@
     "phone": "Telefon",
     "city": "Şəhər",
     "cityPlaceholder": "Bakı",
+    "comingSoon": "Çox yaxında",
     "selectedLevels": "Seçilmiş dillərdə səviyyə",
     "levelNative": "Ana dili",
     "levelAdvanced": "Təkmilləşmiş",

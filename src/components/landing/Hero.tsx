@@ -156,7 +156,7 @@ export default function Hero() {
               <div className="absolute -bottom-3 -left-3 glass-strong rounded-2xl px-4 py-2.5 shadow-xl float">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg gradient-bg-gold flex items-center justify-center">
-                    <span className="text-white text-[10px] font-bold">$5</span>
+                    <span className="text-white text-[10px] font-bold">5 AZN</span>
                   </div>
                   <div>
                     <p className="text-xs font-bold text-foreground">{t('heroCard.trialLesson')}</p>
