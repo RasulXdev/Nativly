@@ -1,40 +1,23 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { Users, Target, Heart, Globe } from 'lucide-react'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
-export const metadata: Metadata = {
-  title: 'Haqqımızda',
-  description: 'Nativly — Azərbaycan üçün yaradılmış online dil öyrənmə platforması.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('public.about')
+  return { title: t('title'), description: t('subtitle') }
 }
 
-const VALUES = [
-  {
-    icon: Target,
-    title: 'Missiyamız',
-    desc: 'Hər azərbaycanlıya native müəllimlərlə keyfiyyətli dil öyrənmə imkanı yaratmaq.',
-    accent: 'bg-blue-500/10 text-blue-600',
-  },
-  {
-    icon: Users,
-    title: 'Müəllimlər',
-    desc: 'Hər müəllim müsahibə, sertifikat yoxlaması və sınaq dərsindən keçir.',
-    accent: 'bg-violet-500/10 text-violet-600',
-  },
-  {
-    icon: Heart,
-    title: 'Tələbələr',
-    desc: 'Tələbə məmnuniyyəti hər şeydən üstündür. İlk dərsdən 30 gün geri qaytarma zəmanəti.',
-    accent: 'bg-rose-500/10 text-rose-600',
-  },
-  {
-    icon: Globe,
-    title: 'Dillər',
-    desc: '12+ dil, 500+ müəllim, istənilən vaxt, istənilən cihazdan.',
-    accent: 'bg-emerald-500/10 text-emerald-600',
-  },
-]
+export default async function AboutPage() {
+  const t = await getTranslations('public.about')
 
-export default function AboutPage() {
+  const values = [
+    { icon: Target, title: t('mission'), desc: t('missionText'), accent: 'bg-blue-500/10 text-blue-600' },
+    { icon: Users, title: t('tutorsValue'), desc: t('tutorsValueText'), accent: 'bg-violet-500/10 text-violet-600' },
+    { icon: Heart, title: t('students'), desc: t('studentsText'), accent: 'bg-rose-500/10 text-rose-600' },
+    { icon: Globe, title: t('languages'), desc: t('languagesText'), accent: 'bg-emerald-500/10 text-emerald-600' },
+  ]
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -51,10 +34,8 @@ export default function AboutPage() {
         />
         <div className="relative z-10 container mx-auto max-w-3xl px-4 py-20 md:py-28 text-center space-y-5">
           <AnimateOnScroll>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Nativly Haqqında</h1>
-            <p className="text-lg text-white/50 mt-4 max-w-xl mx-auto">
-              Azərbaycan üçün yaradılmış, native müəllimlərlə dil öyrənmə platforması
-            </p>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">{t('title')}</h1>
+            <p className="text-lg text-white/50 mt-4 max-w-xl mx-auto">{t('subtitle')}</p>
           </AnimateOnScroll>
         </div>
       </section>
@@ -65,16 +46,9 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimateOnScroll animation="slide-left">
               <div className="space-y-5">
-                <h2 className="text-3xl font-extrabold tracking-tight">Necə başladı?</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Nativly, 2024-cü ildə Bakıda yaradıldı. Əsas ideya sadə idi: azərbaycanlılar üçün
-                  keyfiyyətli, əlçatan, rahat dil öyrənmə imkanı yaratmaq.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Biz inanırıq ki, dil öyrənmək üçün xarici ölkəyə getmək lazım deyil.
-                  Düzgün müəllim, düzgün metod, düzgün platforma ilə evdən, işdən, istənilən yerdən
-                  sürətlə irəliləmək mümkündür.
-                </p>
+                <h2 className="text-3xl font-extrabold tracking-tight">{t('storyTitle')}</h2>
+                <p className="text-muted-foreground leading-relaxed">{t('story1')}</p>
+                <p className="text-muted-foreground leading-relaxed">{t('story2')}</p>
               </div>
             </AnimateOnScroll>
 
@@ -82,10 +56,10 @@ export default function AboutPage() {
               <div className="rounded-2xl border border-border/60 bg-card p-8">
                 <div className="grid grid-cols-2 gap-6">
                   {[
-                    { v: '500+', l: 'Sertifikatlı müəllim' },
-                    { v: '10K+', l: 'Keçirilmiş dərs' },
-                    { v: '5K+', l: 'Aktiv tələbə' },
-                    { v: '4.9', l: 'Orta reytinq' },
+                    { v: '500+', l: t('stat1') },
+                    { v: '10K+', l: t('stat2') },
+                    { v: '5K+', l: t('stat3') },
+                    { v: '4.9', l: t('stat4') },
                   ].map((s) => (
                     <div key={s.l} className="text-center space-y-1">
                       <div className="text-3xl font-extrabold gradient-text">{s.v}</div>
@@ -103,10 +77,10 @@ export default function AboutPage() {
       <section className="py-20 md:py-28 px-4 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <AnimateOnScroll className="text-center mb-14 space-y-3">
-            <h2 className="text-3xl font-extrabold tracking-tight">Dəyərlərimiz</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight">{t('valuesTitle')}</h2>
           </AnimateOnScroll>
           <div className="grid sm:grid-cols-2 gap-5">
-            {VALUES.map((v, i) => {
+            {values.map((v, i) => {
               const Icon = v.icon
               return (
                 <AnimateOnScroll key={v.title} delay={i * 100}>
@@ -124,21 +98,19 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* How tutors are vetted */}
+      {/* Vetting */}
       <section className="py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center space-y-10">
           <AnimateOnScroll className="space-y-3">
-            <h2 className="text-3xl font-extrabold tracking-tight">Müəllimlər necə seçilir?</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Platformamızdakı hər müəllim ciddi seçim prosesindən keçir.
-            </p>
+            <h2 className="text-3xl font-extrabold tracking-tight">{t('vettingTitle')}</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">{t('vettingSubtitle')}</p>
           </AnimateOnScroll>
 
           <div className="grid sm:grid-cols-3 gap-8 text-left">
             {[
-              { step: '01', title: 'Müraciət', desc: 'CV, sertifikatlar, təcrübə məlumatları.' },
-              { step: '02', title: 'Müsahibə', desc: 'Komandamızla video müsahibə.' },
-              { step: '03', title: 'Sınaq Dərsi', desc: 'Real tələbə ilə sınaq dərsi qiymətləndirilir.' },
+              { step: '01', title: t('vetting1Title'), desc: t('vetting1Desc') },
+              { step: '02', title: t('vetting2Title'), desc: t('vetting2Desc') },
+              { step: '03', title: t('vetting3Title'), desc: t('vetting3Desc') },
             ].map((s, i) => (
               <AnimateOnScroll key={s.step} delay={i * 100}>
                 <div className="space-y-3 p-5 rounded-xl border border-border/40 bg-card/50">

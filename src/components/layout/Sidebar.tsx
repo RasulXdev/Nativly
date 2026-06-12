@@ -58,16 +58,16 @@ export default function Sidebar() {
     { href: '/tutor-schedule', label: t('schedule'), icon: Calendar },
     { href: '/tutor-students', label: t('students'), icon: Users },
     { href: '/messages', label: t('messages'), icon: MessageSquare },
-    { href: '/tutor-earnings', label: 'Qazanc', icon: BarChart3 },
+    { href: '/tutor-earnings', label: t('earnings'), icon: BarChart3 },
     { href: '/tutor-settings', label: t('settings'), icon: Settings },
   ]
 
   const adminNav: NavItem[] = [
     { href: '/admin', label: t('dashboard'), icon: LayoutDashboard },
-    { href: '/admin/users', label: 'İstifadəçilər', icon: Users },
+    { href: '/admin/users', label: t('admin'), icon: Users },
     { href: '/admin/tutors', label: t('tutors'), icon: GraduationCap },
-    { href: '/admin/lessons', label: 'Dərslər', icon: BookOpen },
-    { href: '/admin/payments', label: 'Ödənişlər', icon: CreditCard },
+    { href: '/admin/lessons', label: t('lessons'), icon: BookOpen },
+    { href: '/admin/payments', label: t('wallet'), icon: CreditCard },
     { href: '/admin/settings', label: t('settings'), icon: Settings },
   ]
 
@@ -147,17 +147,17 @@ export default function Sidebar() {
       <div className="border-t border-border/60 p-2.5 space-y-2">
         <Link
           href="/"
-          title={sidebarCollapsed ? 'Ana səhifə' : undefined}
+          title={sidebarCollapsed ? t('home') : undefined}
           className={cn(
             'relative flex items-center rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/6 transition-all duration-150 group',
             sidebarCollapsed ? 'h-10 w-10 mx-auto justify-center' : 'h-10 px-3 gap-3'
           )}
         >
           <ArrowLeft className={cn('shrink-0', sidebarCollapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4')} />
-          {!sidebarCollapsed && <span className="flex-1 truncate">Ana səhifə</span>}
+          {!sidebarCollapsed && <span className="flex-1 truncate">{t('home')}</span>}
           {sidebarCollapsed && (
             <span className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-popover border border-border text-foreground text-xs font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
-              Ana səhifə
+              {t('home')}
             </span>
           )}
         </Link>

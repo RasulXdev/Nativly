@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { getLocale } from 'next-intl/server'
-import Link from 'next/link'
+import { getLocale, getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import { Check, Sparkles } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -9,23 +9,17 @@ import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 import { getLandingPlans } from '@/lib/data/landing'
 
-export const metadata: Metadata = {
-  title: 'Qiymətlər',
-  description: 'Nativly aylıq abonəlik planları.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('public.pricing')
+  return { title: t('title'), description: t('subtitle') }
 }
-
-const PLAN_FEATURES = [
-  'Fərdi müəllim seçimi',
-  'Dərs materialları daxil',
-  'Dərs qeydləri',
-  'Video dərslər',
-  'Ev tapşırığı',
-  'Prioritet dəstək',
-]
 
 export default async function PricingPage() {
   const locale = (await getLocale()) as 'az' | 'en' | 'ru'
+  const t = await getTranslations('public.pricing')
   const plans = await getLandingPlans(locale)
+
+  const features = [t('feature1'), t('feature2'), t('feature3'), t('feature4')]
 
   return (
     <div className="min-h-screen">
@@ -43,13 +37,11 @@ export default async function PricingPage() {
         />
         <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-24 text-center space-y-5">
           <AnimateOnScroll>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Aylıq Abonəlik Planları</h1>
-            <p className="text-white/50 text-lg mt-3">
-              Sizə uyğun planı seçin və istənilən müəllimlə dərslərə başlayın.
-            </p>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">{t('title')}</h1>
+            <p className="text-white/50 text-lg mt-3">{t('subtitle')}</p>
             <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 rounded-full px-4 py-1.5 text-sm font-medium ring-1 ring-emerald-500/15 mt-2">
               <Sparkles className="h-3.5 w-3.5" />
-              İstənilən vaxt ləğv et — gizli ödəniş yoxdur
+              {t('allPlans')}
             </div>
           </AnimateOnScroll>
         </div>
@@ -69,20 +61,20 @@ export default async function PricingPage() {
                 )}>
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="px-3 text-xs gradient-bg border-0">Populyar</Badge>
+                      <Badge className="px-3 text-xs gradient-bg border-0">{t('mostPopular')}</Badge>
                     </div>
                   )}
                   <CardHeader className="pt-8 pb-3">
                     <h3 className="font-bold text-lg">{plan.name}</h3>
-                    <p className="text-xs text-muted-foreground">{plan.lessonsPerMonth} dərs/ay × {plan.minutes} dəq</p>
+                    <p className="text-xs text-muted-foreground">{plan.lessonsPerMonth} {t('monthly')}</p>
                     <div className="mt-3 flex items-end gap-1.5">
                       <span className="text-4xl font-extrabold tracking-tight">₼{plan.priceAzn.toFixed(0)}</span>
-                      <span className="text-muted-foreground text-sm mb-1.5">/ay</span>
+                      <span className="text-muted-foreground text-sm mb-1.5">/{t('monthly')}</span>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-5">
                     <ul className="space-y-2.5">
-                      {PLAN_FEATURES.slice(0, plan.features).map((f) => (
+                      {features.slice(0, plan.features).map((f) => (
                         <li key={f} className="flex items-center gap-2.5 text-sm">
                           <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                             <Check className="h-3 w-3 text-primary" />
@@ -92,14 +84,14 @@ export default async function PricingPage() {
                       ))}
                     </ul>
                     <Link
-                      href={`/${locale}/register`}
+                      href="/register"
                       className={cn(
                         buttonVariants({ size: 'default', variant: plan.popular ? 'default' : 'outline' }),
                         'w-full rounded-xl font-semibold',
                         plan.popular && 'gradient-bg border-0'
                       )}
                     >
-                      Abonə ol
+                      {t('subscribe')}
                     </Link>
                   </CardContent>
                 </Card>
@@ -113,13 +105,13 @@ export default async function PricingPage() {
       <section className="py-16 md:py-24 px-4 bg-muted/30">
         <div className="container mx-auto max-w-2xl space-y-6">
           <AnimateOnScroll className="text-center space-y-3">
-            <h2 className="text-2xl font-extrabold tracking-tight">Abonəlik haqqında suallar</h2>
+            <h2 className="text-2xl font-extrabold tracking-tight">{t('faqTitle')}</h2>
           </AnimateOnScroll>
           {[
-            { q: 'Abonəlik necə işləyir?', a: 'Aylıq plan seçirsiniz və hər ay planınıza uyğun sayda dərs hüququ alırsınız. Hər dərs üçün istənilən müəllimi seçə bilərsiniz.' },
-            { q: 'Ödəniş üsulları hansılardır?', a: 'Visa, Mastercard, Apple Pay, Google Pay qəbul edirik.' },
-            { q: 'İstədiyim vaxt ləğv edə bilərəmmi?', a: 'Bəli, abonəliyi istənilən vaxt ləğv edə bilərsiniz. Cari dövrün sonuna qədər dərs hüququnuz qalır.' },
-            { q: 'İstifadə olunmayan dərslər keçirmi?', a: 'Hər ay dərs hüququ yenilənir. Cari ayın dərslərini ayın sonuna qədər istifadə etmək tövsiyə olunur.' },
+            { q: t('faq1q'), a: t('faq1a') },
+            { q: t('faq2q'), a: t('faq2a') },
+            { q: t('faq3q'), a: t('faq3a') },
+            { q: t('faq4q'), a: t('faq4a') },
           ].map((item, i) => (
             <AnimateOnScroll key={i} delay={i * 80}>
               <div className="rounded-xl border border-border/60 bg-card p-5 space-y-2 hover:border-primary/20 transition-colors">

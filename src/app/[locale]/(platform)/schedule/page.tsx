@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { format, differenceInMinutes, isSameDay } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import {
   CalendarClock,
   Video,
@@ -33,6 +34,8 @@ import {
 } from '@/lib/utils'
 import { toast } from 'sonner'
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 interface UpcomingLesson {
   id: string
   booking_id: string | null
@@ -53,6 +56,10 @@ interface PastLesson {
 }
 
 export default function SchedulePage() {
+  const t = useTranslations('schedule')
+  const locale = useLocale()
+  const dateFnsLocale = LOCALES[locale] ?? enUS
+
   const { data: upcomingRaw, isLoading: loadingUpcoming } = useUpcomingLessons()
   const { data: pastRaw, isLoading: loadingPast } = useLessonHistory()
   const cancelLesson = useCancelLesson()
@@ -69,24 +76,20 @@ export default function SchedulePage() {
 
   const handleCancel = async () => {
     if (!cancelTarget?.booking_id) {
-      toast.error('Bu dərs ləğv edilə bilməz')
+      toast.error(t('cancelError'))
       setCancelTarget(null)
       return
     }
     try {
       await cancelLesson.mutateAsync({ bookingId: cancelTarget.booking_id })
-      const tier = getCancellationTier(cancelTarget.scheduled_at)
-      toast.success(
-        tier === 'free' ? 'Dərs ləğv edildi, kredit geri qaytarıldı' : 'Dərs ləğv edildi'
-      )
+      toast.success(t('cancelSuccess'))
     } catch {
-      toast.error('Ləğv edilmədi')
+      toast.error(t('cancelError'))
     } finally {
       setCancelTarget(null)
     }
   }
 
-  // Group upcoming by day for the weekly strip.
   const days = upcoming.reduce<Record<string, UpcomingLesson[]>>((acc, l) => {
     const key = format(new Date(l.scheduled_at), 'yyyy-MM-dd')
     ;(acc[key] ??= []).push(l)
@@ -100,8 +103,7 @@ export default function SchedulePage() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage:
-              'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)',
             backgroundSize: '20px 20px',
           }}
         />
@@ -111,42 +113,38 @@ export default function SchedulePage() {
             <CalendarClock className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Cədvəlim</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight">{t('title')}</h1>
             <p className="text-sm text-white/70 mt-0.5">
               {upcoming.length > 0
-                ? `${upcoming.length} gələn dərs`
-                : 'Hələ planlaşdırılan dərs yoxdur'}
+                ? `${upcoming.length} ${t('lessons')}`
+                : t('noUpcoming')}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Weekly strip (grouped upcoming) */}
+      {/* Weekly strip */}
       {!loadingUpcoming && upcoming.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {Object.entries(days)
             .slice(0, 4)
             .map(([key, dayLessons]) => {
               const d = new Date(key + 'T12:00:00')
-              const today = isSameDay(d, new Date())
+              const isToday = isSameDay(d, new Date())
               return (
                 <div
                   key={key}
-                  className={`rounded-2xl border p-4 ${
-                    today ? 'border-primary/40 bg-primary/5' : 'border-border bg-card'
-                  }`}
+                  className={`rounded-2xl border p-4 ${isToday ? 'border-primary/40 bg-primary/5' : 'border-border bg-card'}`}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <CalendarDays
-                      className={`h-4 w-4 ${today ? 'text-primary' : 'text-muted-foreground'}`}
-                    />
+                    <CalendarDays className={`h-4 w-4 ${isToday ? 'text-primary' : 'text-muted-foreground'}`} />
                     <p className="text-xs font-semibold uppercase tracking-wide">
-                      {today ? 'Bu gün' : format(d, 'EEEE', { locale: az })}
+                      {isToday ? t('today') : format(d, 'EEEE', { locale: dateFnsLocale })}
                     </p>
                   </div>
-                  <p className="text-sm font-bold">{format(d, 'd MMMM', { locale: az })}</p>
+                  <p className="text-sm font-bold">{format(d, 'd MMMM', { locale: dateFnsLocale })}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {dayLessons.length} dərs
+                    {dayLessons.length} {t('lessons')}
                   </p>
                 </div>
               )
@@ -160,20 +158,18 @@ export default function SchedulePage() {
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <CalendarClock className="h-4 w-4 text-white" />
           </div>
-          <h2 className="font-semibold text-sm">Gələn dərslər</h2>
+          <h2 className="font-semibold text-sm">{t('upcoming')}</h2>
         </div>
         <div className="p-5">
           {loadingUpcoming ? (
             <div className="space-y-3">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 rounded-xl" />
-              ))}
+              {Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
             </div>
           ) : upcoming.length === 0 ? (
             <EmptyState
               icon={CalendarClock}
-              title="Gələn dərs yoxdur"
-              description="Müəllim seçib dərs rezerv edin"
+              title={t('noUpcoming')}
+              description={t('browseToBook')}
             />
           ) : (
             <div className="space-y-2.5">
@@ -185,11 +181,7 @@ export default function SchedulePage() {
                     key={lesson.id}
                     className="group flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-white/5 transition-all"
                   >
-                    <div
-                      className={`w-1 self-stretch rounded-full shrink-0 ${
-                        joinable ? 'bg-emerald-400' : 'gradient-bg'
-                      }`}
-                    />
+                    <div className={`w-1 self-stretch rounded-full shrink-0 ${joinable ? 'bg-emerald-400' : 'gradient-bg'}`} />
                     <Avatar className="h-10 w-10 shrink-0">
                       <AvatarImage src={tutorProfile?.avatar_url ?? ''} />
                       <AvatarFallback className="gradient-bg text-white text-xs font-bold">
@@ -197,29 +189,20 @@ export default function SchedulePage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">
-                        {tutorProfile?.full_name ?? 'Müəllim'}
-                      </p>
+                      <p className="text-sm font-semibold truncate">{tutorProfile?.full_name ?? '—'}</p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                         <Clock className="h-3 w-3" />
-                        <span>
-                          {format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', {
-                            locale: az,
-                          })}
-                        </span>
+                        <span>{format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: dateFnsLocale })}</span>
                         <span className="text-border">·</span>
-                        <span>{lesson.duration_minutes} dəq</span>
+                        <span>{lesson.duration_minutes} min</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       {joinable ? (
                         <Link href={`/room/${lesson.room_id ?? lesson.id}`}>
-                          <Button
-                            size="sm"
-                            className="h-8 text-xs rounded-full gradient-bg border-0 text-white shadow-md"
-                          >
+                          <Button size="sm" className="h-8 text-xs rounded-full gradient-bg border-0 text-white shadow-md">
                             <Video className="h-3 w-3 mr-1" />
-                            Qoşul
+                            {t('joinLesson')}
                           </Button>
                         </Link>
                       ) : (
@@ -230,7 +213,7 @@ export default function SchedulePage() {
                           onClick={() => setCancelTarget(lesson)}
                         >
                           <X className="h-3.5 w-3.5 mr-1" />
-                          Ləğv et
+                          {t('cancelLesson')}
                         </Button>
                       )}
                     </div>
@@ -248,30 +231,21 @@ export default function SchedulePage() {
           <div className="w-8 h-8 rounded-lg bg-muted/40 flex items-center justify-center">
             <History className="h-4 w-4 text-muted-foreground" />
           </div>
-          <h2 className="font-semibold text-sm">Keçmiş dərslər</h2>
+          <h2 className="font-semibold text-sm">{t('past')}</h2>
         </div>
         <div className="p-5">
           {loadingPast ? (
             <div className="space-y-3">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-xl" />
-              ))}
+              {Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}
             </div>
           ) : past.length === 0 ? (
-            <EmptyState
-              icon={History}
-              title="Keçmiş dərs yoxdur"
-              description="Tamamlanan dərsləriniz burada görünəcək"
-            />
+            <EmptyState icon={History} title={t('noPast')} description="" />
           ) : (
             <div className="space-y-2.5">
               {past.map((lesson) => {
                 const tutorProfile = lesson.tutor?.profiles
                 return (
-                  <div
-                    key={lesson.id}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-border/50"
-                  >
+                  <div key={lesson.id} className="flex items-center gap-3 p-3 rounded-xl border border-border/50">
                     <Avatar className="h-9 w-9 shrink-0">
                       <AvatarImage src={tutorProfile?.avatar_url ?? ''} />
                       <AvatarFallback className="bg-muted text-muted-foreground text-xs font-bold">
@@ -279,23 +253,15 @@ export default function SchedulePage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {tutorProfile?.full_name ?? 'Müəllim'}
-                      </p>
+                      <p className="text-sm font-medium truncate">{tutorProfile?.full_name ?? '—'}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {format(new Date(lesson.scheduled_at), 'd MMM yyyy, HH:mm', {
-                          locale: az,
-                        })}
+                        {format(new Date(lesson.scheduled_at), 'd MMM yyyy, HH:mm', { locale: dateFnsLocale })}
                       </p>
                     </div>
                     <Link href="/lessons">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 text-xs rounded-full"
-                      >
+                      <Button size="sm" variant="outline" className="h-8 text-xs rounded-full">
                         <Star className="h-3.5 w-3.5 mr-1" />
-                        Rəy yaz
+                        {t('writeReview')}
                       </Button>
                     </Link>
                   </div>
@@ -306,26 +272,19 @@ export default function SchedulePage() {
         </div>
       </section>
 
-      {/* Cancel confirmation */}
+      {/* Cancel dialog */}
       <Dialog open={!!cancelTarget} onOpenChange={(o) => !o && setCancelTarget(null)}>
         <DialogContent className="dark bg-background text-foreground max-w-md">
           <DialogHeader>
-            <DialogTitle>Dərsi ləğv et</DialogTitle>
+            <DialogTitle>{t('cancelTitle')}</DialogTitle>
             <DialogDescription>
-              {cancelTarget &&
-                cancellationTierMessage(getCancellationTier(cancelTarget.scheduled_at))}
+              {cancelTarget && cancellationTierMessage(getCancellationTier(cancelTarget.scheduled_at))}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="outline" onClick={() => setCancelTarget(null)}>
-              İmtina
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleCancel}
-              disabled={cancelLesson.isPending}
-            >
-              {cancelLesson.isPending ? 'Ləğv edilir...' : 'Dərsi ləğv et'}
+            <Button variant="outline" onClick={() => setCancelTarget(null)}>{t('dismiss')}</Button>
+            <Button variant="destructive" onClick={handleCancel} disabled={cancelLesson.isPending}>
+              {cancelLesson.isPending ? t('cancelling') : t('cancelButton')}
             </Button>
           </DialogFooter>
         </DialogContent>
