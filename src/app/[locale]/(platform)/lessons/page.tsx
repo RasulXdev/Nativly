@@ -1,7 +1,9 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { BookOpen, Clock, CheckCircle2 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +21,12 @@ interface PastLesson {
   tutor: any
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function LessonsPage() {
+  const t = useTranslations('lessons')
+  const tStatus = useTranslations('lessons.status')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const { data: raw, isLoading } = useLessonHistory()
   const lessons = (raw ?? []) as PastLesson[]
 
@@ -40,11 +47,11 @@ export default function LessonsPage() {
             <BookOpen className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Dərslərim</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight">{t('myLessons')}</h1>
             <p className="text-sm text-white/70 mt-0.5">
               {lessons.length > 0
-                ? `${lessons.length} tamamlanmış dərs`
-                : 'Tamamlanan dərslər'}
+                ? `${lessons.length} ${t('completedCount')}`
+                : t('completedTitle')}
             </p>
           </div>
         </div>
@@ -61,8 +68,8 @@ export default function LessonsPage() {
           ) : lessons.length === 0 ? (
             <EmptyState
               icon={BookOpen}
-              title="Hələ dərs yoxdur"
-              description="Tamamladığınız dərslər burada görünəcək"
+              title={t('noLessonsTitle')}
+              description={t('noLessonsDesc')}
             />
           ) : (
             <div className="space-y-2.5">
@@ -81,17 +88,17 @@ export default function LessonsPage() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">
-                        {tutorProfile?.full_name ?? 'Müəllim'}
+                        {tutorProfile?.full_name ?? '—'}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                         <Clock className="h-3 w-3" />
                         <span>
                           {format(new Date(lesson.scheduled_at), 'd MMM yyyy, HH:mm', {
-                            locale: az,
+                            locale: dfLocale,
                           })}
                         </span>
                         <span className="text-border">·</span>
-                        <span>{lesson.duration_minutes} dəq</span>
+                        <span>{lesson.duration_minutes} {t('min')}</span>
                       </div>
                     </div>
                     <Badge
@@ -99,7 +106,7 @@ export default function LessonsPage() {
                       className="text-xs text-emerald-400 border-emerald-500/30 shrink-0"
                     >
                       <CheckCircle2 className="h-3 w-3 mr-1" />
-                      Tamamlandı
+                      {tStatus('completed')}
                     </Badge>
                   </div>
                 )

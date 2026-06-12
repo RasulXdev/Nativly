@@ -1,8 +1,10 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { useState } from 'react'
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { MessageSquare, ChevronDown } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -18,7 +20,11 @@ interface TutorReviewsProps {
   totalReviews: number
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function TutorReviews({ tutorId, averageRating, totalReviews }: TutorReviewsProps) {
+  const t = useTranslations('tutors')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useTutorReviews(tutorId, page)
 
@@ -37,7 +43,7 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
       </div>
 
       {isError ? (
-        <p className="text-sm text-muted-foreground text-center py-4">Rəylər yüklənmədi</p>
+        <p className="text-sm text-muted-foreground text-center py-4">{t('reviewsFailed')}</p>
       ) : isLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -54,8 +60,8 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
       ) : !data?.reviews.length ? (
         <EmptyState
           icon={MessageSquare}
-          title="Hələ rəy yoxdur"
-          description="Bu müəllim üçün ilk rəyi siz yaza bilərsiniz"
+          title={t('noReviewsTitle')}
+          description={t('noReviewsDesc')}
         />
       ) : (
         <div className="space-y-5">
@@ -74,7 +80,7 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
                     <span className="font-semibold text-sm">{student?.full_name}</span>
                     <Rating value={review.rating} size="sm" showCount={false} />
                     <span className="text-xs text-muted-foreground">
-                      {format(new Date(review.created_at), 'd MMM yyyy', { locale: az })}
+                      {format(new Date(review.created_at), 'd MMM yyyy', { locale: dfLocale })}
                     </span>
                   </div>
                   {review.comment && (
@@ -84,7 +90,7 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
                   )}
                   {review.tutor_response && (
                     <div className="mt-2 pl-3 border-l-2 border-primary/30">
-                      <p className="text-xs font-semibold text-primary mb-0.5">Müəllimin cavabı</p>
+                      <p className="text-xs font-semibold text-primary mb-0.5">{t('tutorReply')}</p>
                       <p className="text-xs text-muted-foreground">{review.tutor_response}</p>
                     </div>
                   )}

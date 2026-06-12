@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import TutorStatsCards from '@/components/tutor/TutorStatsCards'
 import TodayLessons from '@/components/tutor/TodayLessons'
@@ -11,12 +12,15 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CalendarDays, Users } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: 'Müəllim paneli — Nativly',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('nav')
+  return { title: `${t('dashboard')} — Nativly` }
 }
 
 export default async function TutorDashboardPage() {
   const supabase = await createClient()
+  const t = await getTranslations('tutorDashboard')
+  const td = await getTranslations('dashboard')
   const { data: { user } } = await supabase.auth.getUser()
 
   const { data: profileData } = user
@@ -36,9 +40,9 @@ export default async function TutorDashboardPage() {
     : { data: null }
 
   const profile = profileData as { full_name: string } | null
-  const firstName = profile?.full_name?.split(' ')[0] ?? 'Müəllim'
+  const firstName = profile?.full_name?.split(' ')[0] ?? ''
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Sabahınız xeyir' : hour < 18 ? 'Günortanız xeyir' : 'Axşamınız xeyir'
+  const greeting = hour < 12 ? td('goodMorning') : hour < 18 ? td('goodAfternoon') : td('goodEvening')
   const appStatus = (tutorData as { application_status: string } | null)?.application_status
 
   return (
@@ -69,19 +73,19 @@ export default async function TutorDashboardPage() {
               </div>
               {appStatus === 'approved' ? (
                 <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-400/30 text-xs">
-                  ✓ Təsdiqlənmiş müəllim
+                  {t('approvedBadge')}
                 </Badge>
               ) : appStatus === 'pending' ? (
                 <Badge className="bg-amber-500/20 text-amber-300 border-amber-400/30 text-xs">
-                  ⏳ Müraciət gözləyir
+                  {t('pendingBadge')}
                 </Badge>
               ) : null}
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">
-              Xoş gəldiniz, {firstName}! 👋
+              {td('welcome')}{firstName ? `, ${firstName}` : ''}! 👋
             </h1>
             <p className="text-sm text-white/75 mt-2 max-w-sm leading-relaxed">
-              Bu gün dərslərinizi idarə edin və tələbələrinizlə məşğul olun.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -94,7 +98,7 @@ export default async function TutorDashboardPage() {
               )}
             >
               <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
-              Cədvəl
+              {t('schedule')}
             </Link>
             <Link
               href="/tutor-students"
@@ -104,7 +108,7 @@ export default async function TutorDashboardPage() {
               )}
             >
               <Users className="h-3.5 w-3.5 mr-1.5" />
-              Tələbələr
+              {t('students')}
             </Link>
           </div>
         </div>

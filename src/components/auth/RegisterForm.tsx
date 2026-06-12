@@ -53,7 +53,7 @@ export default function RegisterForm() {
       toast.success(t('emailSent'), { description: t('checkEmail') })
       router.push(`/${locale}/login`)
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('error'))
     } finally {
       setIsLoading(false)
     }
@@ -70,7 +70,7 @@ export default function RegisterForm() {
           id="full_name"
           label={t('fullName')}
           icon={User}
-          placeholder="Adınız Soyadınız"
+          placeholder={t('fullNamePlaceholder')}
           autoComplete="name"
           error={errors.full_name?.message}
           disabled={isLoading}

@@ -1,7 +1,9 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { format, differenceInMinutes } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { CalendarClock, Video, Clock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -11,7 +13,12 @@ import { getInitials } from '@/lib/utils'
 import { Link } from '@/i18n/navigation'
 import EmptyState from '@/components/shared/EmptyState'
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function TodayLessons() {
+  const t = useTranslations('tutorDashboard')
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
   const { data: rawLessons, isLoading, isError } = useTutorTodayLessons()
 
   type TodayLesson = {
@@ -37,7 +44,7 @@ export default function TodayLessons() {
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <CalendarClock className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Bu günün dərsləri</h3>
+          <h3 className="font-semibold text-sm">{t('todayLessons')}</h3>
         </div>
         <Link href="/tutor-schedule">
           <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
@@ -49,7 +56,7 @@ export default function TodayLessons() {
 
       <div className="p-5">
         {isError ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t('failedToLoad')}</p>
         ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -66,8 +73,8 @@ export default function TodayLessons() {
         ) : !lessons?.length ? (
           <EmptyState
             icon={CalendarClock}
-            title="Bu gün dərs yoxdur"
-            description="Gələn dərslər burada görünəcək"
+            title={t('noTodayTitle')}
+            description={t('noTodayDesc')}
           />
         ) : (
           <div className="space-y-2.5">
@@ -89,13 +96,13 @@ export default function TodayLessons() {
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">
-                      {lesson.student?.full_name ?? 'Tələbə'}
+                      {lesson.student?.full_name ?? t('student')}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                       <Clock className="h-3 w-3" />
-                      <span>{format(new Date(lesson.scheduled_at), 'HH:mm', { locale: az })}</span>
+                      <span>{format(new Date(lesson.scheduled_at), 'HH:mm', { locale: dfLocale })}</span>
                       <span className="text-border">·</span>
-                      <span>{lesson.duration_minutes} dəq</span>
+                      <span>{lesson.duration_minutes} {t('min')}</span>
                     </div>
                   </div>
 
@@ -103,7 +110,7 @@ export default function TodayLessons() {
                     <Link href={`/room/${lesson.room_id ?? lesson.id}`}>
                       <Button size="sm" className="h-8 text-xs rounded-full gradient-bg border-0 text-white shrink-0 shadow-md">
                         <Video className="h-3 w-3 mr-1" />
-                        Qoşul
+                        {t('join')}
                       </Button>
                     </Link>
                   ) : (
@@ -111,7 +118,7 @@ export default function TodayLessons() {
                       <p className="text-xs font-bold text-foreground">
                         {format(new Date(lesson.scheduled_at), 'HH:mm')}
                       </p>
-                      <p className="text-xs text-muted-foreground">bu gün</p>
+                      <p className="text-xs text-muted-foreground">{t('today')}</p>
                     </div>
                   )}
                 </div>

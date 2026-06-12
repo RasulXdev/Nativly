@@ -1,16 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { Star, ArrowRight, MapPin } from 'lucide-react'
+import { Star, ArrowRight, MapPin, GraduationCap } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 import type { FeaturedTutor } from '@/lib/data/landing'
-
-const FILTERS = ['all', 'english', 'ielts', 'german', 'french', 'turkish'] as const
 
 type TutorCard = {
   id: string
@@ -21,36 +18,15 @@ type TutorCard = {
   reviews: number
   lessons: number
   tags: string[]
-  filter: string
   online: boolean
-}
-
-const DEMO_TUTORS: TutorCard[] = [
-  { id: '1', name: 'Sarah Mitchell', flag: '🇬🇧', country: 'London, UK', rating: 4.9, reviews: 312, lessons: 1840, tags: ['IELTS', 'Business'], filter: 'english', online: true },
-  { id: '2', name: 'Mikhail Ivanov', flag: '🇷🇺', country: 'Moscow, RU', rating: 4.8, reviews: 198, lessons: 920, tags: ['Grammar', 'Speaking'], filter: 'english', online: true },
-  { id: '3', name: 'Elif Kaya', flag: '🇹🇷', country: 'Istanbul, TR', rating: 5.0, reviews: 87, lessons: 430, tags: ['Beginner', 'Speaking'], filter: 'turkish', online: false },
-  { id: '4', name: 'Hans Müller', flag: '🇩🇪', country: 'Berlin, DE', rating: 4.9, reviews: 145, lessons: 780, tags: ['TestDaF', 'Business'], filter: 'german', online: true },
-  { id: '5', name: 'Marie Dubois', flag: '🇫🇷', country: 'Paris, FR', rating: 4.7, reviews: 203, lessons: 1100, tags: ['DELF', 'Speaking'], filter: 'french', online: false },
-  { id: '6', name: 'James Wright', flag: '🇬🇧', country: 'Manchester, UK', rating: 4.8, reviews: 167, lessons: 890, tags: ['IELTS', 'Conversation'], filter: 'ielts', online: true },
-]
-
-const FILTER_LABELS: Record<string, string> = {
-  all: 'Hamısı',
-  english: 'İngilis dili',
-  ielts: 'IELTS',
-  german: 'Alman dili',
-  french: 'Fransız dili',
-  turkish: 'Türk dili',
 }
 
 export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[] }) {
   const t = useTranslations('landing.tutorShowcase')
   const tc = useTranslations('tutors.card')
-  const [activeFilter, setActiveFilter] = useState<string>('all')
 
-  // Real featured tutors from the DB, mapped to the showcase card shape.
-  // Falls back to the curated demo set until real tutors are approved.
-  const dbTutors: TutorCard[] = tutors.map((t) => ({
+  // Only real featured tutors from the DB — no mock data.
+  const filtered: TutorCard[] = tutors.map((t) => ({
     id: t.id,
     name: t.name,
     flag: '🎓',
@@ -59,14 +35,8 @@ export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[
     reviews: t.reviews,
     lessons: t.lessons,
     tags: t.specializations,
-    filter: 'all',
     online: true,
   }))
-  const allTutors = dbTutors.length > 0 ? dbTutors : DEMO_TUTORS
-
-  const filtered = activeFilter === 'all'
-    ? allTutors
-    : allTutors.filter(t => t.filter === activeFilter)
 
   return (
     <section className="py-24 sm:py-28 px-4 bg-background relative overflow-hidden" id="tutors">
@@ -79,23 +49,22 @@ export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[
           <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
         </AnimateOnScroll>
 
-        <AnimateOnScroll className="flex flex-wrap justify-center gap-2 mb-10">
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={cn(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border cursor-pointer',
-                activeFilter === f
-                  ? 'gradient-bg text-white border-transparent shadow-lg shadow-primary/20'
-                  : 'bg-white/70 border-primary/12 text-foreground/65 hover:border-primary/35 hover:text-primary hover:bg-primary/5'
-              )}
+        {filtered.length === 0 ? (
+          <AnimateOnScroll className="max-w-md mx-auto text-center rounded-3xl border border-dashed border-border bg-card/50 py-14 px-6">
+            <div className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+              <GraduationCap className="h-7 w-7 text-white" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">{t('emptyTitle')}</h3>
+            <p className="text-muted-foreground text-sm mb-6">{t('emptyDesc')}</p>
+            <Link
+              href="/become-tutor"
+              className={cn(buttonVariants({ size: 'lg' }), 'gap-2 rounded-full px-8 gradient-bg border-0')}
             >
-              {FILTER_LABELS[f]}
-            </button>
-          ))}
-        </AnimateOnScroll>
-
+              {t('becomeTutor')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </AnimateOnScroll>
+        ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((tutor, i) => (
             <AnimateOnScroll key={tutor.id} delay={i * 60} animation="fade-up" className="h-full">
@@ -153,13 +122,16 @@ export default function TutorShowcase({ tutors = [] }: { tutors?: FeaturedTutor[
             </AnimateOnScroll>
           ))}
         </div>
+        )}
 
-        <AnimateOnScroll className="text-center mt-10">
-          <Link href="/tutors" className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'gap-2 rounded-full px-8 hover:border-primary/30 hover:bg-primary/3')}>
-            {t('subtitle')}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </AnimateOnScroll>
+        {filtered.length > 0 && (
+          <AnimateOnScroll className="text-center mt-10">
+            <Link href="/tutors" className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'gap-2 rounded-full px-8 hover:border-primary/30 hover:bg-primary/3')}>
+              {t('viewAll')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </AnimateOnScroll>
+        )}
       </div>
     </section>
   )

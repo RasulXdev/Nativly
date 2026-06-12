@@ -95,6 +95,7 @@ export default function TutorOnboardingForm() {
   const [tutorProfileId, setTutorProfileId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [certUploading, setCertUploading] = useState(false)
+  const [videoUploading, setVideoUploading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPass, setShowPass] = useState(false)
   const [showConfirmPass, setShowConfirmPass] = useState(false)
@@ -257,6 +258,22 @@ export default function TutorOnboardingForm() {
       toast.success('Fayl yükləndi')
     } catch { toast.error('Fayl yüklənmədi') }
     finally { setCertUploading(false) }
+  }
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !userId) return
+    if (file.size > 100 * 1024 * 1024) { toast.error('Maks. 100MB'); return }
+    setVideoUploading(true)
+    try {
+      const path = `${userId}/intro-${Date.now()}-${file.name}`
+      const { error } = await supabase.storage.from('documents').upload(path, file)
+      if (error) throw error
+      const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+      set('video_intro_url', publicUrl)
+      toast.success('Video yükləndi')
+    } catch { toast.error('Video yüklənmədi') }
+    finally { setVideoUploading(false) }
   }
 
   const currentStep = STEPS[step - 1]
@@ -597,6 +614,33 @@ export default function TutorOnboardingForm() {
                 className="rounded-xl h-11"
               />
               <p className="text-xs text-muted-foreground">1-2 dəqiqəlik təqdimat — kim olduğunuz, nə öyrətdiyiniz və metodunuz haqqında.</p>
+            </div>
+
+            {/* OR upload a file */}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">və ya</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Video faylı yüklə</Label>
+              <label className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-border/60 hover:border-primary/40 cursor-pointer transition-all duration-200 bg-muted/10 hover:bg-primary/5">
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+                  <Upload className="h-6 w-6 text-rose-500" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium">{videoUploading ? 'Yüklənir...' : 'Video seçin'}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">MP4, MOV, WebM — maks. 100MB</p>
+                </div>
+                <input type="file" accept="video/mp4,video/quicktime,video/webm" className="hidden" onChange={handleVideoUpload} disabled={videoUploading || !userId} />
+              </label>
+              {!userId && (
+                <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-amber-500 shrink-0" />
+                  <p className="text-xs text-muted-foreground">Video yükləmək üçün əvvəlcə hesab yaradın (addım 1)</p>
+                </div>
+              )}
             </div>
 
             {form.video_intro_url ? (

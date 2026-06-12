@@ -127,7 +127,19 @@
     "testimonialRole": "IELTS 7.0 · Baku",
     "statStudents": "Students",
     "statTutors": "Tutors",
-    "statRating": "Rating"
+    "statRating": "Rating",
+    "fullNamePlaceholder": "Your full name",
+    "forgotSubtitle": "Enter your email and we will send a reset link",
+    "emailSentToast": "Email sent!",
+    "applicationReceived": "Your application has been received!",
+    "confirmLinkSent": "A confirmation link has been sent to your email.",
+    "registerAsTutor": "Register as tutor",
+    "error": "An error occurred",
+    "tutorBadge": "Tutor registration",
+    "tutorJoinTitle": "Join as a tutor",
+    "and": "and",
+    "afterRegisterNote": "After registration you will complete your profile and wait for admin approval.",
+    "loading": "Loading..."
   },
   "landing": {
     "heroTitle": "Learn a language anytime, anywhere",
@@ -242,7 +254,11 @@
     },
     "tutorShowcase": {
       "title": "Our top tutors",
-      "subtitle": "Certified, experienced native tutors"
+      "subtitle": "Certified, experienced native tutors",
+      "emptyTitle": "Tutors are joining soon",
+      "emptyDesc": "Our first certified tutors are being onboarded. Want to be one of them?",
+      "becomeTutor": "Become a tutor",
+      "viewAll": "Browse all tutors"
     },
     "dashboardPreview": {
       "badge": "Platform preview",
@@ -265,6 +281,19 @@
         "rating": "Rating",
         "balance": "Balance"
       }
+    },
+    "heroCard": {
+      "expert": "IELTS Expert",
+      "live": "Live",
+      "speakingPractice": "Speaking Practice",
+      "lessons": "Lessons",
+      "tutors": "Tutors",
+      "rating": "Rating",
+      "trialLesson": "Trial lesson",
+      "trialDuration": "30 min",
+      "resultScore": "IELTS 7.0",
+      "resultTime": "in 3 months",
+      "comingSoon": "Coming soon"
     }
   },
   "tutors": {
@@ -283,7 +312,14 @@
       "thisWeek": "This week",
       "minRating": "Minimum rating",
       "priceRange": "Price range",
-      "clearFilters": "Clear filters"
+      "clearFilters": "Clear filters",
+      "title": "Filters",
+      "reset": "Reset",
+      "sort": "Sort",
+      "sortRating": "Rating",
+      "sortPopular": "Popular",
+      "sortNewest": "Newest",
+      "all": "All"
     },
     "sort": {
       "rating": "By rating",
@@ -312,10 +348,46 @@
       "sendMessage": "Send message",
       "addFavorite": "Add to favorites",
       "removeFavorite": "Remove from favorites",
-      "responseTime": "Avg. response time",
+      "responseTime": "Response time",
       "completionRate": "Completion rate",
       "totalLessons": "Total lessons",
-      "yearsExperience": "Years of experience"
+      "yearsExperience": "Years of experience",
+      "reviewsCount": "reviews",
+      "totalLesson": "Total lessons",
+      "completion": "Completion",
+      "min": "min",
+      "weeklySchedule": "Weekly schedule",
+      "subscriptionLesson": "Lessons by subscription",
+      "subscriptionDesc": "Lessons are included in your monthly subscription",
+      "lessonsStat": "Lessons",
+      "reviewsStat": "Reviews",
+      "experienceStat": "Experience",
+      "yearsUnit": "yr",
+      "instantSupports": "This tutor supports instant booking — your lesson is confirmed immediately"
+    },
+    "comingTitle": "Opening soon",
+    "comingDesc": "Tutors are completing registration. Check back shortly — the first profiles go live soon.",
+    "noResults": "No tutors match your filters",
+    "noResultsDesc": "Try adjusting or resetting the filters.",
+    "loadError": "Could not load tutors. Please refresh the page.",
+    "lessonsLabel": "lessons",
+    "instantLabel": "Instant booking",
+    "reviewsFailed": "Could not load reviews",
+    "noReviewsTitle": "No reviews yet",
+    "noReviewsDesc": "Be the first to review this tutor",
+    "tutorReply": "Tutor's reply",
+    "browseTitle": "Tutors",
+    "searching": "Searching tutors...",
+    "available": "tutors available",
+    "searchPlaceholder": "Search tutors...",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     }
   },
   "booking": {
@@ -345,7 +417,23 @@
     "noSubscription": "No active subscription",
     "noSubscriptionDesc": "You need an active subscription to book lessons",
     "buySubscription": "Buy subscription",
-    "lessonsRemaining": "lessons remaining this month"
+    "lessonsRemaining": "lessons remaining this month",
+    "instantBook": "Instant booking",
+    "lessonsLeft": "lessons left",
+    "subscriptionOf": "subscription",
+    "needSubscription": "You need a subscription to book a lesson.",
+    "noLessonsLeft": "No lessons left in your subscription.",
+    "durationIncluded": "30-minute lesson — included in your subscription",
+    "noteOptional": "Note (optional)",
+    "date": "Date",
+    "duration": "Duration",
+    "minutes": "minutes",
+    "totalOneLesson": "1 lesson (subscription)",
+    "cancelPolicyFull": "Cancellation policy: free more than 24h before (credit refunded), 24–12h 50%, less than 12h fully charged.",
+    "student": "Student",
+    "tutor": "Tutor",
+    "errorOccurred": "An error occurred",
+    "awaitingApproval": "Awaiting tutor's approval"
   },
   "lessons": {
     "upcoming": "Upcoming lessons",
@@ -366,7 +454,13 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "no_show": "No show"
-    }
+    },
+    "myLessons": "My lessons",
+    "completedCount": "completed lessons",
+    "completedTitle": "Completed lessons",
+    "noLessonsTitle": "No lessons yet",
+    "noLessonsDesc": "Your completed lessons will appear here",
+    "min": "min"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -383,7 +477,27 @@
     "bookLesson": "Book a lesson",
     "addBalance": "Add balance",
     "browseTutors": "Browse tutors",
-    "streak": "Day streak"
+    "streak": "Day streak",
+    "subtitle": "Start a new lesson today and grow your language skills.",
+    "findTutor": "Find a tutor",
+    "schedule": "Schedule",
+    "lessonsUnit": "lessons",
+    "hoursUnit": "hours",
+    "plannedUnit": "planned",
+    "usdUnit": "USD",
+    "weeklyProgress": "Weekly progress",
+    "lessonsLink": "Lessons",
+    "last6weeks": "Last 6 weeks",
+    "lessonsTotal": "lessons",
+    "noData": "No data yet",
+    "failedToLoad": "Could not load",
+    "all": "All",
+    "noActivityTitle": "No activity yet",
+    "noActivityDesc": "Your completed lessons will appear here",
+    "lessonWith": "Lesson with {name}",
+    "statusCompleted": "Completed",
+    "statusCancelled": "Cancelled",
+    "statusNoShow": "No show"
   },
   "schedule": {
     "title": "My schedule",
@@ -758,7 +872,8 @@
     "legal": "Legal",
     "privacy": "Privacy policy",
     "terms": "Terms of service",
-    "copyright": "© 2026 Nativly. All rights reserved."
+    "copyright": "© 2026 Nativly. All rights reserved.",
+    "tagline": "Learn languages online with native, certified tutors — anytime, anywhere."
   },
   "notifications": {
     "title": "Notifications",
@@ -896,5 +1011,74 @@
     "vetting2Desc": "Video interview with our team.",
     "vetting3Title": "Trial Lesson",
     "vetting3Desc": "Trial lesson with a real student is evaluated."
+  },
+  "specs": {
+    "conversation": "Conversation",
+    "grammar": "Grammar",
+    "business": "Business",
+    "kids": "Kids",
+    "examPrep": "Exam Prep",
+    "pronunciation": "Pronunciation",
+    "writing": "Writing",
+    "interview": "Interview Prep",
+    "beginner": "Beginner",
+    "intensive": "Intensive"
+  },
+  "langNames": {
+    "en": "English",
+    "ru": "Russian",
+    "tr": "Turkish",
+    "de": "German",
+    "fr": "French",
+    "es": "Spanish",
+    "it": "Italian",
+    "ar": "Arabic",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "az": "Azerbaijani"
+  },
+  "tutorDashboard": {
+    "subtitle": "Manage your lessons today and engage with your students.",
+    "approvedBadge": "✓ Verified tutor",
+    "pendingBadge": "⏳ Application pending",
+    "schedule": "Schedule",
+    "students": "Students",
+    "all": "All",
+    "failedToLoad": "Could not load",
+    "notLoaded": "Failed",
+    "earningsMonth": "Monthly earnings",
+    "activeStudents": "Active students",
+    "avgRating": "Average rating",
+    "lessonsMonth": "Monthly lessons",
+    "unitAzn": "AZN",
+    "unitStudents": "students",
+    "unitStars": "stars",
+    "unitLessons": "lessons",
+    "todayLessons": "Today's lessons",
+    "noTodayTitle": "No lessons today",
+    "noTodayDesc": "Upcoming lessons will appear here",
+    "student": "Student",
+    "today": "today",
+    "min": "min",
+    "join": "Join",
+    "pendingTitle": "Pending bookings",
+    "noPendingTitle": "No pending bookings",
+    "noPendingDesc": "Bookings will appear here when students book you",
+    "approve": "Approve",
+    "reject": "Reject",
+    "bookingApproved": "Booking approved",
+    "bookingRejected": "Booking rejected",
+    "errorOccurred": "An error occurred",
+    "trial": "Trial lesson",
+    "earningsChart": "Earnings chart",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "last8weeks": "Last 8 weeks",
+    "last6months": "Last 6 months",
+    "total": "Total",
+    "recentReviews": "Recent reviews",
+    "noReviewsTitle": "No reviews yet",
+    "noReviewsDesc": "Reviews will appear here after lessons"
   }
 }

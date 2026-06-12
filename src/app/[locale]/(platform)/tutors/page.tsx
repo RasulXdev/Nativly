@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Search, SlidersHorizontal, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -10,6 +11,8 @@ import { useTutors, type TutorFilters as TFilters } from '@/hooks/useTutors'
 import { useDebounce } from '@/hooks/useDebounce'
 
 export default function TutorsPage() {
+  const t = useTranslations('tutors')
+  const tf = useTranslations('tutors.filter')
   const [filters, setFilters] = useState<TFilters>({ sortBy: 'rating' })
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 400)
@@ -49,13 +52,13 @@ export default function TutorsPage() {
                 <GraduationCap className="h-4.5 w-4.5 text-white" />
               </div>
               <h1 className="text-2xl font-extrabold tracking-tight gradient-text">
-                Müəllimlər
+                {t('browseTitle')}
               </h1>
             </div>
             <p className="text-sm text-muted-foreground pl-0.5">
               {isLoading
-                ? 'Müəllimlər axtarılır...'
-                : `${tutors.length}+ müəllim mövcuddur`}
+                ? t('searching')
+                : `${tutors.length}+ ${t('available')}`}
             </p>
           </div>
 
@@ -64,7 +67,7 @@ export default function TutorsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
             <input
               type="text"
-              placeholder="Müəllim axtar..."
+              placeholder={t('searchPlaceholder')}
               className="w-full h-10 pl-10 pr-4 rounded-xl border border-border/70 bg-background/80 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 hover:border-border transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -87,11 +90,11 @@ export default function TutorsPage() {
             <Sheet>
               <SheetTrigger className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 h-10 text-sm font-medium hover:bg-accent transition-colors">
                 <SlidersHorizontal className="h-4 w-4" />
-                Filtrlər
+                {tf('title')}
               </SheetTrigger>
               <SheetContent side="left" className="dark bg-background text-foreground w-80 overflow-y-auto p-5">
                 <SheetHeader className="mb-4">
-                  <SheetTitle>Filtrlər</SheetTitle>
+                  <SheetTitle>{tf('title')}</SheetTitle>
                 </SheetHeader>
                 <TutorFilters filters={filters} onChange={setFilters} />
               </SheetContent>
@@ -106,6 +109,12 @@ export default function TutorsPage() {
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={!!hasNextPage}
             onLoadMore={fetchNextPage}
+            hasActiveFilters={
+              !!(filters.search || debouncedSearch ||
+                (filters.languages?.length ?? 0) > 0 ||
+                (filters.specializations?.length ?? 0) > 0 ||
+                filters.onlineOnly || filters.instantBooking || filters.minRating != null)
+            }
           />
         </div>
       </div>

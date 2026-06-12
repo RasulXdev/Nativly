@@ -30,7 +30,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1 space-y-4">
             <Logo />
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-              {t('about')}
+              {t('tagline')}
             </p>
           </div>
 

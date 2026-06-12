@@ -41,16 +41,16 @@ export default function ForgotPasswordPage() {
       }
 
       setSent(true)
-      toast.success('E-poçt göndərildi!')
+      toast.success(t('emailSentToast'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('error'))
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthShell title={t('forgotPassword')} subtitle="E-poçt ünvanınızı daxil edin, sıfırlama linki göndərəcəyik">
+    <AuthShell title={t('forgotPassword')} subtitle={t('forgotSubtitle')}>
       {!sent ? (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">

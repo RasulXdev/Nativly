@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { BarChart3, ArrowRight } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useWeeklyProgress } from '@/hooks/useLessons'
 import { Link } from '@/i18n/navigation'
 
 export default function ProgressChart() {
+  const t = useTranslations('dashboard')
   const { data: weeks = [], isLoading, isError } = useWeeklyProgress()
   const max = Math.max(...weeks.map((w) => w.count), 1)
 
@@ -16,11 +18,11 @@ export default function ProgressChart() {
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <BarChart3 className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Həftəlik irəliləyiş</h3>
+          <h3 className="font-semibold text-sm">{t('weeklyProgress')}</h3>
         </div>
         <Link href="/lessons">
           <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            Dərslər
+            {t('lessonsLink')}
             <ArrowRight className="h-3 w-3" />
           </button>
         </Link>
@@ -37,7 +39,7 @@ export default function ProgressChart() {
             ))}
           </div>
         ) : isError ? (
-          <p className="text-sm text-muted-foreground text-center py-8">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t('failedToLoad')}</p>
         ) : (
           <>
             <div className="flex items-end gap-2 h-24">
@@ -68,9 +70,9 @@ export default function ProgressChart() {
             </div>
 
             <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Son 6 həftə</span>
+              <span>{t('last6weeks')}</span>
               <span className="font-semibold text-foreground">
-                {weeks.reduce((s, w) => s + w.count, 0)} dərs
+                {weeks.reduce((sum, w) => sum + w.count, 0)} {t('lessonsTotal')}
               </span>
             </div>
           </>

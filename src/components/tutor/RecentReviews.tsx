@@ -1,7 +1,9 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { Star, MessageSquare, ArrowRight } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,7 +24,12 @@ function StarRating({ rating }: { rating: number }) {
   )
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function RecentReviews() {
+  const t = useTranslations('tutorDashboard')
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
   const { data: rawReviews, isLoading, isError } = useTutorRecentReviews()
 
   type Review = {
@@ -42,17 +49,17 @@ export default function RecentReviews() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
             <Star className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Son rəylər</h3>
+          <h3 className="font-semibold text-sm">{t('recentReviews')}</h3>
         </div>
         <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-          Hamısı
+          {t('all')}
           <ArrowRight className="h-3 w-3" />
         </button>
       </div>
 
       <div className="p-5">
         {isError ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t('failedToLoad')}</p>
         ) : isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -72,8 +79,8 @@ export default function RecentReviews() {
         ) : !reviews?.length ? (
           <EmptyState
             icon={MessageSquare}
-            title="Hələ rəy yoxdur"
-            description="Tələbələr dərsdən sonra rəy bildirdikdə burada görünəcək"
+            title={t('noReviewsTitle')}
+            description={t('noReviewsDesc')}
           />
         ) : (
           <div className="space-y-4">
@@ -88,12 +95,12 @@ export default function RecentReviews() {
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">
-                      {review.profiles?.full_name ?? 'Tələbə'}
+                      {review.profiles?.full_name ?? t('student')}
                     </p>
                     <StarRating rating={review.rating} />
                   </div>
                   <span className="text-xs text-muted-foreground shrink-0">
-                    {format(new Date(review.created_at), 'd MMM', { locale: az })}
+                    {format(new Date(review.created_at), 'd MMM', { locale: dfLocale })}
                   </span>
                 </div>
                 {review.comment && (

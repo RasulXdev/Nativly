@@ -1,53 +1,19 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { DollarSign, Users, Star, BookOpen, TrendingUp } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTutorStats } from '@/hooks/useTutorStats'
 
 const STATS = [
-  {
-    key: 'monthlyEarnings' as const,
-    label: 'Bu ayki qazanc',
-    icon: DollarSign,
-    format: (v: number) => `₼${v.toFixed(2)}`,
-    gradient: 'from-emerald-500 to-teal-600',
-    glow: 'shadow-emerald-500/30',
-    accent: 'text-emerald-400',
-    unit: 'AZN',
-  },
-  {
-    key: 'activeStudents' as const,
-    label: 'Aktiv tələbələr',
-    icon: Users,
-    format: (v: number) => String(v),
-    gradient: 'from-blue-500 to-indigo-600',
-    glow: 'shadow-blue-500/30',
-    accent: 'text-blue-400',
-    unit: 'tələbə',
-  },
-  {
-    key: 'averageRating' as const,
-    label: 'Ortalama reytinq',
-    icon: Star,
-    format: (v: number) => v.toFixed(1),
-    gradient: 'from-amber-500 to-orange-500',
-    glow: 'shadow-amber-500/30',
-    accent: 'text-amber-400',
-    unit: 'ulduz',
-  },
-  {
-    key: 'lessonsThisMonth' as const,
-    label: 'Bu ayki dərslər',
-    icon: BookOpen,
-    format: (v: number) => String(v),
-    gradient: 'from-violet-500 to-purple-600',
-    glow: 'shadow-violet-500/30',
-    accent: 'text-violet-400',
-    unit: 'dərs',
-  },
+  { key: 'monthlyEarnings' as const, labelKey: 'earningsMonth', icon: DollarSign, format: (v: number) => `₼${v.toFixed(2)}`, gradient: 'from-emerald-500 to-teal-600', glow: 'shadow-emerald-500/30', accent: 'text-emerald-400', unitKey: 'unitAzn' },
+  { key: 'activeStudents' as const, labelKey: 'activeStudents', icon: Users, format: (v: number) => String(v), gradient: 'from-blue-500 to-indigo-600', glow: 'shadow-blue-500/30', accent: 'text-blue-400', unitKey: 'unitStudents' },
+  { key: 'averageRating' as const, labelKey: 'avgRating', icon: Star, format: (v: number) => v.toFixed(1), gradient: 'from-amber-500 to-orange-500', glow: 'shadow-amber-500/30', accent: 'text-amber-400', unitKey: 'unitStars' },
+  { key: 'lessonsThisMonth' as const, labelKey: 'lessonsMonth', icon: BookOpen, format: (v: number) => String(v), gradient: 'from-violet-500 to-purple-600', glow: 'shadow-violet-500/30', accent: 'text-violet-400', unitKey: 'unitLessons' },
 ]
 
 export default function TutorStatsCards() {
+  const t = useTranslations('tutorDashboard')
   const { data, isLoading, isError } = useTutorStats()
 
   if (isError) {
@@ -55,7 +21,7 @@ export default function TutorStatsCards() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="rounded-2xl border border-destructive/20 bg-card p-5 flex items-center justify-center min-h-[110px]">
-            <p className="text-xs text-muted-foreground text-center">Yüklənmədi</p>
+            <p className="text-xs text-muted-foreground text-center">{t('notLoaded')}</p>
           </div>
         ))}
       </div>
@@ -94,10 +60,10 @@ export default function TutorStatsCards() {
               <p className="text-2xl font-extrabold tracking-tight text-foreground">
                 {stat.format(value)}
               </p>
-              <p className="text-sm text-muted-foreground mt-0.5 font-medium">{stat.label}</p>
+              <p className="text-sm text-muted-foreground mt-0.5 font-medium">{t(stat.labelKey)}</p>
               <div className="flex items-center gap-1.5 mt-3">
                 <TrendingUp className={`h-3 w-3 ${stat.accent}`} />
-                <span className={`text-xs font-semibold ${stat.accent}`}>{stat.unit}</span>
+                <span className={`text-xs font-semibold ${stat.accent}`}>{t(stat.unitKey)}</span>
               </div>
             </div>
           </div>

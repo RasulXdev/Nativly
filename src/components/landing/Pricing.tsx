@@ -24,26 +24,27 @@ export default function Pricing({ plans }: { plans: LandingPlan[] }) {
           <p className="text-muted-foreground text-lg mb-6">{t('subtitle')}</p>
         </AnimateOnScroll>
 
-        <div className="grid md:grid-cols-3 gap-5 items-stretch">
+        <div className="grid md:grid-cols-3 gap-5 items-stretch pt-3">
           {plans.map((plan, i) => (
             <AnimateOnScroll key={plan.id} delay={i * 100} animation="fade-up" className="h-full">
-              <Card
-                className={cn(
-                  'relative h-full rounded-2xl overflow-hidden transition-all duration-400',
-                  plan.popular
-                    ? 'border-primary/30 shadow-xl shadow-primary/8 ring-1 ring-primary/10 scale-[1.03]'
-                    : 'border-border/50 card-lift'
-                )}
-              >
+              <div className="relative h-full">
                 {plan.popular && (
-                  <>
-                    <div className="absolute top-0 left-0 right-0 h-1 gradient-bg" />
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <Badge className="px-4 py-1 rounded-full gradient-bg border-0 shadow-md shadow-primary/20 text-white text-xs">
-                        {t('popular')}
-                      </Badge>
-                    </div>
-                  </>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                    <Badge className="px-4 py-1 rounded-full gradient-bg border-0 shadow-md shadow-primary/20 text-white text-xs whitespace-nowrap">
+                      {t('popular')}
+                    </Badge>
+                  </div>
+                )}
+                <Card
+                  className={cn(
+                    'relative h-full rounded-2xl overflow-hidden transition-all duration-400',
+                    plan.popular
+                      ? 'border-primary/30 shadow-xl shadow-primary/8 ring-1 ring-primary/20'
+                      : 'border-border/50 card-lift'
+                  )}
+                >
+                {plan.popular && (
+                  <div className="absolute top-0 left-0 right-0 h-1 gradient-bg" />
                 )}
 
                 <CardHeader className="pb-3 pt-8">
@@ -59,7 +60,7 @@ export default function Pricing({ plans }: { plans: LandingPlan[] }) {
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-5 pt-2">
+                <CardContent className="flex flex-1 flex-col gap-5 pt-2">
                   <ul className="space-y-2.5">
                     {featureKeys.slice(0, plan.features).map((key) => (
                       <li key={key} className="flex items-center gap-2.5 text-sm">
@@ -78,14 +79,15 @@ export default function Pricing({ plans }: { plans: LandingPlan[] }) {
                         size: 'lg',
                         variant: plan.popular ? 'default' : 'outline',
                       }),
-                      'w-full rounded-full text-sm',
+                      'w-full rounded-full text-sm mt-auto',
                       plan.popular && 'gradient-bg border-0 shadow-md shadow-primary/15 hover:opacity-90'
                     )}
                   >
                     {t('subscribe')}
                   </Link>
                 </CardContent>
-              </Card>
+                </Card>
+              </div>
             </AnimateOnScroll>
           ))}
         </div>

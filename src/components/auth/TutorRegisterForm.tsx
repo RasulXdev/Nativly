@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -22,6 +22,7 @@ import Logo from '@/components/shared/Logo'
 export default function TutorRegisterForm() {
   const router = useRouter()
   const locale = useLocale()
+  const t = useTranslations('auth')
   const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
@@ -56,13 +57,13 @@ export default function TutorRegisterForm() {
         return
       }
 
-      toast.success('Müraciətiniz qəbul edildi!', {
-        description: 'Email-inizə təsdiq linki göndərildi.',
+      toast.success(t('applicationReceived'), {
+        description: t('confirmLinkSent'),
       })
 
       router.push(`/${locale}/login`)
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('error'))
     } finally {
       setIsLoading(false)
     }
@@ -77,14 +78,14 @@ export default function TutorRegisterForm() {
         <div className="flex justify-center mb-1">
           <Badge variant="secondary" className="gap-1">
             <GraduationCap className="h-3 w-3" />
-            Müəllim qeydiyyatı
+            {t('tutorBadge')}
           </Badge>
         </div>
-        <CardTitle className="text-2xl">Müəllim kimi qoşul</CardTitle>
+        <CardTitle className="text-2xl">{t('tutorJoinTitle')}</CardTitle>
         <CardDescription>
-          Artıq hesabın var?{' '}
+          {t('hasAccount')}{' '}
           <Link href={`/${locale}/login`} className="text-primary hover:underline font-medium">
-            Daxil ol
+            {t('loginNow')}
           </Link>
         </CardDescription>
       </CardHeader>
@@ -97,16 +98,16 @@ export default function TutorRegisterForm() {
             <Separator />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">və ya</span>
+            <span className="bg-background px-2 text-muted-foreground">{t('orDivider')}</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="full_name">Ad Soyad</Label>
+            <Label htmlFor="full_name">{t('fullName')}</Label>
             <Input
               id="full_name"
-              placeholder="Adınız Soyadınız"
+              placeholder={t('fullNamePlaceholder')}
               {...register('full_name')}
               disabled={isLoading}
             />
@@ -116,7 +117,7 @@ export default function TutorRegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -130,7 +131,7 @@ export default function TutorRegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Şifrə</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -149,7 +150,7 @@ export default function TutorRegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirm_password">Şifrəni təsdiqlə</Label>
+            <Label htmlFor="confirm_password">{t('confirmPassword')}</Label>
             <div className="relative">
               <Input
                 id="confirm_password"
@@ -176,13 +177,13 @@ export default function TutorRegisterForm() {
             />
             <Label htmlFor="agree_terms" className="text-sm font-normal leading-snug">
               <Link href={`/${locale}/terms`} className="text-primary hover:underline">
-                İstifadə şərtləri
+                {t('termsOfService')}
               </Link>{' '}
-              və{' '}
+              {t('and')}{' '}
               <Link href={`/${locale}/privacy`} className="text-primary hover:underline">
-                Gizlilik siyasəti
+                {t('privacyPolicy')}
               </Link>
-              {' '}ilə razıyam
+              {' '}{t('agreeToTerms')}
             </Label>
           </div>
           {errors.agree_terms && (
@@ -193,16 +194,16 @@ export default function TutorRegisterForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Yüklənir...
+                {t('loading')}
               </>
             ) : (
-              'Müəllim kimi qeydiyyat'
+              t('registerAsTutor')
             )}
           </Button>
         </form>
 
         <p className="text-xs text-center text-muted-foreground">
-          Qeydiyyatdan sonra profilinizi tamamlayacaq və admin təsdiqini gözləyəcəksiniz.
+          {t('afterRegisterNote')}
         </p>
       </CardContent>
     </Card>

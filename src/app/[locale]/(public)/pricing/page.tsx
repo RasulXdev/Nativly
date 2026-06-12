@@ -50,51 +50,53 @@ export default async function PricingPage() {
       {/* Plans */}
       <section className="py-16 md:py-24 px-4">
         <div className="container mx-auto max-w-5xl">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch pt-3">
             {plans.map((plan, i) => (
               <AnimateOnScroll key={plan.id} delay={i * 80} className="h-full">
-                <Card className={cn(
-                  'relative h-full hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 rounded-2xl',
-                  plan.popular
-                    ? 'border-primary ring-1 ring-primary/20 shadow-lg shadow-primary/10'
-                    : 'border-border/60'
-                )}>
+                <div className="relative h-full">
                   {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="px-3 text-xs gradient-bg border-0">{t('mostPopular')}</Badge>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                      <Badge className="px-4 py-1 text-xs gradient-bg border-0 rounded-full shadow-md shadow-primary/20 whitespace-nowrap">{t('mostPopular')}</Badge>
                     </div>
                   )}
-                  <CardHeader className="pt-8 pb-3">
-                    <h3 className="font-bold text-lg">{plan.name}</h3>
-                    <p className="text-xs text-muted-foreground">{plan.lessonsPerMonth} {t('monthly')}</p>
-                    <div className="mt-3 flex items-end gap-1.5">
-                      <span className="text-4xl font-extrabold tracking-tight">₼{plan.priceAzn.toFixed(0)}</span>
-                      <span className="text-muted-foreground text-sm mb-1.5">/{t('monthly')}</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-5">
-                    <ul className="space-y-2.5">
-                      {features.slice(0, plan.features).map((f) => (
-                        <li key={f} className="flex items-center gap-2.5 text-sm">
-                          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                            <Check className="h-3 w-3 text-primary" />
-                          </div>
-                          <span className="text-muted-foreground">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Link
-                      href="/register"
-                      className={cn(
-                        buttonVariants({ size: 'default', variant: plan.popular ? 'default' : 'outline' }),
-                        'w-full rounded-xl font-semibold',
-                        plan.popular && 'gradient-bg border-0'
-                      )}
-                    >
-                      {t('subscribe')}
-                    </Link>
-                  </CardContent>
-                </Card>
+                  <Card className={cn(
+                    'relative h-full flex flex-col hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 rounded-2xl',
+                    plan.popular
+                      ? 'border-primary ring-1 ring-primary/20 shadow-lg shadow-primary/10'
+                      : 'border-border/60'
+                  )}>
+                    <CardHeader className="pt-8 pb-3">
+                      <h3 className="font-bold text-lg">{plan.name}</h3>
+                      <p className="text-xs text-muted-foreground">{plan.lessonsPerMonth} {t('monthly')}</p>
+                      <div className="mt-3 flex items-end gap-1.5">
+                        <span className="text-4xl font-extrabold tracking-tight">₼{plan.priceAzn.toFixed(0)}</span>
+                        <span className="text-muted-foreground text-sm mb-1.5">/{t('monthly')}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex flex-1 flex-col gap-5">
+                      <ul className="space-y-2.5">
+                        {features.slice(0, plan.features).map((f) => (
+                          <li key={f} className="flex items-center gap-2.5 text-sm">
+                            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                              <Check className="h-3 w-3 text-primary" />
+                            </div>
+                            <span className="text-muted-foreground">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Link
+                        href="/register"
+                        className={cn(
+                          buttonVariants({ size: 'default', variant: plan.popular ? 'default' : 'outline' }),
+                          'w-full rounded-xl font-semibold mt-auto',
+                          plan.popular && 'gradient-bg border-0'
+                        )}
+                      >
+                        {t('subscribe')}
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
               </AnimateOnScroll>
             ))}
           </div>

@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { format, addDays } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { Clock, Loader2, Info, Ticket, ShieldCheck } from 'lucide-react'
 import {
   Dialog,
@@ -33,7 +34,12 @@ interface BookingModalProps {
   onClose: () => void
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function BookingModal({ tutor, open, onClose }: BookingModalProps) {
+  const t = useTranslations('booking')
+  const tl = useTranslations('lessons')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = (tutor as any).profiles
   const router = useRouter()
@@ -89,8 +95,8 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
           body: JSON.stringify({
             kind: 'booking_confirmed',
             to: user.email,
-            recipientName: user.user_metadata?.full_name ?? 'Tələbə',
-            counterpartName: profile?.full_name ?? 'Müəllim',
+            recipientName: user.user_metadata?.full_name ?? t('student'),
+            counterpartName: profile?.full_name ?? t('tutor'),
             scheduledAt: scheduledAt.toISOString(),
           }),
         }).catch(() => {})
@@ -101,12 +107,12 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
       toast.success(
         tutor.instant_booking
-          ? 'Dərs uğurla rezerv edildi!'
-          : 'Müəllimin təsdiqi gözlənilir'
+          ? t('bookingSuccess')
+          : t('awaitingApproval')
       )
       onClose()
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Xəta baş verdi')
+      toast.error(e instanceof Error ? e.message : t('errorOccurred'))
     } finally {
       setSubmitting(false)
     }
@@ -116,8 +122,8 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="dark bg-background text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Dərs rezerv et</DialogTitle>
-          <DialogDescription>Tarix və vaxt seçin</DialogDescription>
+          <DialogTitle>{t('title')}</DialogTitle>
+          <DialogDescription>{t('selectDate')} · {t('selectTime')}</DialogDescription>
         </DialogHeader>
 
         {/* Tutor info */}
@@ -133,7 +139,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
           </div>
           {tutor.instant_booking && (
             <Badge variant="outline" className="text-xs text-emerald-400 border-emerald-500/30">
-              Ani rezerv
+              {t('instantBook')}
             </Badge>
           )}
         </div>
@@ -145,16 +151,16 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
           <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-sm">
             <Ticket className="h-4 w-4 text-emerald-400 shrink-0" />
             <span>
-              <span className="font-semibold">{remaining}</span> dərs qalıb —{' '}
-              {subscription?.plan?.name_az} abonəliyi
+              <span className="font-semibold">{remaining}</span> {t('lessonsLeft')} —{' '}
+              {subscription?.plan?.name_az} {t('subscriptionOf')}
             </span>
           </div>
         ) : (
           <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 space-y-3">
             <p className="text-sm">
               {subscription === null
-                ? 'Dərs rezerv etmək üçün abonəlik lazımdır.'
-                : 'Abonəliyinizdə qalan dərs yoxdur.'}
+                ? t('needSubscription')
+                : t('noLessonsLeft')}
             </p>
             <Button
               className="gradient-bg border-0 text-white w-full"
@@ -163,7 +169,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
                 router.push('/pricing')
               }}
             >
-              Abonəlik al
+              {t('buySubscription')}
             </Button>
           </div>
         )}
@@ -185,15 +191,15 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
               <Info className="h-4 w-4 text-primary shrink-0" />
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                30 dəqiqəlik dərs — abonəliyinizə daxildir
+                {t('durationIncluded')}
               </span>
             </div>
 
             {/* Note */}
             <div>
-              <p className="text-sm font-semibold mb-2">Qeyd (ixtiyari)</p>
+              <p className="text-sm font-semibold mb-2">{t('noteOptional')}</p>
               <Textarea
-                placeholder="Müəllimə mesajınız..."
+                placeholder={t('notePlaceholder')}
                 className="text-sm resize-none h-20"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
@@ -204,19 +210,19 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
             {date && time && (
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tarix</span>
+                  <span className="text-muted-foreground">{t('date')}</span>
                   <span className="font-medium">
-                    {format(date, 'd MMMM yyyy', { locale: az })}, {time}
+                    {format(date, 'd MMMM yyyy', { locale: dfLocale })}, {time}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Müddət</span>
-                  <span className="font-medium">{duration} dəqiqə</span>
+                  <span className="text-muted-foreground">{t('duration')}</span>
+                  <span className="font-medium">{duration} {t('minutes')}</span>
                 </div>
                 <Separator className="my-1" />
                 <div className="flex justify-between font-bold">
-                  <span>Cəmi</span>
-                  <span className="text-primary">1 dərs (abonəlik)</span>
+                  <span>{t('total')}</span>
+                  <span className="text-primary">{t('totalOneLesson')}</span>
                 </div>
               </div>
             )}
@@ -225,14 +231,13 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
             <div className="flex items-start gap-2 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" />
               <span>
-                Ləğvetmə siyasəti: 24 saatdan əvvəl pulsuz (kredit geri qaytarılır),
-                12–24 saat 50%, 12 saatdan az tam tutulur.
+                {t('cancelPolicyFull')}
               </span>
             </div>
 
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={onClose}>
-                Ləğv et
+                {tl('cancel')}
               </Button>
               <Button
                 className="flex-1 gradient-bg border-0 text-white"
@@ -240,7 +245,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
                 onClick={handleBook}
               >
                 {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                Rezerv et
+                {t('bookButton')}
               </Button>
             </div>
           </>

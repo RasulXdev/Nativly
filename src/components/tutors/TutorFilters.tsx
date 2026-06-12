@@ -1,31 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { SlidersHorizontal, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import type { TutorFilters } from '@/hooks/useTutors'
+import { SPECIALIZATIONS, TEACHING_LANGUAGES } from '@/lib/constants/teaching'
 
-const LANGUAGES = [
-  { code: 'en', label: 'İngilis', flag: '🇬🇧' },
-  { code: 'ru', label: 'Rus', flag: '🇷🇺' },
-  { code: 'tr', label: 'Türk', flag: '🇹🇷' },
-  { code: 'de', label: 'Alman', flag: '🇩🇪' },
-  { code: 'fr', label: 'Fransız', flag: '🇫🇷' },
-  { code: 'ar', label: 'Ərəb', flag: '🇸🇦' },
-  { code: 'es', label: 'İspan', flag: '🇪🇸' },
-]
-
-const SPECIALIZATIONS = ['IELTS', 'Business', 'Kids', 'Conversation', 'Grammar', 'TOEFL', 'Academic']
-
-const SORT_OPTIONS = [
-  { value: 'rating', label: 'Reytinq' },
-  { value: 'popular', label: 'Populyar' },
-  { value: 'newest', label: 'Yeni' },
-] as const
+const SORT_VALUES = ['rating', 'popular', 'newest'] as const
 
 interface TutorFiltersProps {
   filters: TutorFilters
@@ -33,6 +17,9 @@ interface TutorFiltersProps {
 }
 
 export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
+  const t = useTranslations('tutors.filter')
+  const tl = useTranslations('langNames')
+  const ts = useTranslations('specs')
   const toggleLang = (code: string) => {
     const langs = filters.languages ?? []
     onChange({
@@ -56,13 +43,16 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
     filters.instantBooking ||
     filters.minRating != null
 
+  const sortLabel = (v: string) =>
+    v === 'rating' ? t('sortRating') : v === 'popular' ? t('sortPopular') : t('sortNewest')
+
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-sm">
           <SlidersHorizontal className="h-4 w-4" />
-          Filtrlər
+          {t('title')}
         </div>
         {hasFilters && (
           <Button
@@ -72,26 +62,26 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
             onClick={() => onChange({})}
           >
             <X className="h-3 w-3 mr-1" />
-            Sıfırla
+            {t('reset')}
           </Button>
         )}
       </div>
 
       {/* Sort */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Sıralama</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{t('sort')}</p>
         <div className="flex flex-wrap gap-1.5">
-          {SORT_OPTIONS.map((opt) => (
+          {SORT_VALUES.map((value) => (
             <button
-              key={opt.value}
-              onClick={() => onChange({ ...filters, sortBy: opt.value })}
+              key={value}
+              onClick={() => onChange({ ...filters, sortBy: value })}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                filters.sortBy === opt.value || (!filters.sortBy && opt.value === 'rating')
+                filters.sortBy === value || (!filters.sortBy && value === 'rating')
                   ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border hover:border-primary/50 hover:text-primary'
               }`}
             >
-              {opt.label}
+              {sortLabel(value)}
             </button>
           ))}
         </div>
@@ -102,7 +92,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
       {/* Toggles */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-sm cursor-pointer" htmlFor="online-only">İndi onlayn</Label>
+          <Label className="text-sm cursor-pointer" htmlFor="online-only">{t('onlineNow')}</Label>
           <Switch
             id="online-only"
             checked={filters.onlineOnly ?? false}
@@ -110,7 +100,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label className="text-sm cursor-pointer" htmlFor="instant">Ani rezerv</Label>
+          <Label className="text-sm cursor-pointer" htmlFor="instant">{t('instantBooking')}</Label>
           <Switch
             id="instant"
             checked={filters.instantBooking ?? false}
@@ -123,9 +113,9 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
 
       {/* Languages */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Dil</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{t('language')}</p>
         <div className="flex flex-wrap gap-1.5">
-          {LANGUAGES.map((lang) => {
+          {TEACHING_LANGUAGES.filter((l) => l.available).map((lang) => {
             const active = filters.languages?.includes(lang.code)
             return (
               <button
@@ -138,7 +128,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
                 }`}
               >
                 <span>{lang.flag}</span>
-                {lang.label}
+                {tl(lang.code)}
               </button>
             )
           })}
@@ -149,7 +139,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
 
       {/* Minimum rating */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Minimum reytinq</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{t('minRating')}</p>
         <div className="flex flex-wrap gap-1.5">
           {[null, 3, 4, 4.5].map((r) => (
             <button
@@ -161,7 +151,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
                   : 'border-border hover:border-primary/50'
               }`}
             >
-              {r == null ? 'Hamısı' : `${r}+★`}
+              {r == null ? t('all') : `${r}+★`}
             </button>
           ))}
         </div>
@@ -171,7 +161,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
 
       {/* Specializations */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">İxtisas</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{t('specialization')}</p>
         <div className="flex flex-wrap gap-1.5">
           {SPECIALIZATIONS.map((spec) => {
             const active = filters.specializations?.includes(spec)
@@ -185,7 +175,7 @@ export default function TutorFilters({ filters, onChange }: TutorFiltersProps) {
                     : 'border-border hover:border-primary/50'
                 }`}
               >
-                {spec}
+                {ts(spec)}
               </button>
             )
           })}

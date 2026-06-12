@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import {
   Bell,
   CalendarCheck,
@@ -13,7 +13,7 @@ import {
   CheckCheck,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import {
   Popover,
   PopoverContent,
@@ -56,7 +56,11 @@ function routeFor(n: NotificationRow): string | null {
   }
 }
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function NotificationBell() {
+  const t = useTranslations('notifications')
+  const dfLocale = LOCALES[useLocale()] ?? enUS
   const router = useRouter()
   const locale = useLocale()
   const { data: notifications = [], unreadCount } = useNotifications()
@@ -78,7 +82,7 @@ export default function NotificationBell() {
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
-        <span className="sr-only">Bildirişlər</span>
+        <span className="sr-only">{t('title')}</span>
       </PopoverTrigger>
       <PopoverContent
         align="end"
@@ -86,7 +90,7 @@ export default function NotificationBell() {
         className="dark bg-popover text-popover-foreground w-80 p-0"
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <p className="text-sm font-semibold">Bildirişlər</p>
+          <p className="text-sm font-semibold">{t('title')}</p>
           {unreadCount > 0 && (
             <button
               onClick={() => markAll.mutate()}
@@ -104,7 +108,7 @@ export default function NotificationBell() {
             <div className="w-10 h-10 rounded-full bg-muted/40 flex items-center justify-center mb-3">
               <Bell className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground">Bildiriş yoxdur</p>
+            <p className="text-sm text-muted-foreground">{t('noNotifications')}</p>
           </div>
         ) : (
           <ScrollArea className="max-h-[360px]">
@@ -142,7 +146,7 @@ export default function NotificationBell() {
                         <p className="text-[10px] text-muted-foreground/70 mt-1">
                           {formatDistanceToNow(new Date(n.created_at), {
                             addSuffix: true,
-                            locale: az,
+                            locale: dfLocale,
                           })}
                         </p>
                       )}

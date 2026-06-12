@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useParams, useSearchParams } from 'next/navigation'
 import {
   MapPin, Clock, CheckCircle2, Video, Star, Heart, MessageSquare,
@@ -21,6 +22,8 @@ import { getInitials, cn } from '@/lib/utils'
 import { Link } from '@/i18n/navigation'
 
 export default function TutorProfilePage() {
+  const t = useTranslations('tutors.profile')
+  const ts = useTranslations('specs')
   const { id } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -156,28 +159,28 @@ export default function TutorProfilePage() {
               {
                 icon: Star,
                 value: (tutor.average_rating ?? 0).toFixed(1),
-                label: `${tutor.total_reviews ?? 0} rəy`,
+                label: `${tutor.total_reviews ?? 0} ${t('reviewsCount')}`,
                 color: 'text-amber-400',
                 bg: 'bg-amber-500/12',
               },
               {
                 icon: Video,
                 value: String(tutor.total_lessons ?? 0),
-                label: 'Ümumi dərs',
+                label: t('totalLesson'),
                 color: 'text-blue-400',
                 bg: 'bg-blue-500/12',
               },
               {
                 icon: CheckCircle2,
                 value: `${tutor.completion_rate ?? 100}%`,
-                label: 'Tamamlama',
+                label: t('completion'),
                 color: 'text-emerald-400',
                 bg: 'bg-emerald-500/12',
               },
               {
                 icon: Clock,
-                value: `${tutor.response_time_minutes ?? '<5'} dəq`,
-                label: 'Cavab müddəti',
+                value: `${tutor.response_time_minutes ?? '<5'} ${t('min')}`,
+                label: t('responseTime'),
                 color: 'text-violet-400',
                 bg: 'bg-violet-500/12',
               },
@@ -233,7 +236,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
                   <Users className="h-3 w-3 text-white" />
                 </div>
-                Haqqında
+                {t('about')}
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                 {tutor.about}
@@ -248,7 +251,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
                   <TrendingUp className="h-3 w-3 text-white" />
                 </div>
-                İxtisaslar
+                {t('specializations')}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {tutor.specializations!.map((spec) => (
@@ -256,7 +259,7 @@ export default function TutorProfilePage() {
                     key={spec}
                     className="text-sm px-3 py-1 rounded-full border border-border bg-muted/40 font-medium"
                   >
-                    {spec}
+                    {ts.has(spec) ? ts(spec) : spec}
                   </span>
                 ))}
               </div>
@@ -270,7 +273,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
                   <GraduationCap className="h-3 w-3 text-white" />
                 </div>
-                Təhsil
+                {t('education')}
               </h2>
               <ul className="space-y-2.5">
                 {tutor.education!.map((edu, i) => (
@@ -290,7 +293,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
                   <Award className="h-3 w-3 text-white" />
                 </div>
-                Sertifikatlar
+                {t('certificates')}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {tutor.certificates!.map((cert) => (
@@ -310,7 +313,7 @@ export default function TutorProfilePage() {
                 <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
                   <CalendarDays className="h-3 w-3 text-white" />
                 </div>
-                Həftəlik cədvəl
+                {t('weeklySchedule')}
               </h2>
               <AvailabilityGrid slots={availability.filter((a) => a.is_active)} />
             </div>
@@ -332,10 +335,10 @@ export default function TutorProfilePage() {
             {/* Subscription header */}
             <div className="gradient-bg px-5 py-4 text-white">
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-extrabold">Abonəliklə dərs</span>
+                <span className="text-2xl font-extrabold">{t('subscriptionLesson')}</span>
               </div>
               <p className="text-xs text-white/80 mt-1">
-                Dərslər aylıq abonəliyinizə daxildir
+                {t('subscriptionDesc')}
               </p>
             </div>
 
@@ -343,10 +346,9 @@ export default function TutorProfilePage() {
               {/* Mini stats */}
               <div className="grid grid-cols-2 gap-2.5">
                 {[
-                  { label: 'Dərslər', value: tutor.total_lessons ?? 0 },
-                  { label: 'Tələbələr', value: Math.floor((tutor.total_lessons ?? 0) * 0.7) },
-                  { label: 'Rəylər', value: tutor.total_reviews ?? 0 },
-                  { label: 'Təcrübə', value: `${tutor.years_experience ?? 0} il` },
+                  { label: t('lessonsStat'), value: tutor.total_lessons ?? 0 },
+                  { label: t('reviewsStat'), value: tutor.total_reviews ?? 0 },
+                  { label: t('experienceStat'), value: `${tutor.years_experience ?? 0} ${t('yearsUnit')}` },
                 ].map((stat) => (
                   <div key={stat.label} className="bg-muted/50 rounded-xl p-3 text-center">
                     <p className="text-base font-extrabold">{stat.value}</p>
@@ -363,18 +365,18 @@ export default function TutorProfilePage() {
                   className="w-full rounded-xl gradient-bg border-0 text-white h-11 font-semibold shadow-md btn-glow"
                   onClick={() => setBookingOpen(true)}
                 >
-                  Dərs rezerv et
+                  {t('bookLesson')}
                 </Button>
                 <Button variant="outline" className="w-full rounded-xl h-11">
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  Mesaj göndər
+                  {t('sendMessage')}
                 </Button>
               </div>
 
               {tutor.instant_booking && (
                 <div className="flex items-start gap-2 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
                   <Zap className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                  <span>Bu müəllim ani rezervi dəstəkləyir — dərsiniz dərhal təsdiqlənir</span>
+                  <span>{t('instantSupports')}</span>
                 </div>
               )}
             </div>
@@ -393,19 +395,13 @@ export default function TutorProfilePage() {
   )
 }
 
-const DAY_LABELS: Record<string, string> = {
-  monday: 'B.e',
-  tuesday: 'Ç.a',
-  wednesday: 'Çər',
-  thursday: 'C.a',
-  friday: 'Cüm',
-  saturday: 'Şnb',
-  sunday: 'Baz',
+const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+const DAY_KEYS: Record<string, string> = {
+  monday: 'mon', tuesday: 'tue', wednesday: 'wed', thursday: 'thu', friday: 'fri', saturday: 'sat', sunday: 'sun',
 }
 
-const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-
 function AvailabilityGrid({ slots }: { slots: any[] }) {
+  const td = useTranslations('tutors.days')
   const byDay = DAY_ORDER.reduce<Record<string, any[]>>((acc, d) => {
     acc[d] = slots.filter((s) => s.day_of_week === d)
     return acc
@@ -419,7 +415,7 @@ function AvailabilityGrid({ slots }: { slots: any[] }) {
         return (
           <div key={day} className="flex flex-col items-center gap-1.5">
             <span className={`text-[11px] font-semibold ${hasSlots ? 'text-foreground' : 'text-muted-foreground/50'}`}>
-              {DAY_LABELS[day]}
+              {td(DAY_KEYS[day])}
             </span>
             <div className={`w-full rounded-lg p-1.5 min-h-[52px] flex flex-col gap-1 ${hasSlots ? 'bg-primary/10 border border-primary/20' : 'bg-white/4 border border-border/30'}`}>
               {daySlots.map((slot, i) => (

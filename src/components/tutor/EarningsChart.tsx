@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { TrendingUp, ArrowRight } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTutorEarningsChart } from '@/hooks/useTutorEarnings'
 import { Link } from '@/i18n/navigation'
 
 export default function EarningsChart() {
+  const t = useTranslations('tutorDashboard')
   const [period, setPeriod] = useState<'weekly' | 'monthly'>('weekly')
   const { data: bars = [], isLoading, isError } = useTutorEarningsChart(period)
   const max = Math.max(...bars.map((b) => b.amount), 1)
@@ -18,7 +20,7 @@ export default function EarningsChart() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
             <TrendingUp className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Qazanc qrafiki</h3>
+          <h3 className="font-semibold text-sm">{t('earningsChart')}</h3>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex rounded-lg border border-border overflow-hidden text-xs">
@@ -26,18 +28,18 @@ export default function EarningsChart() {
               onClick={() => setPeriod('weekly')}
               className={`px-2.5 py-1 transition-colors ${period === 'weekly' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Həftəlik
+              {t('weekly')}
             </button>
             <button
               onClick={() => setPeriod('monthly')}
               className={`px-2.5 py-1 transition-colors ${period === 'monthly' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Aylıq
+              {t('monthly')}
             </button>
           </div>
           <Link href="/tutor-earnings">
             <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-              Hamısı
+              {t('all')}
               <ArrowRight className="h-3 w-3" />
             </button>
           </Link>
@@ -55,7 +57,7 @@ export default function EarningsChart() {
             ))}
           </div>
         ) : isError ? (
-          <p className="text-sm text-muted-foreground text-center py-8">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t('failedToLoad')}</p>
         ) : (
           <>
             <div className="flex items-end gap-2 h-24">
@@ -90,7 +92,7 @@ export default function EarningsChart() {
             </div>
 
             <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
-              <span>{period === 'weekly' ? 'Son 8 həftə' : 'Son 6 ay'}</span>
+              <span>{period === 'weekly' ? t('last8weeks') : t('last6months')}</span>
               <span className="font-semibold text-emerald-400">
                 ₼{bars.reduce((s, b) => s + b.amount, 0).toFixed(2)}
               </span>

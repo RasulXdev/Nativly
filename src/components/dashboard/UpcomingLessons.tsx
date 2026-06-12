@@ -1,7 +1,8 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
 import { format, differenceInMinutes } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { Calendar, Video, Clock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -11,7 +12,13 @@ import { getInitials } from '@/lib/utils'
 import { Link } from '@/i18n/navigation'
 import EmptyState from '@/components/shared/EmptyState'
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function UpcomingLessons() {
+  const t = useTranslations('schedule')
+  const td = useTranslations('dashboard')
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
   const { data: rawLessons, isLoading, isError } = useUpcomingLessons()
   const lessons = rawLessons as Array<{
     id: string
@@ -34,11 +41,11 @@ export default function UpcomingLessons() {
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <Calendar className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Gələn dərslər</h3>
+          <h3 className="font-semibold text-sm">{t('upcoming')}</h3>
         </div>
         <Link href="/schedule">
           <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            Hamısı
+            {td('schedule')}
             <ArrowRight className="h-3 w-3" />
           </button>
         </Link>
@@ -46,7 +53,7 @@ export default function UpcomingLessons() {
 
       <div className="p-5">
         {isError ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{td('failedToLoad')}</p>
         ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -63,8 +70,8 @@ export default function UpcomingLessons() {
         ) : !lessons?.length ? (
           <EmptyState
             icon={Calendar}
-            title="Gələn dərs yoxdur"
-            description="Müəllim seçib dərs rezerv edin"
+            title={t('noUpcoming')}
+            description={t('browseToBook')}
           />
         ) : (
           <div className="space-y-2.5">
@@ -88,13 +95,13 @@ export default function UpcomingLessons() {
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">
-                      {tutorProfile?.full_name ?? 'Müəllim'}
+                      {tutorProfile?.full_name ?? '—'}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                       <Clock className="h-3 w-3" />
-                      <span>{format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: az })}</span>
+                      <span>{format(new Date(lesson.scheduled_at), 'd MMM, HH:mm', { locale: dfLocale })}</span>
                       <span className="text-border">·</span>
-                      <span>{lesson.duration_minutes} dəq</span>
+                      <span>{lesson.duration_minutes} min</span>
                     </div>
                   </div>
 
@@ -102,7 +109,7 @@ export default function UpcomingLessons() {
                     <Link href={`/room/${lesson.room_id ?? lesson.id}`}>
                       <Button size="sm" className="h-8 text-xs rounded-full gradient-bg border-0 text-white shrink-0 shadow-md">
                         <Video className="h-3 w-3 mr-1" />
-                        Qoşul
+                        {t('joinLesson')}
                       </Button>
                     </Link>
                   ) : (
@@ -111,7 +118,7 @@ export default function UpcomingLessons() {
                         {format(new Date(lesson.scheduled_at), 'HH:mm')}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {format(new Date(lesson.scheduled_at), 'd MMM', { locale: az })}
+                        {format(new Date(lesson.scheduled_at), 'd MMM', { locale: dfLocale })}
                       </p>
                     </div>
                   )}

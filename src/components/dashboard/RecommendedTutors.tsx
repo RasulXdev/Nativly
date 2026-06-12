@@ -1,14 +1,18 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { GraduationCap, ArrowRight, Star } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTutors } from '@/hooks/useTutors'
 import { getInitials } from '@/lib/utils'
 import OnlineStatus from '@/components/shared/OnlineStatus'
+import EmptyState from '@/components/shared/EmptyState'
 import { Link } from '@/i18n/navigation'
 
 export default function RecommendedTutors() {
+  const t = useTranslations('dashboard')
+  const tt = useTranslations('tutors')
   const { data, isLoading, isError } = useTutors({ sortBy: 'rating' })
   const tutors = data?.pages[0]?.slice(0, 4) ?? []
 
@@ -20,11 +24,11 @@ export default function RecommendedTutors() {
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <GraduationCap className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Tövsiyyə olunan müəllimlər</h3>
+          <h3 className="font-semibold text-sm">{t('recommendedTutors')}</h3>
         </div>
         <Link href="/tutors">
           <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            Hamısı
+            {t('all')}
             <ArrowRight className="h-3 w-3" />
           </button>
         </Link>
@@ -32,7 +36,7 @@ export default function RecommendedTutors() {
 
       <div className="p-5">
         {isError ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t('failedToLoad')}</p>
         ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -46,6 +50,8 @@ export default function RecommendedTutors() {
               </div>
             ))}
           </div>
+        ) : tutors.length === 0 ? (
+          <EmptyState icon={GraduationCap} title={tt('comingTitle')} description={tt('comingDesc')} />
         ) : (
           <div className="space-y-2">
             {tutors.map((tutor, idx) => {
@@ -83,7 +89,7 @@ export default function RecommendedTutors() {
 
                     <div className="shrink-0 text-right">
                       <p className="text-sm font-bold text-primary">{tutor.total_lessons ?? 0}</p>
-                      <p className="text-xs text-muted-foreground">dərs</p>
+                      <p className="text-xs text-muted-foreground">{t('lessonsUnit')}</p>
                     </div>
                   </div>
                 </Link>

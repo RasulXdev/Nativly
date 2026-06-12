@@ -1,53 +1,19 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { BookOpen, Clock, Calendar, Wallet, TrendingUp } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStudentStats } from '@/hooks/useLessons'
 
-const stats = [
-  {
-    key: 'totalLessons' as const,
-    label: 'Ümumi dərslər',
-    icon: BookOpen,
-    format: (v: number) => String(v),
-    gradient: 'from-blue-500 to-indigo-600',
-    glow: 'shadow-blue-500/30',
-    accent: 'text-blue-400',
-    unit: 'dərs',
-  },
-  {
-    key: 'totalHours' as const,
-    label: 'Öyrənmə saatları',
-    icon: Clock,
-    format: (v: number) => String(v),
-    gradient: 'from-emerald-500 to-teal-600',
-    glow: 'shadow-emerald-500/30',
-    accent: 'text-emerald-400',
-    unit: 'saat',
-  },
-  {
-    key: 'upcomingLessons' as const,
-    label: 'Gələn dərslər',
-    icon: Calendar,
-    format: (v: number) => String(v),
-    gradient: 'from-amber-500 to-orange-500',
-    glow: 'shadow-amber-500/30',
-    accent: 'text-amber-400',
-    unit: 'planlanmış',
-  },
-  {
-    key: 'balance' as const,
-    label: 'Hesab balansı',
-    icon: Wallet,
-    format: (v: number) => `$${v.toFixed(2)}`,
-    gradient: 'from-violet-500 to-purple-600',
-    glow: 'shadow-violet-500/30',
-    accent: 'text-violet-400',
-    unit: 'USD',
-  },
+const STAT_DEFS = [
+  { key: 'totalLessons' as const, labelKey: 'totalLessons', icon: BookOpen, format: (v: number) => String(v), gradient: 'from-blue-500 to-indigo-600', glow: 'shadow-blue-500/30', accent: 'text-blue-400', unitKey: 'lessonsUnit' },
+  { key: 'totalHours' as const, labelKey: 'totalHours', icon: Clock, format: (v: number) => String(v), gradient: 'from-emerald-500 to-teal-600', glow: 'shadow-emerald-500/30', accent: 'text-emerald-400', unitKey: 'hoursUnit' },
+  { key: 'upcomingLessons' as const, labelKey: 'upcomingLessons', icon: Calendar, format: (v: number) => String(v), gradient: 'from-amber-500 to-orange-500', glow: 'shadow-amber-500/30', accent: 'text-amber-400', unitKey: 'plannedUnit' },
+  { key: 'balance' as const, labelKey: 'balance', icon: Wallet, format: (v: number) => `$${v.toFixed(2)}`, gradient: 'from-violet-500 to-purple-600', glow: 'shadow-violet-500/30', accent: 'text-violet-400', unitKey: 'usdUnit' },
 ]
 
 export default function StatsCards() {
+  const t = useTranslations('dashboard')
   const { data, isLoading, isError } = useStudentStats()
 
   if (isError) {
@@ -55,7 +21,7 @@ export default function StatsCards() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="rounded-2xl border border-destructive/20 bg-card p-5 flex items-center justify-center min-h-[110px]">
-            <p className="text-xs text-muted-foreground text-center">Yüklənmədi</p>
+            <p className="text-xs text-muted-foreground text-center">{t('failedToLoad')}</p>
           </div>
         ))}
       </div>
@@ -79,7 +45,7 @@ export default function StatsCards() {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat) => {
+      {STAT_DEFS.map((stat) => {
         const value = data?.[stat.key] ?? 0
         return (
           <div
@@ -101,12 +67,12 @@ export default function StatsCards() {
               </p>
 
               {/* Label */}
-              <p className="text-sm text-muted-foreground mt-0.5 font-medium">{stat.label}</p>
+              <p className="text-sm text-muted-foreground mt-0.5 font-medium">{t(stat.labelKey)}</p>
 
               {/* Unit */}
               <div className="flex items-center gap-1.5 mt-3">
                 <TrendingUp className={`h-3 w-3 ${stat.accent}`} />
-                <span className={`text-xs font-semibold ${stat.accent}`}>{stat.unit}</span>
+                <span className={`text-xs font-semibold ${stat.accent}`}>{t(stat.unitKey)}</span>
               </div>
             </div>
           </div>

@@ -99,18 +99,18 @@ export default function Hero() {
                     </div>
                     <div>
                       <p className="font-semibold text-sm text-white">Sarah Mitchell</p>
-                      <p className="text-xs text-white/50">IELTS Expert</p>
+                      <p className="text-xs text-white/50">{t('heroCard.expert')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-400/20 rounded-full px-3 py-1">
                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-live" />
-                    <span className="text-[11px] text-emerald-400 font-medium">Live</span>
+                    <span className="text-[11px] text-emerald-400 font-medium">{t('heroCard.live')}</span>
                   </div>
                 </div>
 
                 <div className="bg-white/5 border border-white/8 rounded-2xl p-5 mb-5">
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-white/70 font-medium">IELTS Speaking Practice</p>
+                    <p className="text-sm text-white/70 font-medium">{t('heroCard.speakingPractice')}</p>
                     <div className="flex items-center gap-1">
                       <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                       <span className="text-xs text-white/60">4.9</span>
@@ -129,9 +129,9 @@ export default function Hero() {
 
                 <div className="grid grid-cols-3 gap-2.5">
                   {[
-                    { emoji: '🎓', value: '10K+', label: 'Dərs' },
-                    { emoji: '👨‍🏫', value: '500+', label: 'Müəllim' },
-                    { emoji: '⭐', value: '4.9', label: 'Reytinq' },
+                    { emoji: '🎓', value: '10K+', label: t('heroCard.lessons') },
+                    { emoji: '👨‍🏫', value: '500+', label: t('heroCard.tutors') },
+                    { emoji: '⭐', value: '4.9', label: t('heroCard.rating') },
                   ].map((s) => (
                     <div key={s.label} className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
                       <p className="text-lg mb-0.5">{s.emoji}</p>
@@ -146,8 +146,8 @@ export default function Hero() {
                 <div className="flex items-center gap-2">
                   <Award className="h-4 w-4 text-primary" />
                   <div>
-                    <p className="text-xs font-bold">IELTS 7.0</p>
-                    <p className="text-[10px] text-muted-foreground">3 ayda</p>
+                    <p className="text-xs font-bold">{t('heroCard.resultScore')}</p>
+                    <p className="text-[10px] text-muted-foreground">{t('heroCard.resultTime')}</p>
                   </div>
                 </div>
               </div>
@@ -158,8 +158,8 @@ export default function Hero() {
                     <span className="text-white text-[10px] font-bold">$5</span>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-foreground">Sınaq dərsi</p>
-                    <p className="text-[10px] text-muted-foreground">30 dəq</p>
+                    <p className="text-xs font-bold text-foreground">{t('heroCard.trialLesson')}</p>
+                    <p className="text-[10px] text-muted-foreground">{t('heroCard.trialDuration')}</p>
                   </div>
                 </div>
               </div>
@@ -170,13 +170,26 @@ export default function Hero() {
         <div className="mt-16 pt-8 border-t border-border/30">
           <div className="flex flex-wrap justify-center gap-2">
             {[
-              ['🇬🇧', 'English'], ['🇷🇺', 'Русский'], ['🇩🇪', 'Deutsch'],
-              ['🇫🇷', 'Français'], ['🇹🇷', 'Türkçe'], ['🇪🇸', 'Español'],
-              ['🇮🇹', 'Italiano'], ['🇨🇳', '中文'], ['🇯🇵', '日本語'],
-            ].map(([flag, name]) => (
-              <div key={name} className="flex items-center gap-1.5 bg-white/70 border border-primary/12 rounded-full px-3.5 py-1.5 text-xs hover:border-primary/35 hover:bg-primary/5 hover:scale-105 transition-all duration-200 cursor-default shadow-sm">
-                <span>{flag}</span>
+              ['🇬🇧', 'English', true], ['🇷🇺', 'Русский', true], ['🇩🇪', 'Deutsch', false],
+              ['🇫🇷', 'Français', false], ['🇹🇷', 'Türkçe', false], ['🇪🇸', 'Español', false],
+              ['🇮🇹', 'Italiano', false], ['🇨🇳', '中文', false], ['🇯🇵', '日本語', false],
+            ].map(([flag, name, available]) => (
+              <div
+                key={name as string}
+                className={cn(
+                  'flex items-center gap-1.5 border rounded-full px-3.5 py-1.5 text-xs transition-all duration-200 cursor-default shadow-sm',
+                  available
+                    ? 'bg-white/70 border-primary/12 hover:border-primary/35 hover:bg-primary/5 hover:scale-105'
+                    : 'bg-muted/40 border-border/40 opacity-60'
+                )}
+              >
+                <span className={available ? '' : 'grayscale'}>{flag}</span>
                 <span className="text-foreground/65 font-medium">{name}</span>
+                {!available && (
+                  <span className="ml-1 text-[9px] font-semibold text-primary/70 bg-primary/8 rounded-full px-1.5 py-0.5 leading-none">
+                    {t('heroCard.comingSoon')}
+                  </span>
+                )}
               </div>
             ))}
           </div>

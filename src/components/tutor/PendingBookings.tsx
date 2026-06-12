@@ -1,7 +1,9 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { format } from 'date-fns'
-import { az } from 'date-fns/locale'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { ClipboardList, Check, X, Clock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -12,7 +14,12 @@ import { getInitials } from '@/lib/utils'
 import EmptyState from '@/components/shared/EmptyState'
 import { toast } from 'sonner'
 
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+
 export default function PendingBookings() {
+  const t = useTranslations('tutorDashboard')
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
   const { data: rawBookings, isLoading, isError } = usePendingBookings()
   const confirm = useConfirmBooking()
   const reject = useRejectBooking()
@@ -33,18 +40,18 @@ export default function PendingBookings() {
   const handleConfirm = async (id: string) => {
     try {
       await confirm.mutateAsync(id)
-      toast.success('Rezervasiya təsdiqləndi')
+      toast.success(t('bookingApproved'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
   const handleReject = async (id: string) => {
     try {
       await reject.mutateAsync({ bookingId: id })
-      toast.success('Rezervasiya rədd edildi')
+      toast.success(t('bookingRejected'))
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     }
   }
 
@@ -55,7 +62,7 @@ export default function PendingBookings() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
             <ClipboardList className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-semibold text-sm">Gözləyən rezervasiyalar</h3>
+          <h3 className="font-semibold text-sm">{t('pendingTitle')}</h3>
           {bookings && bookings.length > 0 && (
             <Badge className="h-5 text-xs bg-amber-500/20 text-amber-400 border-amber-500/30">
               {bookings.length}
@@ -63,14 +70,14 @@ export default function PendingBookings() {
           )}
         </div>
         <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-          Hamısı
+          {t('all')}
           <ArrowRight className="h-3 w-3" />
         </button>
       </div>
 
       <div className="p-5">
         {isError ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Məlumat yüklənmədi</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t('failedToLoad')}</p>
         ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 2 }).map((_, i) => (
@@ -92,8 +99,8 @@ export default function PendingBookings() {
         ) : !bookings?.length ? (
           <EmptyState
             icon={ClipboardList}
-            title="Gözləyən rezervasiya yoxdur"
-            description="Tələbələr sizi rezerv etdikdə burada görünəcək"
+            title={t('noPendingTitle')}
+            description={t('noPendingDesc')}
           />
         ) : (
           <div className="space-y-3">
@@ -112,7 +119,7 @@ export default function PendingBookings() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold truncate">
-                        {booking.student?.full_name ?? 'Tələbə'}
+                        {booking.student?.full_name ?? t('student')}
                       </p>
                       {booking.is_trial && (
                         <Badge className="text-[10px] h-4 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shrink-0">
@@ -122,9 +129,9 @@ export default function PendingBookings() {
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                       <Clock className="h-3 w-3" />
-                      <span>{format(new Date(booking.scheduled_at), 'd MMM, HH:mm', { locale: az })}</span>
+                      <span>{format(new Date(booking.scheduled_at), 'd MMM, HH:mm', { locale: dfLocale })}</span>
                       <span className="text-border">·</span>
-                      <span>{booking.duration_minutes} dəq</span>
+                      <span>{booking.duration_minutes} {t('min')}</span>
                       <span className="text-border">·</span>
                       <span className="font-semibold text-foreground">${booking.price}</span>
                     </div>
@@ -145,7 +152,7 @@ export default function PendingBookings() {
                     disabled={confirm.isPending}
                   >
                     <Check className="h-3 w-3 mr-1" />
-                    Təsdiqlə
+                    {t('approve')}
                   </Button>
                   <Button
                     size="sm"
@@ -155,7 +162,7 @@ export default function PendingBookings() {
                     disabled={reject.isPending}
                   >
                     <X className="h-3 w-3 mr-1" />
-                    Rədd et
+                    {t('reject')}
                   </Button>
                 </div>
               </div>
