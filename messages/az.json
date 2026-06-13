@@ -2,6 +2,8 @@
   "common": {
     "loading": "Yüklənir...",
     "error": "Xəta baş verdi",
+    "favoriteAdded": "Seçilmişlərə əlavə edildi",
+    "favoriteRemoved": "Seçilmişlərdən silindi",
     "retry": "Yenidən cəhd et",
     "save": "Saxla",
     "cancel": "İmtina",
@@ -84,7 +86,10 @@
     "students": "Tələbələr",
     "lessons": "Dərslər",
     "earnings": "Qazanc",
-    "admin": "Admin panel"
+    "admin": "Admin panel",
+    "roleTutor": "Müəllim",
+    "roleAdmin": "Admin",
+    "roleStudent": "Tələbə"
   },
   "auth": {
     "login": "Daxil ol",
@@ -140,7 +145,9 @@
     "tutorJoinTitle": "Müəllim kimi qoşul",
     "and": "və",
     "afterRegisterNote": "Qeydiyyatdan sonra profilinizi tamamlayacaq və admin təsdiqini gözləyəcəksiniz.",
-    "loading": "Yüklənir..."
+    "loading": "Yüklənir...",
+    "errorOccurred": "Xəta baş verdi",
+    "checkEmailDescription": "E-poçtunuzu yoxlayın və linkə klikləyin."
   },
   "landing": {
     "heroTitle": "İstənilən vaxt, istənilən yerdən dil öyrən",

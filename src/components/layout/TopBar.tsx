@@ -62,7 +62,7 @@ export default function TopBar() {
                     {profile.full_name?.split(' ')[0]}
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-tight">
-                    {role === 'tutor' ? 'Müəllim' : role === 'admin' ? 'Admin' : 'Tələbə'}
+                    {role === 'tutor' ? t('roleTutor') : role === 'admin' ? t('roleAdmin') : t('roleStudent')}
                   </p>
                 </div>
               </div>

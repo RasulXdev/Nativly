@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 export function useFavorites() {
   const supabase = createClient()
@@ -25,13 +26,14 @@ export function useFavorites() {
 }
 
 export function useToggleFavorite() {
+  const t = useTranslations('common')
   const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async ({ tutorId, isFav }: { tutorId: string; isFav: boolean }) => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Daxil olun')
+      if (!user) throw new Error('Not authenticated')
 
       if (isFav) {
         const { error } = await supabase
@@ -49,10 +51,10 @@ export function useToggleFavorite() {
     },
     onSuccess: (_, { isFav }) => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      toast.success(isFav ? 'Seçilmişlərdən silindi' : 'Seçilmişlərə əlavə edildi')
+      toast.success(isFav ? t('favoriteRemoved') : t('favoriteAdded'))
     },
     onError: () => {
-      toast.error('Xəta baş verdi')
+      toast.error(t('error'))
     },
   })
 }

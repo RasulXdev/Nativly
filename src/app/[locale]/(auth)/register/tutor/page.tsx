@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import TutorOnboardingForm from '@/components/auth/TutorOnboardingForm'
 
-export const metadata: Metadata = {
-  title: 'Müəllim qeydiyyatı — Nativly',
-  description: 'Nativly platformasında müəllim kimi qeydiyyatdan keçin.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('auth')
+  return { title: `${t('tutorJoinTitle')} — Nativly` }
 }
 
 export default function TutorRegisterPage() {

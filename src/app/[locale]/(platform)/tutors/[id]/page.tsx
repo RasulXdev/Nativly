@@ -64,7 +64,7 @@ export default function TutorProfilePage() {
       if (!res.ok) throw new Error(data.error)
       router.push(`/${locale}/messages?c=${data.conversationId}`)
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(tc('error'))
     } finally {
       setSendingMessage(false)
     }

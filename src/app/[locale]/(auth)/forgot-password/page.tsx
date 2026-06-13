@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
           <div>
             <p className="font-semibold text-foreground">{t('emailSent')}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              E-poçtunuzu yoxlayın və linkə klikləyin.
+              {t('checkEmailDescription')}
             </p>
           </div>
         </div>

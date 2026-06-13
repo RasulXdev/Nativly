@@ -31,7 +31,7 @@ export default function SocialButtons({ mode }: SocialButtonsProps) {
       })
       if (error) toast.error(error.message)
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     } finally {
       setIsGoogleLoading(false)
     }
@@ -68,7 +68,7 @@ export default function SocialButtons({ mode }: SocialButtonsProps) {
       setShowMagicInput(false)
       setMagicEmail('')
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     } finally {
       setIsMagicLoading(false)
     }

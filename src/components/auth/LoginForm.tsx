@@ -64,7 +64,7 @@ export default function LoginForm() {
         router.refresh()
       }
     } catch {
-      toast.error('Xəta baş verdi')
+      toast.error(t('errorOccurred'))
     } finally {
       setIsLoading(false)
     }
@@ -116,7 +116,7 @@ export default function LoginForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('loading') ?? 'Yüklənir...'}
+              {t('loading')}
             </>
           ) : (
             t('login')
