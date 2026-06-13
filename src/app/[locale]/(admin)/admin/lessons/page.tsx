@@ -20,11 +20,11 @@ interface Lesson {
   tutor: { profiles: { full_name: string; avatar_url: string } }
 }
 
-const STATUS_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-  scheduled: { icon: Clock, color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', label: 'Scheduled' },
-  in_progress: { icon: Loader2, color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', label: 'In Progress' },
-  completed: { icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', label: 'Completed' },
-  cancelled: { icon: XCircle, color: 'bg-destructive/10 text-destructive border-destructive/20', label: 'Cancelled' },
+const STATUS_CONFIG: Record<string, { icon: React.ElementType; color: string; key: string }> = {
+  scheduled: { icon: Clock, color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', key: 'scheduled' },
+  in_progress: { icon: Loader2, color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', key: 'inProgress' },
+  completed: { icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', key: 'completed' },
+  cancelled: { icon: XCircle, color: 'bg-destructive/10 text-destructive border-destructive/20', key: 'cancelled' },
 }
 
 export default function AdminLessonsPage() {
@@ -57,7 +57,7 @@ export default function AdminLessonsPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">{total} total lessons</p>
+          <p className="text-xs text-muted-foreground">{t('totalLessons', { count: total })}</p>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export default function AdminLessonsPage() {
             onClick={() => setStatusFilter(s)}
             className="capitalize text-xs"
           >
-            {s ? STATUS_CONFIG[s]?.label : 'All'}
+            {s ? t(STATUS_CONFIG[s]?.key) : t('all')}
           </Button>
         ))}
       </div>
@@ -84,7 +84,7 @@ export default function AdminLessonsPage() {
               {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-xl" />)}
             </div>
           ) : lessons.length === 0 ? (
-            <div className="py-16 text-center text-sm text-muted-foreground">No lessons found</div>
+            <div className="py-16 text-center text-sm text-muted-foreground">{t('noLessons')}</div>
           ) : lessons.map(lesson => {
             const cfg = STATUS_CONFIG[lesson.status] ?? STATUS_CONFIG.scheduled
             const StatusIcon = cfg.icon
@@ -107,7 +107,7 @@ export default function AdminLessonsPage() {
                   <span className="text-sm font-semibold">{lesson.price}₼</span>
                   <Badge className={`text-xs border ${cfg.color} gap-1`}>
                     <StatusIcon className="h-3 w-3" />
-                    <span className="hidden sm:inline">{cfg.label}</span>
+                    <span className="hidden sm:inline">{t(cfg.key)}</span>
                   </Badge>
                 </div>
               </div>

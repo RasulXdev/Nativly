@@ -72,7 +72,7 @@ export default function AdminTutorsPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">Manage tutor applications</p>
+          <p className="text-xs text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -100,7 +100,7 @@ export default function AdminTutorsPage() {
         ) : tutors.length === 0 ? (
           <div className="py-16 text-center rounded-2xl border border-dashed border-border">
             <GraduationCap className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No {activeTab} applications</p>
+            <p className="text-sm text-muted-foreground">{t('noApplications', { status: activeTab })}</p>
           </div>
         ) : tutors.map(tutor => (
           <div key={tutor.id} className="rounded-2xl border border-border bg-card p-4 space-y-4">
@@ -115,7 +115,7 @@ export default function AdminTutorsPage() {
                   <Badge className={`text-xs border ${STATUS_COLORS[tutor.application_status]}`}>{tutor.application_status}</Badge>
                   {tutor.is_featured && (
                     <Badge className="text-xs bg-yellow-500/10 text-yellow-500 border-yellow-500/20 border">
-                      <Sparkles className="h-3 w-3 mr-1" />Featured
+                      <Sparkles className="h-3 w-3 mr-1" />{t('featured')}
                     </Badge>
                   )}
                 </div>
@@ -148,7 +148,7 @@ export default function AdminTutorsPage() {
                 {tutor.total_lessons > 0 && (
                   <span className="flex items-center gap-1">
                     <BookOpen className="h-3.5 w-3.5" />
-                    {tutor.total_lessons} lessons
+                    {tutor.total_lessons} {t('lessons')}
                   </span>
                 )}
               </div>
@@ -161,7 +161,7 @@ export default function AdminTutorsPage() {
                   onClick={() => handleAction(tutor.id, 'toggle_feature')}
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  {tutor.is_featured ? 'Unfeature' : 'Feature'}
+                  {tutor.is_featured ? t('unfeature') : t('feature')}
                 </Button>
                 {tutor.application_status === 'pending' && (
                   <>

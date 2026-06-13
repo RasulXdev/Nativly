@@ -70,7 +70,7 @@ export default function AdminPaymentsPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">Tutor payout management</p>
+          <p className="text-xs text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -99,7 +99,7 @@ export default function AdminPaymentsPage() {
               {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-xl" />)}
             </div>
           ) : payouts.length === 0 ? (
-            <div className="py-16 text-center text-sm text-muted-foreground">No {tab} payouts</div>
+            <div className="py-16 text-center text-sm text-muted-foreground">{tab === 'pending' ? t('noPending') : t('noPaid')}</div>
           ) : payouts.map(p => (
             <div key={p.id} className="flex items-center gap-3 px-4 py-3">
               <Avatar className="h-10 w-10 shrink-0">
@@ -116,13 +116,13 @@ export default function AdminPaymentsPage() {
                 <span className="font-bold text-base">{p.amount_azn}₼</span>
                 {p.status === 'paid' ? (
                   <Badge className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 gap-1 text-xs">
-                    <Check className="h-3 w-3" />Paid
+                    <Check className="h-3 w-3" />{t('paid')}
                     {p.paid_at && <span className="ml-1 opacity-70">{format(new Date(p.paid_at), 'd MMM')}</span>}
                   </Badge>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Badge className="bg-amber-500/10 text-amber-500 border border-amber-500/20 gap-1 text-xs">
-                      <Clock className="h-3 w-3" />Pending
+                      <Clock className="h-3 w-3" />{t('pending')}
                     </Badge>
                     <Button
                       size="sm"
@@ -143,17 +143,17 @@ export default function AdminPaymentsPage() {
       <Dialog open={!!markingId} onOpenChange={open => !open && setMarkingId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mark as Paid</DialogTitle>
+            <DialogTitle>{t('markAsPaidTitle')}</DialogTitle>
           </DialogHeader>
           <Textarea
-            placeholder="Optional note (bank ref, transfer ID...)"
+            placeholder={t('notePlaceholder')}
             value={note}
             onChange={e => setNote(e.target.value)}
             rows={3}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMarkingId(null)}>Cancel</Button>
-            <Button className="gradient-bg text-white" onClick={confirmPaid}>Confirm</Button>
+            <Button variant="outline" onClick={() => setMarkingId(null)}>{t('cancel')}</Button>
+            <Button className="gradient-bg text-white" onClick={confirmPaid}>{t('confirm')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

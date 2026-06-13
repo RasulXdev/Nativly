@@ -78,7 +78,7 @@ export default function AdminUsersPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">{total} total users</p>
+          <p className="text-xs text-muted-foreground">{t('totalUsers', { count: total })}</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
               onClick={() => setRole(r)}
               className="capitalize text-xs"
             >
-              {r || 'All'}
+              {r || t('all')}
             </Button>
           ))}
         </div>
@@ -125,7 +125,7 @@ export default function AdminUsersPage() {
               ))}
             </div>
           ) : users.length === 0 ? (
-            <div className="py-16 text-center text-sm text-muted-foreground">No users found</div>
+            <div className="py-16 text-center text-sm text-muted-foreground">{t('noUsers')}</div>
           ) : users.map(u => {
             const RoleIcon = ROLE_ICONS[u.role]
             return (
@@ -161,12 +161,12 @@ export default function AdminUsersPage() {
                   <DropdownMenuContent align="end" className="w-44">
                     <DropdownMenuItem onClick={() => handleAction(u.id, 'toggle_active', !u.is_active)}>
                       {u.is_active ? <X className="h-3.5 w-3.5 mr-2 text-destructive" /> : <Check className="h-3.5 w-3.5 mr-2 text-emerald-500" />}
-                      {u.is_active ? 'Deactivate' : 'Activate'}
+                      {u.is_active ? t('deactivate') : t('activate')}
                     </DropdownMenuItem>
                     {u.role !== 'admin' && (
                       <DropdownMenuItem onClick={() => handleAction(u.id, 'change_role', u.role === 'tutor' ? 'student' : 'tutor')}>
                         <Shield className="h-3.5 w-3.5 mr-2" />
-                        Make {u.role === 'tutor' ? 'Student' : 'Tutor'}
+                        {u.role === 'tutor' ? t('makeStudent') : t('makeTutor')}
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>

@@ -71,7 +71,7 @@ export default function AdminSettingsPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">Subscription plan configuration</p>
+          <p className="text-xs text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ export default function AdminSettingsPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
             <h2 className="font-semibold">{plan.name_en ?? plan.name_az ?? 'Plan'}</h2>
             <label className="ml-auto flex items-center gap-2 cursor-pointer">
-              <span className="text-xs text-muted-foreground">Active</span>
+              <span className="text-xs text-muted-foreground">{t('active')}</span>
               <div
                 onClick={() => update(plan.id, 'is_active', !plan.is_active)}
                 className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${plan.is_active ? 'gradient-bg' : 'bg-muted'}`}
@@ -97,19 +97,19 @@ export default function AdminSettingsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Name (EN)</Label>
+              <Label className="text-xs">{t('nameEn')}</Label>
               <Input value={plan.name_en ?? ''} onChange={e => update(plan.id, 'name_en', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Name (AZ)</Label>
+              <Label className="text-xs">{t('nameAz')}</Label>
               <Input value={plan.name_az ?? ''} onChange={e => update(plan.id, 'name_az', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Name (RU)</Label>
+              <Label className="text-xs">{t('nameRu')}</Label>
               <Input value={plan.name_ru ?? ''} onChange={e => update(plan.id, 'name_ru', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Price (AZN)</Label>
+              <Label className="text-xs">{t('priceAzn')}</Label>
               <Input
                 type="number"
                 value={plan.price_azn}
@@ -117,7 +117,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Duration (minutes)</Label>
+              <Label className="text-xs">{t('durationMinutes')}</Label>
               <Input
                 type="number"
                 value={plan.duration_minutes}
@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Stripe Price ID</Label>
+              <Label className="text-xs">{t('stripePriceId')}</Label>
               <Input
                 value={plan.stripe_price_id ?? ''}
                 onChange={e => update(plan.id, 'stripe_price_id', e.target.value)}
@@ -136,15 +136,15 @@ export default function AdminSettingsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Description (AZ)</Label>
+              <Label className="text-xs">{t('descriptionAz')}</Label>
               <Input value={plan.description_az ?? ''} onChange={e => update(plan.id, 'description_az', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Description (EN)</Label>
+              <Label className="text-xs">{t('descriptionEn')}</Label>
               <Input value={plan.description_en ?? ''} onChange={e => update(plan.id, 'description_en', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Description (RU)</Label>
+              <Label className="text-xs">{t('descriptionRu')}</Label>
               <Input value={plan.description_ru ?? ''} onChange={e => update(plan.id, 'description_ru', e.target.value)} />
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function AdminSettingsPage() {
             disabled={saving === plan.id}
           >
             <Save className="h-4 w-4" />
-            {saving === plan.id ? 'Saving…' : t('save')}
+            {saving === plan.id ? t('saving') : t('save')}
           </Button>
         </div>
       ))}
