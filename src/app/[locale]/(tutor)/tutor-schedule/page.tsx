@@ -22,6 +22,8 @@ import {
   useUpdateAvailability,
   useDateAvailability,
   useSaveDateAvailability,
+  useTutorScheduleMode,
+  useUpdateScheduleMode,
   type DayOfWeek,
   type AvailabilitySlot,
   type DateAvailabilitySlot,
@@ -75,6 +77,9 @@ export default function TutorSchedulePage() {
   const dfLocale = LOCALES[locale] ?? enUS
 
   // ── Data hooks ──
+  const { data: scheduleMode } = useTutorScheduleMode()
+  const updateScheduleMode = useUpdateScheduleMode()
+  const activeMode = scheduleMode ?? 'weekly'
   const { data: savedSlots, isLoading } = useTutorAvailability()
   const { data: upcomingRaw, isLoading: loadingUpcoming } = useTutorUpcomingLessons()
   const upcomingLessons = (upcomingRaw ?? []) as TutorUpcomingLesson[]
@@ -277,8 +282,50 @@ export default function TutorSchedulePage() {
         </div>
       </div>
 
+      {/* ── Schedule Mode Toggle ── */}
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
+            <CalendarCheck className="h-4 w-4 text-primary" />
+          </div>
+          <p className="text-sm font-bold">{t('scheduleMode')}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          <button
+            type="button"
+            onClick={() => updateScheduleMode.mutate('weekly')}
+            className={cn(
+              'rounded-xl border p-3 text-left transition-all',
+              activeMode === 'weekly'
+                ? 'border-primary/40 bg-primary/[0.08] ring-1 ring-primary/30'
+                : 'border-border/40 bg-white/[0.02] hover:bg-white/[0.05]',
+            )}
+          >
+            <p className={cn('text-sm font-bold', activeMode === 'weekly' ? 'text-primary' : 'text-foreground')}>
+              {t('weeklyMode')}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{t('weeklyModeDesc')}</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => updateScheduleMode.mutate('monthly')}
+            className={cn(
+              'rounded-xl border p-3 text-left transition-all',
+              activeMode === 'monthly'
+                ? 'border-primary/40 bg-primary/[0.08] ring-1 ring-primary/30'
+                : 'border-border/40 bg-white/[0.02] hover:bg-white/[0.05]',
+            )}
+          >
+            <p className={cn('text-sm font-bold', activeMode === 'monthly' ? 'text-primary' : 'text-foreground')}>
+              {t('monthlyMode')}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{t('monthlyModeDesc')}</p>
+          </button>
+        </div>
+      </div>
+
       {/* ── Monthly Calendar ── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      {activeMode === 'monthly' && <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
             <Paintbrush className="h-4 w-4 text-white" />
@@ -537,8 +584,10 @@ export default function TutorSchedulePage() {
         )}
       </div>
 
+      }
+
       {/* ── Weekly defaults (collapsible) ── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      {activeMode === 'weekly' && <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <button
           type="button"
           onClick={() => setWeeklyOpen(!weeklyOpen)}
@@ -632,7 +681,7 @@ export default function TutorSchedulePage() {
             </div>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* ── Upcoming lessons ── */}
       <div className="rounded-2xl border border-border bg-card overflow-hidden">

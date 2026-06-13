@@ -85,10 +85,10 @@ export async function GET(
 
   const db = createAdminClient()
 
-  // Tutor profile + owner timezone.
+  // Tutor profile + owner timezone + schedule mode.
   const { data: tutor } = await db
     .from('tutor_profiles')
-    .select('id, user_id, profiles!tutor_profiles_user_id_fkey(timezone)')
+    .select('id, user_id, schedule_mode, profiles!tutor_profiles_user_id_fkey(timezone)')
     .eq('id', tutorId)
     .maybeSingle()
 
@@ -100,30 +100,33 @@ export async function GET(
     (tutor as { profiles?: { timezone?: string | null } }).profiles?.timezone ??
     'Asia/Baku'
 
+  const scheduleMode = (tutor as { schedule_mode?: string }).schedule_mode ?? 'weekly'
   const dayKey = DAY_KEYS[new Date(`${dateStr}T12:00:00`).getUTCDay()]
-
-  // Date-specific overrides take priority over weekly defaults.
-  const { data: dateRows } = await db
-    .from('tutor_availability')
-    .select('start_time, end_time, is_active')
-    .eq('tutor_id', tutorId)
-    .eq('specific_date', dateStr)
-
-  const hasDateOverride = (dateRows ?? []).length > 0
 
   type AvailRow = { start_time: string; end_time: string; is_active: boolean | null }
 
-  // If there's a date-specific override, use it; otherwise fall back to weekly.
-  const availRows: AvailRow[] = hasDateOverride
-    ? (dateRows ?? []).filter((r: AvailRow) => r.is_active)
-    : await db
-        .from('tutor_availability')
-        .select('start_time, end_time, is_active')
-        .eq('tutor_id', tutorId)
-        .eq('day_of_week', dayKey)
-        .eq('is_active', true)
-        .is('specific_date', null)
-        .then((res: { data: AvailRow[] | null }) => res.data ?? [])
+  let availRows: AvailRow[]
+
+  if (scheduleMode === 'monthly') {
+    // Monthly mode: only use date-specific rows, no weekly fallback.
+    const { data: dateRows } = await db
+      .from('tutor_availability')
+      .select('start_time, end_time, is_active')
+      .eq('tutor_id', tutorId)
+      .eq('specific_date', dateStr)
+
+    availRows = (dateRows ?? []).filter((r: AvailRow) => r.is_active)
+  } else {
+    // Weekly mode: only use day-of-week rows, ignore date-specific.
+    availRows = await db
+      .from('tutor_availability')
+      .select('start_time, end_time, is_active')
+      .eq('tutor_id', tutorId)
+      .eq('day_of_week', dayKey)
+      .eq('is_active', true)
+      .is('specific_date', null)
+      .then((res: { data: AvailRow[] | null }) => res.data ?? [])
+  }
 
   // Day-level / time-ranged blocks.
   const { data: unavailRows } = await db

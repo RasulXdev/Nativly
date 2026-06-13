@@ -404,7 +404,8 @@
       "yearsUnit": "yr",
       "instantSupports": "This tutor supports instant booking — your lesson is confirmed immediately",
       "instantBadge": "Instant booking",
-      "videoIntro": "Video intro"
+      "videoIntro": "Video intro",
+      "calendarBasedSchedule": "This tutor uses a monthly calendar"
     },
     "comingTitle": "Opening soon",
     "comingDesc": "Tutors are completing registration. Check back shortly — the first profiles go live soon.",
@@ -1413,7 +1414,13 @@
       "friday": "Fri",
       "saturday": "Sat",
       "sunday": "Sun"
-    }
+    },
+    "scheduleMode": "Schedule mode",
+    "weeklyMode": "Weekly",
+    "monthlyMode": "Monthly calendar",
+    "weeklyModeDesc": "Same hours every week",
+    "monthlyModeDesc": "Set each month separately",
+    "calendarBasedSchedule": "This tutor uses a monthly calendar"
   },
   "tutorSettings": {
     "title": "Settings",

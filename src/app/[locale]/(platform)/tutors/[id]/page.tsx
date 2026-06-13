@@ -45,6 +45,7 @@ export default function TutorProfilePage() {
   const profile = (tutor as any)?.profiles
   const languages: any[] = (tutor as any)?.user_languages ?? []
   const availability: any[] = (tutor as any)?.tutor_availability ?? []
+  const scheduleMode: string = (tutor as any)?.schedule_mode ?? 'weekly'
 
   const isFav = favorites.includes(id)
   const isOnline = profile?.is_online ?? false
@@ -337,9 +338,17 @@ export default function TutorProfilePage() {
           )}
 
           {/* Weekly Schedule */}
-          {availability.filter((a) => a.is_active).length > 0 && (
+          {scheduleMode === 'weekly' && availability.filter((a) => a.is_active && a.day_of_week).length > 0 && (
             <ProfileSection icon={CalendarDays} title={t('weeklySchedule')}>
-              <AvailabilityGrid slots={availability.filter((a) => a.is_active)} />
+              <AvailabilityGrid slots={availability.filter((a) => a.is_active && a.day_of_week)} />
+            </ProfileSection>
+          )}
+          {scheduleMode === 'monthly' && (
+            <ProfileSection icon={CalendarDays} title={t('weeklySchedule')}>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <CalendarDays className="h-4 w-4 text-primary/60" />
+                <span>{t('calendarBasedSchedule')}</span>
+              </div>
             </ProfileSection>
           )}
 

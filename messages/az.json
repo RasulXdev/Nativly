@@ -404,7 +404,8 @@
       "yearsUnit": "il",
       "instantSupports": "Bu müəllim ani rezervi dəstəkləyir — dərsiniz dərhal təsdiqlənir",
       "instantBadge": "Ani rezerv",
-      "videoIntro": "Video tanıtım"
+      "videoIntro": "Video tanıtım",
+      "calendarBasedSchedule": "Bu müəllim aylıq təqvim istifadə edir"
     },
     "comingTitle": "Tezliklə açılır",
     "comingDesc": "Müəllimlər qeydiyyatı tamamlayır. Bir azdan yenidən yoxla — ilk profillər tezliklə yayımlanır.",
@@ -1413,7 +1414,13 @@
       "friday": "Cüm",
       "saturday": "Şnb",
       "sunday": "Bzr"
-    }
+    },
+    "scheduleMode": "Cədvəl rejimi",
+    "weeklyMode": "Həftəlik",
+    "monthlyMode": "Aylıq təqvim",
+    "weeklyModeDesc": "Hər həftə eyni saatlar",
+    "monthlyModeDesc": "Hər ayı ayrıca təyin edin",
+    "calendarBasedSchedule": "Bu müəllim aylıq təqvim istifadə edir"
   },
   "tutorSettings": {
     "title": "Tənzimləmələr",

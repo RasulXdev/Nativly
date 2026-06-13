@@ -835,6 +835,7 @@ export type Database = {
           is_accepting_students: boolean | null
           is_featured: boolean | null
           response_time_minutes: number | null
+          schedule_mode: string
           specializations: string[] | null
           total_hours: number | null
           total_lessons: number | null
@@ -861,6 +862,7 @@ export type Database = {
           is_accepting_students?: boolean | null
           is_featured?: boolean | null
           response_time_minutes?: number | null
+          schedule_mode?: string
           specializations?: string[] | null
           total_hours?: number | null
           total_lessons?: number | null
@@ -887,6 +889,7 @@ export type Database = {
           is_accepting_students?: boolean | null
           is_featured?: boolean | null
           response_time_minutes?: number | null
+          schedule_mode?: string
           specializations?: string[] | null
           total_hours?: number | null
           total_lessons?: number | null

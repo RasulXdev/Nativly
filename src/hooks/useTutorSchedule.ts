@@ -41,6 +41,54 @@ export interface DateAvailabilitySlot {
   is_active: boolean
 }
 
+/* ── Schedule mode ── */
+
+export function useTutorScheduleMode() {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['tutor-schedule-mode'],
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return 'weekly'
+
+      const { data: tp } = await db
+        .from('tutor_profiles')
+        .select('schedule_mode')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      return (tp as { schedule_mode?: string } | null)?.schedule_mode ?? 'weekly'
+    },
+  })
+}
+
+export function useUpdateScheduleMode() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (mode: 'weekly' | 'monthly') => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const tutorId = await getOrCreateTutorProfileId(db, user.id)
+      const { error } = await db
+        .from('tutor_profiles')
+        .update({ schedule_mode: mode })
+        .eq('id', tutorId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tutor-schedule-mode'] })
+    },
+  })
+}
+
 /* ── Weekly defaults ── */
 
 export function useTutorAvailability() {
