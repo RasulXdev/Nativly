@@ -63,7 +63,7 @@ export default function AuthShell({
           </Link>
           <div className="flex items-center gap-2 text-xs text-white/40 bg-white/[0.05] rounded-full px-3 py-1.5 ring-1 ring-white/[0.08]">
             <BookOpen className="h-3 w-3" />
-            <span>{FLAGS.length}+ dil</span>
+            <span>{t('languageCount', { count: FLAGS.length })}</span>
           </div>
         </div>
 
@@ -72,7 +72,7 @@ export default function AuthShell({
           <div className="space-y-5">
             <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-300/80 bg-amber-400/10 rounded-full px-3 py-1 ring-1 ring-amber-400/15">
               <Sparkles className="h-3 w-3" />
-              Native müəllimlərlə öyrən
+              {t('nativeBadge')}
             </div>
             <h2 className="text-4xl xl:text-[2.75rem] font-extrabold leading-[1.08] tracking-tight">
               {t('brandTagline')}
