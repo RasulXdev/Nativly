@@ -29,6 +29,7 @@ export type Database = {
           status: Database["public"]["Enums"]["booking_status"] | null
           student_id: string
           student_note: string | null
+          topic: string | null
           tutor_id: string
           tutor_note: string | null
           updated_at: string | null
@@ -47,6 +48,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"] | null
           student_id: string
           student_note?: string | null
+          topic?: string | null
           tutor_id: string
           tutor_note?: string | null
           updated_at?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"] | null
           student_id?: string
           student_note?: string | null
+          topic?: string | null
           tutor_id?: string
           tutor_note?: string | null
           updated_at?: string | null
@@ -592,7 +595,7 @@ export type Database = {
             foreignKeyName: "reviews_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: true
-            referencedRelation: "lessons"
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
           {
@@ -730,26 +733,29 @@ export type Database = {
       }
       tutor_availability: {
         Row: {
-          day_of_week: Database["public"]["Enums"]["day_of_week"]
+          day_of_week: Database["public"]["Enums"]["day_of_week"] | null
           end_time: string
           id: string
           is_active: boolean | null
+          specific_date: string | null
           start_time: string
           tutor_id: string
         }
         Insert: {
-          day_of_week: Database["public"]["Enums"]["day_of_week"]
+          day_of_week?: Database["public"]["Enums"]["day_of_week"] | null
           end_time: string
           id?: string
           is_active?: boolean | null
+          specific_date?: string | null
           start_time: string
           tutor_id: string
         }
         Update: {
-          day_of_week?: Database["public"]["Enums"]["day_of_week"]
+          day_of_week?: Database["public"]["Enums"]["day_of_week"] | null
           end_time?: string
           id?: string
           is_active?: boolean | null
+          specific_date?: string | null
           start_time?: string
           tutor_id?: string
         }
@@ -1095,6 +1101,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_lesson_for_booking: {
+        Args: { b: Database["public"]["Tables"]["bookings"]["Row"] }
+        Returns: undefined
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
