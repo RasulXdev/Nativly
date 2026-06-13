@@ -194,8 +194,7 @@ export async function GET(
     for (const row of availRows ?? []) {
       const start = toMinutes(row.start_time)
       const end = toMinutes(row.end_time)
-      // A start is valid while the full lesson still fits inside the window.
-      for (let m = start; m + LESSON_MINUTES <= end; m += STEP_MINUTES) {
+      for (let m = start; m <= end; m += STEP_MINUTES) {
         const time = `${pad(Math.floor(m / 60))}:${pad(m % 60)}`
         // Blocked if the lesson would overlap a time-ranged unavailability.
         const inBlock = (unavailRows ?? []).some((u) => {

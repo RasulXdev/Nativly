@@ -15,7 +15,7 @@ export default async function TutorLayout({ children }: { children: React.ReactN
       <Sidebar />
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <TopBar />
-        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
           <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
             {children}
           </div>

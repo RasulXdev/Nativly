@@ -207,6 +207,14 @@
     transform: translateY(-6px);
     box-shadow: 0 20px 40px oklch(0.395 0.195 262 / 0.08), 0 8px 16px oklch(0 0 0 / 0.04);
   }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes float {
