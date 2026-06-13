@@ -225,12 +225,30 @@
       "title": "What our students say",
       "subtitle": "Thousands of students already learned with Nativly",
       "items": [
-        { "city": "Baku", "text": "I got IELTS 7.0 in 3 months with Nativly. My teacher Sarah was perfect — professional, kind and very patient." },
-        { "city": "Baku", "text": "I went from A2 to B2 in 6 months with Hans. Now I study at a university in Munich." },
-        { "city": "Ganja", "text": "I needed Russian for business meetings. I reached conversational level in 2 months." },
-        { "city": "Sumgait", "text": "I take 3 lessons a week with Carlos. The flexible scheduling system is amazing." },
-        { "city": "Baku", "text": "Learning French with Marie is a joy. I passed the DELF exam on my first try!" },
-        { "city": "Baku", "text": "Professional teachers, affordable prices. I reached my goal in 4 months. Highly recommend." }
+        {
+          "city": "Baku",
+          "text": "I got IELTS 7.0 in 3 months with Nativly. My teacher Sarah was perfect — professional, kind and very patient."
+        },
+        {
+          "city": "Baku",
+          "text": "I went from A2 to B2 in 6 months with Hans. Now I study at a university in Munich."
+        },
+        {
+          "city": "Ganja",
+          "text": "I needed Russian for business meetings. I reached conversational level in 2 months."
+        },
+        {
+          "city": "Sumgait",
+          "text": "I take 3 lessons a week with Carlos. The flexible scheduling system is amazing."
+        },
+        {
+          "city": "Baku",
+          "text": "Learning French with Marie is a joy. I passed the DELF exam on my first try!"
+        },
+        {
+          "city": "Baku",
+          "text": "Professional teachers, affordable prices. I reached my goal in 4 months. Highly recommend."
+        }
       ]
     },
     "faq": {
@@ -448,7 +466,21 @@
     "student": "Student",
     "tutor": "Tutor",
     "errorOccurred": "An error occurred",
-    "awaitingApproval": "Awaiting tutor's approval"
+    "awaitingApproval": "Awaiting tutor's approval",
+    "selectTopic": "Select topic",
+    "topicConversation": "Conversation",
+    "topicGrammar": "Grammar",
+    "topicBusiness": "Business",
+    "topicKids": "For Kids",
+    "topicExamPrep": "Exam Prep",
+    "topicPronunciation": "Pronunciation",
+    "topicWriting": "Writing",
+    "topicInterview": "Interview",
+    "topicBeginner": "Beginner",
+    "topicIntensive": "Intensive",
+    "topicOther": "Other",
+    "messageSending": "Sending...",
+    "messageSuccess": "Conversation opened"
   },
   "lessons": {
     "upcoming": "Upcoming lessons",

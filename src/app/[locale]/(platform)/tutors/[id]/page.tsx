@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useLocale } from 'next-intl'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import {
   MapPin, Clock, CheckCircle2, Video, Star, Heart, MessageSquare,
   GraduationCap, Award, Zap, ArrowLeft, Users, TrendingUp, CalendarDays, Play
@@ -18,7 +19,9 @@ import { useAuth } from '@/hooks/useAuth'
 import OnlineStatus from '@/components/shared/OnlineStatus'
 import TutorReviews from '@/components/tutors/TutorReviews'
 import BookingModal from '@/components/tutors/BookingModal'
+import { Loader2 } from 'lucide-react'
 import { getInitials, cn } from '@/lib/utils'
+import { toast } from 'sonner'
 import { Link } from '@/i18n/navigation'
 
 export default function TutorProfilePage() {
@@ -30,7 +33,10 @@ export default function TutorProfilePage() {
   const searchParams = useSearchParams()
   const { user } = useAuth()
 
+  const router = useRouter()
+  const locale = useLocale()
   const [bookingOpen, setBookingOpen] = useState(searchParams.get('book') === '1')
+  const [sendingMessage, setSendingMessage] = useState(false)
 
   const { data: tutor, isLoading } = useTutor(id)
   const { data: favorites = [] } = useFavorites()
@@ -44,6 +50,25 @@ export default function TutorProfilePage() {
   const isOnline = profile?.is_online ?? false
 
   const teachingLangs = languages.filter((ul) => ul.is_teaching).map((ul) => ul.languages).filter(Boolean)
+
+  const handleSendMessage = async () => {
+    if (!user || !profile?.id) return
+    setSendingMessage(true)
+    try {
+      const res = await fetch('/api/messages/conversation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetUserId: profile.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      router.push(`/${locale}/messages?c=${data.conversationId}`)
+    } catch {
+      toast.error('Xəta baş verdi')
+    } finally {
+      setSendingMessage(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -376,8 +401,13 @@ export default function TutorProfilePage() {
                 <Button
                   variant="outline"
                   className="w-full rounded-xl h-11 border-white/[0.08] hover:bg-white/[0.04]"
+                  disabled={!user || sendingMessage}
+                  onClick={handleSendMessage}
                 >
-                  <MessageSquare className="h-4 w-4 mr-2" />
+                  {sendingMessage
+                    ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    : <MessageSquare className="h-4 w-4 mr-2" />
+                  }
                   {t('sendMessage')}
                 </Button>
               </div>

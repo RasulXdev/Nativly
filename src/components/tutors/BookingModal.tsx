@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { format, addDays } from 'date-fns'
 import { az, enUS, ru, type Locale } from 'date-fns/locale'
-import { Clock, Loader2, Info, Ticket, ShieldCheck } from 'lucide-react'
+import {
+  Clock, Loader2, Info, Ticket, ShieldCheck, BookOpen,
+  CalendarDays, CheckCircle2, Sparkles,
+} from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,12 +20,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { getInitials } from '@/lib/utils'
+import { getInitials, cn } from '@/lib/utils'
 import type { TutorWithProfile } from '@/lib/types'
 import Rating from '@/components/shared/Rating'
 import TimeSlotPicker from '@/components/booking/TimeSlotPicker'
@@ -36,10 +38,22 @@ interface BookingModalProps {
 
 const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
 
+const TOPICS = [
+  'conversation', 'grammar', 'business', 'kids', 'examPrep',
+  'pronunciation', 'writing', 'interview', 'beginner', 'intensive', 'other',
+] as const
+
+const TOPIC_ICONS: Record<string, string> = {
+  conversation: '💬', grammar: '📝', business: '💼', kids: '👶',
+  examPrep: '📚', pronunciation: '🗣️', writing: '✍️', interview: '🎯',
+  beginner: '🌱', intensive: '⚡', other: '📌',
+}
+
 export default function BookingModal({ tutor, open, onClose }: BookingModalProps) {
   const t = useTranslations('booking')
   const tl = useTranslations('lessons')
-  const dfLocale = LOCALES[useLocale()] ?? enUS
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = (tutor as any).profiles
   const router = useRouter()
@@ -48,10 +62,11 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
   const [date, setDate] = useState<Date | undefined>(addDays(new Date(), 1))
   const [time, setTime] = useState<string | null>(null)
+  const [topic, setTopic] = useState<string | null>(null)
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const duration = 30 // 30-min lessons, covered by subscription
+  const duration = 30
   const remaining = subscription?.lessons_remaining ?? 0
   const canBook = !subLoading && subscription !== null && remaining > 0
 
@@ -61,9 +76,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
     try {
       const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Daxil olun')
 
       const [h, m] = time.split(':').map(Number)
@@ -81,13 +94,13 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
           price: 0,
           currency: 'AZN',
           student_note: note || null,
+          topic: topic || null,
           is_trial: false,
           status: tutor.instant_booking ? 'confirmed' : 'pending',
         } as any)
 
       if (error) throw error
 
-      // Best-effort confirmation email (no-ops until RESEND_API_KEY is set).
       if (tutor.instant_booking) {
         fetch('/api/internal/notify-email', {
           method: 'POST',
@@ -106,9 +119,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
       queryClient.invalidateQueries({ queryKey: ['lessons'] })
 
       toast.success(
-        tutor.instant_booking
-          ? t('bookingSuccess')
-          : t('awaitingApproval')
+        tutor.instant_booking ? t('bookingSuccess') : t('awaitingApproval')
       )
       onClose()
     } catch (e) {
@@ -120,136 +131,192 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="dark bg-background text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>{t('selectDate')} · {t('selectTime')}</DialogDescription>
-        </DialogHeader>
-
-        {/* Tutor info */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="gradient-bg text-white text-xs font-semibold">
-              {getInitials(profile?.full_name ?? '?')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm">{profile?.full_name}</p>
-            <Rating value={tutor.average_rating ?? 0} count={tutor.total_reviews ?? 0} size="sm" />
-          </div>
-          {tutor.instant_booking && (
-            <Badge variant="outline" className="text-xs text-emerald-400 border-emerald-500/30">
-              {t('instantBook')}
-            </Badge>
-          )}
+      <DialogContent className="dark bg-background text-foreground max-w-3xl w-[95vw] max-h-[92vh] overflow-y-auto p-0 gap-0 rounded-2xl border-white/[0.06]">
+        {/* Header */}
+        <div className="relative px-6 sm:px-8 pt-7 pb-5">
+          <div className="absolute inset-0 gradient-bg opacity-[0.06] rounded-t-2xl" />
+          <DialogHeader className="relative z-10">
+            <DialogTitle className="text-xl font-extrabold tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center shadow-md shrink-0">
+                <CalendarDays className="h-4 w-4 text-white" />
+              </div>
+              {t('title')}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground/70 mt-1">
+              {t('selectDate')} · {t('selectTime')}
+            </DialogDescription>
+          </DialogHeader>
         </div>
 
-        {/* Subscription status */}
-        {subLoading ? (
-          <Skeleton className="h-12 rounded-xl" />
-        ) : canBook ? (
-          <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-sm">
-            <Ticket className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>
-              <span className="font-semibold">{remaining}</span> {t('lessonsLeft')} —{' '}
-              {subscription?.plan?.name_az} {t('subscriptionOf')}
-            </span>
+        <div className="px-6 sm:px-8 pb-7 space-y-5">
+          {/* Tutor card */}
+          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-white/[0.03] ring-1 ring-white/[0.06]">
+            <Avatar className="h-12 w-12 rounded-xl">
+              <AvatarImage src={profile?.avatar_url ?? ''} className="rounded-xl" />
+              <AvatarFallback className="gradient-bg text-white text-sm font-bold rounded-xl">
+                {getInitials(profile?.full_name ?? '?')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm">{profile?.full_name}</p>
+              <Rating value={tutor.average_rating ?? 0} count={tutor.total_reviews ?? 0} size="sm" />
+            </div>
+            {tutor.instant_booking && (
+              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/25 gap-1 text-[11px] shrink-0">
+                <Sparkles className="h-3 w-3" />
+                {t('instantBook')}
+              </Badge>
+            )}
           </div>
-        ) : (
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 space-y-3">
-            <p className="text-sm">
-              {subscription === null
-                ? t('needSubscription')
-                : t('noLessonsLeft')}
-            </p>
-            <Button
-              className="gradient-bg border-0 text-white w-full"
-              onClick={() => {
-                onClose()
-                router.push('/pricing')
-              }}
-            >
-              {t('buySubscription')}
-            </Button>
-          </div>
-        )}
 
-        {canBook && (
-          <>
-            <Separator />
-
-            <TimeSlotPicker
-              tutorId={tutor.id}
-              date={date}
-              onDateChange={setDate}
-              time={time}
-              onTimeChange={setTime}
-            />
-
-            {/* Duration note */}
-            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm">
-              <Info className="h-4 w-4 text-primary shrink-0" />
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" />
-                {t('durationIncluded')}
+          {/* Subscription status */}
+          {subLoading ? (
+            <Skeleton className="h-14 rounded-xl" />
+          ) : canBook ? (
+            <div className="flex items-center gap-3 rounded-xl ring-1 ring-emerald-500/20 bg-emerald-500/8 px-4 py-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
+                <Ticket className="h-4 w-4 text-emerald-400" />
+              </div>
+              <span className="text-sm">
+                <span className="font-bold text-emerald-400">{remaining}</span>{' '}
+                <span className="text-emerald-300/80">{t('lessonsLeft')}</span>
+                <span className="text-muted-foreground"> — {subscription?.plan?.name_az} {t('subscriptionOf')}</span>
               </span>
             </div>
-
-            {/* Note */}
-            <div>
-              <p className="text-sm font-semibold mb-2">{t('noteOptional')}</p>
-              <Textarea
-                placeholder={t('notePlaceholder')}
-                className="text-sm resize-none h-20"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
+          ) : (
+            <div className="rounded-xl ring-1 ring-amber-500/20 bg-amber-500/8 p-5 space-y-3">
+              <p className="text-sm text-amber-200/90">
+                {subscription === null ? t('needSubscription') : t('noLessonsLeft')}
+              </p>
+              <Button
+                className="gradient-bg border-0 text-white w-full rounded-xl h-11"
+                onClick={() => { onClose(); router.push('/pricing') }}
+              >
+                {t('buySubscription')}
+              </Button>
             </div>
+          )}
 
-            {/* Summary */}
-            {date && time && (
-              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('date')}</span>
-                  <span className="font-medium">
-                    {format(date, 'd MMMM yyyy', { locale: dfLocale })}, {time}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('duration')}</span>
-                  <span className="font-medium">{duration} {t('minutes')}</span>
-                </div>
-                <Separator className="my-1" />
-                <div className="flex justify-between font-bold">
-                  <span>{t('total')}</span>
-                  <span className="text-primary">{t('totalOneLesson')}</span>
+          {canBook && (
+            <>
+              {/* Date & Time picker */}
+              <TimeSlotPicker
+                tutorId={tutor.id}
+                date={date}
+                onDateChange={setDate}
+                time={time}
+                onTimeChange={setTime}
+              />
+
+              {/* Topic selection */}
+              <div className="space-y-3">
+                <p className="text-sm font-semibold flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  {t('selectTopic')}
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {TOPICS.map((tp) => {
+                    const topicKey = `topic${tp.charAt(0).toUpperCase() + tp.slice(1)}`
+                    return (
+                      <button
+                        key={tp}
+                        type="button"
+                        onClick={() => setTopic(topic === tp ? null : tp)}
+                        className={cn(
+                          'flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ring-1',
+                          topic === tp
+                            ? 'ring-primary bg-primary/12 text-primary'
+                            : 'ring-white/[0.06] bg-white/[0.02] text-foreground/70 hover:bg-white/[0.05] hover:ring-white/[0.1]'
+                        )}
+                      >
+                        <span className="text-sm">{TOPIC_ICONS[tp]}</span>
+                        <span className="truncate">{t(topicKey)}</span>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
-            )}
 
-            {/* Cancellation policy */}
-            <div className="flex items-start gap-2 text-[11px] text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-              <span>
-                {t('cancelPolicyFull')}
-              </span>
-            </div>
+              {/* Duration info */}
+              <div className="flex items-center gap-2.5 rounded-xl ring-1 ring-primary/15 bg-primary/6 px-4 py-3 text-sm">
+                <Info className="h-4 w-4 text-primary shrink-0" />
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" />
+                  {t('durationIncluded')}
+                </span>
+              </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={onClose}>
-                {tl('cancel')}
-              </Button>
-              <Button
-                className="flex-1 gradient-bg border-0 text-white"
-                disabled={!date || !time || submitting}
-                onClick={handleBook}
-              >
-                {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {t('bookButton')}
-              </Button>
-            </div>
-          </>
-        )}
+              {/* Note */}
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">{t('noteOptional')}</p>
+                <Textarea
+                  placeholder={t('notePlaceholder')}
+                  className="text-sm resize-none h-20 rounded-xl border-white/[0.06] bg-white/[0.02] focus:ring-primary/30"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
+
+              {/* Summary */}
+              {date && time && (
+                <div className="rounded-xl ring-1 ring-primary/20 bg-primary/6 p-5 space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">{t('date')}</span>
+                    <span className="font-semibold">
+                      {format(date, 'd MMMM yyyy', { locale: dfLocale })}, {time}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">{t('duration')}</span>
+                    <span className="font-semibold">{duration} {t('minutes')}</span>
+                  </div>
+                  {topic && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">{t('selectTopic')}</span>
+                      <span className="font-semibold flex items-center gap-1.5">
+                        {TOPIC_ICONS[topic]}
+                        {t(`topic${topic.charAt(0).toUpperCase() + topic.slice(1)}`)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="h-px bg-white/[0.06]" />
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold">{t('total')}</span>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                      <span className="font-bold text-primary">{t('totalOneLesson')}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Policy */}
+              <div className="flex items-start gap-2.5 text-[11px] text-muted-foreground/70">
+                <ShieldCheck className="h-4 w-4 mt-0.5 shrink-0" />
+                <span className="leading-relaxed">{t('cancelPolicyFull')}</span>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-1">
+                <Button
+                  variant="outline"
+                  className="flex-1 rounded-xl h-12 border-white/[0.08]"
+                  onClick={onClose}
+                >
+                  {tl('cancel')}
+                </Button>
+                <Button
+                  className="flex-1 rounded-xl h-12 gradient-bg border-0 text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/25 hover:scale-[1.01] transition-all"
+                  disabled={!date || !time || submitting}
+                  onClick={handleBook}
+                >
+                  {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  {t('bookButton')}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )

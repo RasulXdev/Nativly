@@ -225,12 +225,30 @@
       "title": "Tələbələrimiz nə deyir",
       "subtitle": "Minlərlə tələbə artıq Nativly ilə öyrənib",
       "items": [
-        { "city": "Bakı", "text": "Nativly ilə 3 ayda IELTS 7.0 aldım. Sarah müəllimim mükəmməl idi — peşəkar, mehriban və çox səbirli." },
-        { "city": "Bakı", "text": "Hans ilə 6 ayda A2-dən B2-yə çatdım. İndi Münhendə universitetdə oxuyuram." },
-        { "city": "Gəncə", "text": "Biznes görüşlər üçün rus dili lazım idi. 2 ayda danışıq səviyyəsinə çatdım." },
-        { "city": "Sumqayıt", "text": "Carlos ilə həftədə 3 dərs alıram. Elastik cədvəl sistemi möhtəşəmdir." },
-        { "city": "Bakı", "text": "Marie ilə Fransız dili öyrənmək zövqlüdür. DELF imtahanını ilk cəhddə keçdim!" },
-        { "city": "Bakı", "text": "Peşəkar müəllimlər, rahat qiymətlər. 4 ayda hədəfimə çatdım. Çox tövsiyə edirəm." }
+        {
+          "city": "Bakı",
+          "text": "Nativly ilə 3 ayda IELTS 7.0 aldım. Sarah müəllimim mükəmməl idi — peşəkar, mehriban və çox səbirli."
+        },
+        {
+          "city": "Bakı",
+          "text": "Hans ilə 6 ayda A2-dən B2-yə çatdım. İndi Münhendə universitetdə oxuyuram."
+        },
+        {
+          "city": "Gəncə",
+          "text": "Biznes görüşlər üçün rus dili lazım idi. 2 ayda danışıq səviyyəsinə çatdım."
+        },
+        {
+          "city": "Sumqayıt",
+          "text": "Carlos ilə həftədə 3 dərs alıram. Elastik cədvəl sistemi möhtəşəmdir."
+        },
+        {
+          "city": "Bakı",
+          "text": "Marie ilə Fransız dili öyrənmək zövqlüdür. DELF imtahanını ilk cəhddə keçdim!"
+        },
+        {
+          "city": "Bakı",
+          "text": "Peşəkar müəllimlər, rahat qiymətlər. 4 ayda hədəfimə çatdım. Çox tövsiyə edirəm."
+        }
       ]
     },
     "faq": {
@@ -448,7 +466,21 @@
     "student": "Tələbə",
     "tutor": "Müəllim",
     "errorOccurred": "Xəta baş verdi",
-    "awaitingApproval": "Müəllimin təsdiqi gözlənilir"
+    "awaitingApproval": "Müəllimin təsdiqi gözlənilir",
+    "selectTopic": "Mövzu seçin",
+    "topicConversation": "Danışıq",
+    "topicGrammar": "Qrammatika",
+    "topicBusiness": "Biznes",
+    "topicKids": "Uşaqlar üçün",
+    "topicExamPrep": "İmtahana hazırlıq",
+    "topicPronunciation": "Tələffüz",
+    "topicWriting": "Yazı",
+    "topicInterview": "Müsahibə",
+    "topicBeginner": "Başlanğıc",
+    "topicIntensive": "İntensiv",
+    "topicOther": "Digər",
+    "messageSending": "Göndərilir...",
+    "messageSuccess": "Söhbət açıldı"
   },
   "lessons": {
     "upcoming": "Gələn dərslər",
