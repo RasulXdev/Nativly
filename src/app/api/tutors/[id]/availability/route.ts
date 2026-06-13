@@ -111,9 +111,11 @@ export async function GET(
 
   const hasDateOverride = (dateRows ?? []).length > 0
 
+  type AvailRow = { start_time: string; end_time: string; is_active: boolean | null }
+
   // If there's a date-specific override, use it; otherwise fall back to weekly.
-  const availRows = hasDateOverride
-    ? (dateRows ?? []).filter((r: { is_active: boolean | null }) => r.is_active)
+  const availRows: AvailRow[] = hasDateOverride
+    ? (dateRows ?? []).filter((r: AvailRow) => r.is_active)
     : await db
         .from('tutor_availability')
         .select('start_time, end_time, is_active')
@@ -121,7 +123,7 @@ export async function GET(
         .eq('day_of_week', dayKey)
         .eq('is_active', true)
         .is('specific_date', null)
-        .then((res: { data: unknown[] | null }) => res.data ?? [])
+        .then((res: { data: AvailRow[] | null }) => res.data ?? [])
 
   // Day-level / time-ranged blocks.
   const { data: unavailRows } = await db
