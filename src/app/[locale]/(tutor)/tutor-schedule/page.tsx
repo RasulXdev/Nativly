@@ -35,12 +35,43 @@ interface TutorUpcomingLesson {
 
 const DAY_KEYS: DayOfWeek[] = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
 
-const HOURS = Array.from({ length: 24 * 6 }, (_, i) => {
-  const totalMin = i * 10
-  const h = String(Math.floor(totalMin / 60)).padStart(2, '0')
-  const m = String(totalMin % 60).padStart(2, '0')
-  return `${h}:${m}`
-})
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
+const MINUTE_OPTIONS = ['00', '10', '20', '30', '40', '50']
+
+function TimeSelect({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (v: string) => void
+}) {
+  const [hh = '00', mm = '00'] = value.split(':')
+  return (
+    <div className="flex items-center gap-1 flex-1">
+      <Select value={hh} onValueChange={(h) => onChange(`${h}:${mm}`)}>
+        <SelectTrigger className="flex-1 h-8 text-xs rounded-lg">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {HOUR_OPTIONS.map((h) => (
+            <SelectItem key={h} value={h}>{h}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <span className="text-xs text-muted-foreground">:</span>
+      <Select value={mm} onValueChange={(m) => onChange(`${hh}:${m}`)}>
+        <SelectTrigger className="w-16 h-8 text-xs rounded-lg">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {MINUTE_OPTIONS.map((m) => (
+            <SelectItem key={m} value={m}>{m}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
 
 const DEFAULT_SLOT = (day: DayOfWeek): AvailabilitySlot => ({
   day_of_week: day,
@@ -254,29 +285,15 @@ export default function TutorSchedulePage() {
                           <span>{t('workHours')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Select
+                          <TimeSelect
                             value={slot.start_time}
-                            onValueChange={(v) => v && updateTime(slot.day_of_week, 'start_time', v)}
-                          >
-                            <SelectTrigger className="flex-1 h-8 text-xs rounded-lg">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {HOURS.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
+                            onChange={(v) => updateTime(slot.day_of_week, 'start_time', v)}
+                          />
                           <span className="text-xs text-muted-foreground shrink-0">—</span>
-                          <Select
+                          <TimeSelect
                             value={slot.end_time}
-                            onValueChange={(v) => v && updateTime(slot.day_of_week, 'end_time', v)}
-                          >
-                            <SelectTrigger className="flex-1 h-8 text-xs rounded-lg">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {HOURS.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
+                            onChange={(v) => updateTime(slot.day_of_week, 'end_time', v)}
+                          />
                         </div>
                       </div>
                     ) : (

@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 export interface AvailabilityResponse {
   timezone: string
   date: string
-  slots: { time: string; available: boolean }[]
+  slots: { time: string; available: boolean; utc: string }[]
 }
 
 /** Fetches a tutor's bookable 30-min slots for a given day from the API. */

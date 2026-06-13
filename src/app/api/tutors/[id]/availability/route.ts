@@ -15,6 +15,8 @@ const DAY_KEYS = [
 const STEP_MINUTES = 10
 /** Default lesson length a slot must accommodate. */
 const LESSON_MINUTES = 30
+/** Breathing room after each lesson before the next can start. */
+const BUFFER_MINUTES = 10
 
 /** "HH:MM[:SS]" -> minutes since midnight */
 function toMinutes(t: string): number {
@@ -24,6 +26,29 @@ function toMinutes(t: string): number {
 
 function pad(n: number): string {
   return String(n).padStart(2, '0')
+}
+
+/**
+ * Convert a wall-clock time (HH:MM) on a given date in a named timezone to a
+ * UTC ISO string. Uses a one-step offset correction via Intl — accurate for
+ * all IANA timezones including DST transitions.
+ */
+function localToUTC(dateStr: string, localTime: string, tz: string): string {
+  const [h, m] = localTime.split(':').map(Number)
+  const naiveUTC = new Date(`${dateStr}T${pad(h)}:${pad(m)}:00Z`)
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+      .formatToParts(naiveUTC)
+      .map((p) => [p.type, p.value])
+  )
+  const gotMin = (parseInt(parts.hour) % 24) * 60 + parseInt(parts.minute)
+  const wantMin = h * 60 + m
+  return new Date(naiveUTC.getTime() + (wantMin - gotMin) * 60_000).toISOString()
 }
 
 /** Minutes-since-midnight of an instant, read in a specific timezone. */
@@ -119,7 +144,8 @@ export async function GET(
     for (const r of rows ?? []) {
       const startMin = minutesInTimezone(r.scheduled_at, timezone)
       const dur = r.duration_minutes || LESSON_MINUTES
-      busyIntervals.push({ start: startMin, end: startMin + dur })
+      // Reserve lesson duration + buffer so back-to-back bookings get a breather.
+      busyIntervals.push({ start: startMin, end: startMin + dur + BUFFER_MINUTES })
     }
   }
   addBusy(bookings)
@@ -144,7 +170,7 @@ export async function GET(
   const nowMinSameDay =
     todayInTz === dateStr ? minutesInTimezone(new Date().toISOString(), timezone) : -1
 
-  const slots: { time: string; available: boolean }[] = []
+  const slots: { time: string; available: boolean; utc: string }[] = []
 
   if (!fullDayBlocked) {
     for (const row of availRows ?? []) {
@@ -160,18 +186,19 @@ export async function GET(
         })
         const available =
           !overlapsBusy(m) && !inBlock && (nowMinSameDay < 0 || m > nowMinSameDay)
-        slots.push({ time, available })
+        slots.push({ time, available, utc: localToUTC(dateStr, time, timezone) })
       }
     }
   }
 
   // De-dup + sort (overlapping availability windows).
-  const seen = new Map<string, boolean>()
+  const seen = new Map<string, { available: boolean; utc: string }>()
   for (const s of slots) {
-    seen.set(s.time, (seen.get(s.time) ?? false) || s.available)
+    const prev = seen.get(s.time)
+    seen.set(s.time, { available: (prev?.available ?? false) || s.available, utc: s.utc })
   }
   const merged = [...seen.entries()]
-    .map(([time, available]) => ({ time, available }))
+    .map(([time, { available, utc }]) => ({ time, available, utc }))
     .sort((a, b) => a.time.localeCompare(b.time))
 
   return NextResponse.json({ timezone, date: dateStr, slots: merged })
