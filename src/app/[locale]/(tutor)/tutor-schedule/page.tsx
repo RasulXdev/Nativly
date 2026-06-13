@@ -35,9 +35,11 @@ interface TutorUpcomingLesson {
 
 const DAY_KEYS: DayOfWeek[] = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
 
-const HOURS = Array.from({ length: 24 }, (_, i) => {
-  const h = String(i).padStart(2, '0')
-  return `${h}:00`
+const HOURS = Array.from({ length: 24 * 6 }, (_, i) => {
+  const totalMin = i * 10
+  const h = String(Math.floor(totalMin / 60)).padStart(2, '0')
+  const m = String(totalMin % 60).padStart(2, '0')
+  return `${h}:${m}`
 })
 
 const DEFAULT_SLOT = (day: DayOfWeek): AvailabilitySlot => ({
