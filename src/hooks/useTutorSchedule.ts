@@ -5,11 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 
-/**
- * Returns the caller's tutor_profiles.id, creating the row if it is missing.
- * Some tutor-role accounts predate the auto-create trigger and have no
- * tutor_profiles row, which previously made schedule saves fail outright.
- */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getOrCreateTutorProfileId(db: any, userId: string): Promise<string> {
   const { data: tp } = await db
@@ -38,6 +33,16 @@ export interface AvailabilitySlot {
   is_active: boolean
 }
 
+export interface DateAvailabilitySlot {
+  id?: string
+  specific_date: string
+  start_time: string
+  end_time: string
+  is_active: boolean
+}
+
+/* ── Weekly defaults ── */
+
 export function useTutorAvailability() {
   const supabase = createClient()
 
@@ -61,6 +66,7 @@ export function useTutorAvailability() {
         .from('tutor_availability')
         .select('*')
         .eq('tutor_id', (tp as { id: string }).id)
+        .is('specific_date', null)
 
       if (error) throw error
       return (data ?? []) as AvailabilitySlot[]
@@ -80,7 +86,13 @@ export function useUpdateAvailability() {
       if (!user) throw new Error('Not authenticated')
 
       const tutorId = await getOrCreateTutorProfileId(db, user.id)
-      await db.from('tutor_availability').delete().eq('tutor_id', tutorId)
+
+      // Only delete weekly (non-date-specific) rows
+      await db
+        .from('tutor_availability')
+        .delete()
+        .eq('tutor_id', tutorId)
+        .is('specific_date', null)
 
       const active = slots.filter((s) => s.is_active)
       if (active.length > 0) {
@@ -101,6 +113,90 @@ export function useUpdateAvailability() {
     },
   })
 }
+
+/* ── Date-specific overrides ── */
+
+export function useDateAvailability(month?: string) {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['tutor-date-availability', month],
+    enabled: !!month,
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
+
+      const { data: tp } = await db
+        .from('tutor_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (!tp) return []
+
+      const startDate = `${month}-01`
+      const [y, m] = month!.split('-').map(Number)
+      const endDate = `${y}-${String(m).padStart(2, '0')}-${new Date(y, m, 0).getDate()}`
+
+      const { data, error } = await db
+        .from('tutor_availability')
+        .select('id, specific_date, start_time, end_time, is_active')
+        .eq('tutor_id', (tp as { id: string }).id)
+        .not('specific_date', 'is', null)
+        .gte('specific_date', startDate)
+        .lte('specific_date', endDate)
+
+      if (error) throw error
+      return (data ?? []) as DateAvailabilitySlot[]
+    },
+  })
+}
+
+export function useSaveDateAvailability() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (slots: DateAvailabilitySlot[]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const tutorId = await getOrCreateTutorProfileId(db, user.id)
+
+      const dates = [...new Set(slots.map((s) => s.specific_date))]
+      if (dates.length > 0) {
+        await db
+          .from('tutor_availability')
+          .delete()
+          .eq('tutor_id', tutorId)
+          .in('specific_date', dates)
+      }
+
+      const toInsert = slots.filter((s) => s.is_active)
+      if (toInsert.length > 0) {
+        const { error } = await db.from('tutor_availability').insert(
+          toInsert.map((s) => ({
+            tutor_id: tutorId,
+            specific_date: s.specific_date,
+            start_time: s.start_time,
+            end_time: s.end_time,
+            is_active: true,
+          }))
+        )
+        if (error) throw error
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tutor-date-availability'] })
+    },
+  })
+}
+
+/* ── Unavailability (blocked dates) ── */
 
 export function useTutorUnavailability() {
   const supabase = createClient()

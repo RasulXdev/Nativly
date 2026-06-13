@@ -1,28 +1,34 @@
 'use client'
 
+import { useState, useEffect, useMemo } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-
-import { useState, useEffect } from 'react'
-import { CalendarOff, Save, Plus, Trash2, CalendarCheck, Clock, CheckCircle2, XCircle, CalendarClock } from 'lucide-react'
+import {
+  CalendarCheck, Clock, Save, ChevronLeft, ChevronRight,
+  CheckCircle2, XCircle, CalendarClock, ChevronDown,
+  Paintbrush, X, Copy, Ban,
+} from 'lucide-react'
+import {
+  format, startOfMonth, endOfMonth, eachDayOfInterval,
+  addMonths, subMonths, isSameMonth, isToday, isBefore,
+  startOfDay, getDay,
+} from 'date-fns'
+import { az, enUS, ru, type Locale } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   useTutorAvailability,
   useUpdateAvailability,
-  useTutorUnavailability,
-  useAddUnavailability,
-  useDeleteUnavailability,
+  useDateAvailability,
+  useSaveDateAvailability,
   type DayOfWeek,
   type AvailabilitySlot,
+  type DateAvailabilitySlot,
 } from '@/hooks/useTutorSchedule'
 import { useTutorUpcomingLessons } from '@/hooks/useTutorLessons'
-import { getInitials } from '@/lib/utils'
+import { getInitials, cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { format } from 'date-fns'
-import { az, enUS, ru, type Locale } from 'date-fns/locale'
 
 interface TutorUpcomingLesson {
   id: string
@@ -33,14 +39,10 @@ interface TutorUpcomingLesson {
 }
 
 const DAY_KEYS: DayOfWeek[] = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
+const WEEK_START_KEYS: DayOfWeek[] = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
+const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
 
-function TimeSelect({
-  value,
-  onChange,
-}: {
-  value: string
-  onChange: (v: string) => void
-}) {
+function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <input
       type="time"
@@ -59,22 +61,29 @@ const DEFAULT_SLOT = (day: DayOfWeek): AvailabilitySlot => ({
   is_active: false,
 })
 
-const LOCALES: Record<string, Locale> = { az, en: enUS, ru }
+type DateEdit = {
+  date: string
+  start_time: string
+  end_time: string
+  is_active: boolean
+  mode: 'custom' | 'off'
+}
 
 export default function TutorSchedulePage() {
   const t = useTranslations('tutorSchedule')
-  const dfLocale = LOCALES[useLocale()] ?? enUS
+  const locale = useLocale()
+  const dfLocale = LOCALES[locale] ?? enUS
+
+  // ── Data hooks ──
   const { data: savedSlots, isLoading } = useTutorAvailability()
   const { data: upcomingRaw, isLoading: loadingUpcoming } = useTutorUpcomingLessons()
   const upcomingLessons = (upcomingRaw ?? []) as TutorUpcomingLesson[]
-  const { data: unavailDates, isLoading: loadingUnavail } = useTutorUnavailability()
   const updateAvailability = useUpdateAvailability()
-  const addUnavail = useAddUnavailability()
-  const deleteUnavail = useDeleteUnavailability()
+  const saveDateAvail = useSaveDateAvailability()
 
+  // ── Weekly defaults state ──
   const [slots, setSlots] = useState<AvailabilitySlot[]>(DAY_KEYS.map((d) => DEFAULT_SLOT(d)))
-  const [newBlockDate, setNewBlockDate] = useState('')
-  const [newBlockReason, setNewBlockReason] = useState('')
+  const [weeklyOpen, setWeeklyOpen] = useState(true)
 
   useEffect(() => {
     if (!savedSlots) return
@@ -92,8 +101,7 @@ export default function TutorSchedulePage() {
   const updateTime = (day: DayOfWeek, field: 'start_time' | 'end_time', value: string) =>
     setSlots((prev) => prev.map((s) => (s.day_of_week === day ? { ...s, [field]: value } : s)))
 
-  const handleSave = async () => {
-    // DB enforces start_time < end_time; validate up front for a clear message.
+  const handleSaveWeekly = async () => {
     if (slots.some((s) => s.is_active && s.start_time >= s.end_time)) {
       return toast.error(t('invalidTimeRange'))
     }
@@ -105,25 +113,150 @@ export default function TutorSchedulePage() {
     }
   }
 
-  const handleAddBlock = async () => {
-    if (!newBlockDate) return toast.error(t('selectDate'))
+  // ── Calendar state ──
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const monthKey = format(currentMonth, 'yyyy-MM')
+  const { data: savedDateSlots } = useDateAvailability(monthKey)
+
+  const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [dateEdits, setDateEdits] = useState<Map<string, DateEdit>>(new Map())
+
+  // Sync saved date overrides into edits when month data loads
+  useEffect(() => {
+    if (!savedDateSlots) return
+    const map = new Map<string, DateEdit>()
+    for (const s of savedDateSlots) {
+      map.set(s.specific_date, {
+        date: s.specific_date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        is_active: s.is_active,
+        mode: s.is_active ? 'custom' : 'off',
+      })
+    }
+    setDateEdits(map)
+    setSelectedDates([])
+  }, [savedDateSlots])
+
+  // ── Calendar grid ──
+  const calendarDays = useMemo(() => {
+    const monthStart = startOfMonth(currentMonth)
+    const monthEnd = endOfMonth(currentMonth)
+    const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
+
+    // Pad start to align with Monday (week starts Monday)
+    const startPad = (getDay(monthStart) + 6) % 7
+    const padBefore: (Date | null)[] = Array.from({ length: startPad }, () => null)
+
+    // Pad end to fill last row
+    const totalCells = padBefore.length + days.length
+    const padAfter: (Date | null)[] = Array.from({ length: (7 - (totalCells % 7)) % 7 }, () => null)
+
+    return [...padBefore, ...days, ...padAfter]
+  }, [currentMonth])
+
+  const activeWeekdays = useMemo(() => {
+    const set = new Set<number>()
+    for (const s of slots) {
+      if (s.is_active) {
+        const idx = DAY_KEYS.indexOf(s.day_of_week)
+        set.add((idx + 1) % 7) // convert to JS getDay (0=Sun)
+      }
+    }
+    return set
+  }, [slots])
+
+  const toggleDateSelection = (dateStr: string) => {
+    setSelectedDates((prev) =>
+      prev.includes(dateStr)
+        ? prev.filter((d) => d !== dateStr)
+        : [...prev, dateStr]
+    )
+  }
+
+  const getDateEdit = (dateStr: string): DateEdit | undefined => dateEdits.get(dateStr)
+
+  const setDateEdit = (dateStr: string, edit: Partial<DateEdit>) => {
+    setDateEdits((prev) => {
+      const next = new Map(prev)
+      const existing = next.get(dateStr) ?? {
+        date: dateStr,
+        start_time: '09:00',
+        end_time: '18:00',
+        is_active: true,
+        mode: 'custom' as const,
+      }
+      next.set(dateStr, { ...existing, ...edit })
+      return next
+    })
+  }
+
+  const removeOverride = (dateStr: string) => {
+    setDateEdits((prev) => {
+      const next = new Map(prev)
+      next.delete(dateStr)
+      return next
+    })
+    setSelectedDates((prev) => prev.filter((d) => d !== dateStr))
+  }
+
+  const applyTimeToSelected = () => {
+    if (selectedDates.length === 0) return
+    const first = dateEdits.get(selectedDates[0]) ?? {
+      start_time: '09:00',
+      end_time: '18:00',
+      is_active: true,
+      mode: 'custom' as const,
+    }
+    setDateEdits((prev) => {
+      const next = new Map(prev)
+      for (const d of selectedDates) {
+        next.set(d, { date: d, ...first, date: d } as DateEdit)
+      }
+      return next
+    })
+  }
+
+  const handleSaveDates = async () => {
+    const toSave: DateAvailabilitySlot[] = []
+    for (const [, edit] of dateEdits) {
+      if (edit.mode === 'off') {
+        toSave.push({
+          specific_date: edit.date,
+          start_time: '00:00',
+          end_time: '00:00',
+          is_active: false,
+        })
+      } else {
+        if (edit.start_time >= edit.end_time) {
+          return toast.error(t('invalidTimeRange'))
+        }
+        toSave.push({
+          specific_date: edit.date,
+          start_time: edit.start_time,
+          end_time: edit.end_time,
+          is_active: true,
+        })
+      }
+    }
     try {
-      await addUnavail.mutateAsync({ date: newBlockDate, reason: newBlockReason || undefined })
-      setNewBlockDate('')
-      setNewBlockReason('')
-      toast.success(t('dayOffAdded'))
+      await saveDateAvail.mutateAsync(toSave)
+      toast.success(t('overrideSaved'))
     } catch {
       toast.error(t('errorOccurred'))
     }
   }
 
   const activeCount = slots.filter((s) => s.is_active).length
+  const overrideCount = dateEdits.size
+  const weekDayHeaders = DAY_KEYS.map((dk) => t(`daysShort.${dk}`))
 
   return (
     <div className="space-y-6">
-      {/* ── Hero header ─────────────────────────────────── */}
+      {/* ── Hero ── */}
       <div className="relative overflow-hidden rounded-2xl gradient-bg p-6 text-white">
-        <div className="absolute inset-0 opacity-20"
+        <div
+          className="absolute inset-0 opacity-20"
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '20px 20px' }}
         />
         <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/8 float-slow" />
@@ -141,18 +274,367 @@ export default function TutorSchedulePage() {
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleSave}
-            disabled={updateAvailability.isPending}
-            className="bg-white text-primary hover:bg-white/90 border-0 rounded-xl h-10 px-6 font-semibold shadow-lg shrink-0"
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {updateAvailability.isPending ? t('saving') : t('save')}
-          </Button>
         </div>
       </div>
 
-      {/* ── Upcoming lessons ─────────────────────────────── */}
+      {/* ── Monthly Calendar ── */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+            <Paintbrush className="h-4 w-4 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="font-semibold text-sm">{t('calendarTitle')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('calendarDesc')}</p>
+          </div>
+          {overrideCount > 0 && (
+            <span className="text-[11px] font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full shrink-0">
+              {overrideCount} {t('dateOverrides').toLowerCase()}
+            </span>
+          )}
+        </div>
+
+        <div className="p-4 sm:p-5">
+          {/* Month nav */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setCurrentMonth((m) => subMonths(m, 1))}
+              className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="text-center">
+              <p className="text-sm font-bold capitalize">
+                {format(currentMonth, 'LLLL yyyy', { locale: dfLocale })}
+              </p>
+            </div>
+            <button
+              onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
+              className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Week day headers */}
+          <div className="grid grid-cols-7 mb-1">
+            {weekDayHeaders.map((dh) => (
+              <div key={dh} className="text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50 py-2">
+                {dh}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7 gap-px bg-border/30 rounded-xl overflow-hidden ring-1 ring-border/40">
+            {calendarDays.map((day, i) => {
+              if (!day) {
+                return <div key={`pad-${i}`} className="bg-card/50 min-h-[44px] sm:min-h-[52px]" />
+              }
+
+              const dateStr = format(day, 'yyyy-MM-dd')
+              const inMonth = isSameMonth(day, currentMonth)
+              const today = isToday(day)
+              const past = isBefore(day, startOfDay(new Date()))
+              const isSelected = selectedDates.includes(dateStr)
+              const override = getDateEdit(dateStr)
+              const isWeeklyActive = activeWeekdays.has(getDay(day))
+
+              return (
+                <button
+                  key={dateStr}
+                  type="button"
+                  disabled={past}
+                  onClick={() => {
+                    if (past) return
+                    toggleDateSelection(dateStr)
+                    if (!dateEdits.has(dateStr)) {
+                      const weekDayKey = WEEK_START_KEYS[getDay(day)]
+                      const weekSlot = slots.find((s) => s.day_of_week === weekDayKey && s.is_active)
+                      setDateEdit(dateStr, {
+                        date: dateStr,
+                        start_time: weekSlot?.start_time ?? '09:00',
+                        end_time: weekSlot?.end_time ?? '18:00',
+                        is_active: true,
+                        mode: 'custom',
+                      })
+                    }
+                  }}
+                  className={cn(
+                    'relative min-h-[44px] sm:min-h-[52px] flex flex-col items-center justify-center gap-0.5 transition-all duration-150',
+                    past && 'opacity-30 cursor-not-allowed',
+                    !past && !isSelected && 'hover:bg-white/[0.06] cursor-pointer',
+                    isSelected
+                      ? 'bg-primary/15 ring-1 ring-inset ring-primary/40'
+                      : 'bg-card',
+                    !inMonth && 'opacity-40',
+                  )}
+                >
+                  <span className={cn(
+                    'text-xs sm:text-sm font-semibold tabular-nums leading-none',
+                    today && 'text-primary',
+                    isSelected && 'text-primary',
+                  )}>
+                    {format(day, 'd')}
+                  </span>
+
+                  {/* Indicator dots */}
+                  <div className="flex items-center gap-0.5 h-2">
+                    {override ? (
+                      <span className={cn(
+                        'w-1.5 h-1.5 rounded-full',
+                        override.mode === 'off'
+                          ? 'bg-rose-400'
+                          : 'bg-emerald-400',
+                      )} />
+                    ) : isWeeklyActive && !past ? (
+                      <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                    ) : null}
+                  </div>
+
+                  {today && (
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[7px] font-bold text-primary/60 uppercase tracking-widest">
+                      {t('today')}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground/50">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {t('customTime')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+              {t('dayOff')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+              {t('weeklyDefaults')}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Selected dates panel ── */}
+        {selectedDates.length > 0 && (
+          <div className="border-t border-border/60 p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <p className="text-sm font-bold">
+                {selectedDates.length} {t('selectedDates')}
+              </p>
+              <div className="flex items-center gap-2">
+                {selectedDates.length > 1 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={applyTimeToSelected}
+                    className="h-7 text-[11px] rounded-lg border-border/60 gap-1.5"
+                  >
+                    <Copy className="h-3 w-3" />
+                    {t('applied')}
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedDates([])}
+                  className="h-7 text-[11px] rounded-lg text-muted-foreground gap-1.5"
+                >
+                  <X className="h-3 w-3" />
+                  {t('clearSelection')}
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5">
+              {selectedDates.sort().map((dateStr) => {
+                const edit = dateEdits.get(dateStr)
+                if (!edit) return null
+                return (
+                  <div
+                    key={dateStr}
+                    className={cn(
+                      'rounded-xl border p-3 transition-all',
+                      edit.mode === 'off'
+                        ? 'border-rose-500/30 bg-rose-500/[0.05]'
+                        : 'border-primary/30 bg-primary/[0.05]',
+                    )}
+                  >
+                    {/* Date header */}
+                    <div className="flex items-center justify-between mb-2.5">
+                      <p className="text-xs font-bold capitalize">
+                        {format(new Date(dateStr + 'T12:00:00'), 'EEEE, d MMM', { locale: dfLocale })}
+                      </p>
+                      <button
+                        onClick={() => removeOverride(dateStr)}
+                        className="w-5 h-5 rounded-md hover:bg-white/10 flex items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+
+                    {/* Mode toggle */}
+                    <div className="flex items-center gap-1.5 mb-2.5">
+                      <button
+                        onClick={() => setDateEdit(dateStr, { mode: 'custom', is_active: true })}
+                        className={cn(
+                          'flex-1 h-7 rounded-lg text-[11px] font-semibold transition-all',
+                          edit.mode === 'custom'
+                            ? 'bg-primary/20 text-primary ring-1 ring-primary/30'
+                            : 'bg-white/[0.04] text-muted-foreground hover:bg-white/[0.08]',
+                        )}
+                      >
+                        {t('customTime')}
+                      </button>
+                      <button
+                        onClick={() => setDateEdit(dateStr, { mode: 'off', is_active: false })}
+                        className={cn(
+                          'flex-1 h-7 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1',
+                          edit.mode === 'off'
+                            ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/30'
+                            : 'bg-white/[0.04] text-muted-foreground hover:bg-white/[0.08]',
+                        )}
+                      >
+                        <Ban className="h-3 w-3" />
+                        {t('dayOff')}
+                      </button>
+                    </div>
+
+                    {/* Time range (only for custom) */}
+                    {edit.mode === 'custom' && (
+                      <div className="flex items-center gap-2">
+                        <TimeSelect
+                          value={edit.start_time}
+                          onChange={(v) => setDateEdit(dateStr, { start_time: v })}
+                        />
+                        <span className="text-xs text-muted-foreground shrink-0">—</span>
+                        <TimeSelect
+                          value={edit.end_time}
+                          onChange={(v) => setDateEdit(dateStr, { end_time: v })}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <Button
+                onClick={handleSaveDates}
+                disabled={saveDateAvail.isPending}
+                className="gradient-bg border-0 text-white rounded-xl h-10 px-6 font-semibold shadow-lg shadow-primary/20"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {saveDateAvail.isPending ? t('saving') : t('save')}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Weekly defaults (collapsible) ── */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setWeeklyOpen(!weeklyOpen)}
+          className="w-full px-5 py-4 border-b border-border/60 flex items-center gap-2.5 hover:bg-white/[0.02] transition-colors text-left"
+        >
+          <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0">
+            <Clock className="h-4 w-4 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="font-semibold text-sm">{t('weeklyDefaults')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('weeklyDefaultsDesc')}</p>
+          </div>
+          {activeCount > 0 && (
+            <span className="text-[11px] font-medium text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full shrink-0">
+              {activeCount} {t('activeDays')}
+            </span>
+          )}
+          <ChevronDown className={cn(
+            'h-4 w-4 text-muted-foreground/50 transition-transform duration-200 shrink-0',
+            weeklyOpen && 'rotate-180'
+          )} />
+        </button>
+
+        {weeklyOpen && (
+          <div className="p-4 sm:p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2.5">
+              {isLoading
+                ? Array.from({ length: 7 }).map((_, i) => (
+                    <Skeleton key={i} className="h-24 rounded-xl" />
+                  ))
+                : slots.map((slot) => (
+                    <div
+                      key={slot.day_of_week}
+                      className={cn(
+                        'rounded-xl border p-3 transition-all duration-200',
+                        slot.is_active
+                          ? 'border-primary/30 bg-primary/[0.04]'
+                          : 'border-border/40 bg-muted/10',
+                      )}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          {slot.is_active
+                            ? <CheckCircle2 className="h-3.5 w-3.5 text-primary/70" />
+                            : <XCircle className="h-3.5 w-3.5 text-muted-foreground/30" />
+                          }
+                          <p className={cn(
+                            'text-xs font-bold',
+                            slot.is_active ? 'text-foreground' : 'text-muted-foreground',
+                          )}>
+                            {t(`days.${slot.day_of_week}`)}
+                          </p>
+                        </div>
+                        <Switch
+                          checked={slot.is_active}
+                          onCheckedChange={() => toggleDay(slot.day_of_week)}
+                        />
+                      </div>
+
+                      {slot.is_active ? (
+                        <div className="flex items-center gap-2">
+                          <TimeSelect
+                            value={slot.start_time}
+                            onChange={(v) => updateTime(slot.day_of_week, 'start_time', v)}
+                          />
+                          <span className="text-xs text-muted-foreground shrink-0">—</span>
+                          <TimeSelect
+                            value={slot.end_time}
+                            onChange={(v) => updateTime(slot.day_of_week, 'end_time', v)}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-8 rounded-lg border border-dashed border-border/40">
+                          <span className="text-[11px] text-muted-foreground/50">{t('closed')}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))
+              }
+            </div>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSaveWeekly}
+                disabled={updateAvailability.isPending}
+                className="gradient-bg border-0 text-white rounded-xl h-10 px-6 font-semibold shadow-lg shadow-primary/20"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {updateAvailability.isPending ? t('saving') : t('save')}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Upcoming lessons ── */}
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
@@ -206,174 +688,6 @@ export default function TutorSchedulePage() {
                   </div>
                 )
               })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Weekly availability grid ─────────────────────── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border/60">
-          <h2 className="font-semibold text-sm">{t('weeklyHours')}</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{t('weeklyHoursDesc')}</p>
-        </div>
-
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
-          {isLoading
-            ? Array.from({ length: 7 }).map((_, i) => (
-                <Skeleton key={i} className="h-32 rounded-2xl" />
-              ))
-            : slots.map((slot) => {
-                const dayKey = slot.day_of_week
-                return (
-                  <div
-                    key={slot.day_of_week}
-                    className={`relative rounded-2xl border p-4 transition-all duration-300 ${
-                      slot.is_active
-                        ? 'border-primary/40 bg-primary/5 shadow-sm shadow-primary/10'
-                        : 'border-border/50 bg-muted/20'
-                    }`}
-                  >
-                    {/* Day header */}
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className={`text-xs font-bold uppercase tracking-widest mb-0.5 ${slot.is_active ? 'text-primary' : 'text-muted-foreground'}`}>
-                          {t(`daysShort.${dayKey}`)}
-                        </p>
-                        <p className={`text-sm font-semibold ${slot.is_active ? 'text-foreground' : 'text-muted-foreground'}`}>
-                          {t(`days.${dayKey}`)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {slot.is_active
-                          ? <CheckCircle2 className="h-4 w-4 text-primary opacity-70" />
-                          : <XCircle className="h-4 w-4 text-muted-foreground/40" />
-                        }
-                        <Switch
-                          checked={slot.is_active}
-                          onCheckedChange={() => toggleDay(slot.day_of_week)}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Time range */}
-                    {slot.is_active ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-                          <Clock className="h-3 w-3" />
-                          <span>{t('workHours')}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <TimeSelect
-                            value={slot.start_time}
-                            onChange={(v) => updateTime(slot.day_of_week, 'start_time', v)}
-                          />
-                          <span className="text-xs text-muted-foreground shrink-0">—</span>
-                          <TimeSelect
-                            value={slot.end_time}
-                            onChange={(v) => updateTime(slot.day_of_week, 'end_time', v)}
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-11 rounded-xl border border-dashed border-border/50">
-                        <span className="text-xs text-muted-foreground">{t('closed')}</span>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-        </div>
-      </div>
-
-      {/* ── Blocked dates ────────────────────────────────── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center">
-            <CalendarOff className="h-4 w-4 text-white" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-sm">{t('blockedTitle')}</h2>
-            <p className="text-xs text-muted-foreground">{t('blockedSubtitle')}</p>
-          </div>
-        </div>
-
-        <div className="p-5 space-y-4">
-          {/* Add new blocked date */}
-          <div className="p-4 rounded-2xl border border-dashed border-border/70 bg-muted/10 space-y-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('addDayOff')}</p>
-            <div className="flex flex-wrap gap-3 items-end">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-muted-foreground">{t('date')}</label>
-                <input
-                  type="date"
-                  value={newBlockDate}
-                  min={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => setNewBlockDate(e.target.value)}
-                  className="h-9 px-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-                <label className="text-xs font-medium text-muted-foreground">{t('reasonOptional')}</label>
-                <input
-                  type="text"
-                  value={newBlockReason}
-                  onChange={(e) => setNewBlockReason(e.target.value)}
-                  placeholder={t('reasonPlaceholder')}
-                  className="h-9 px-3 rounded-xl border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-              <Button
-                onClick={handleAddBlock}
-                disabled={!newBlockDate || addUnavail.isPending}
-                size="sm"
-                className="h-9 gradient-bg border-0 text-white rounded-xl px-4"
-              >
-                <Plus className="h-3.5 w-3.5 mr-1.5" />
-                {t('add')}
-              </Button>
-            </div>
-          </div>
-
-          {/* Existing blocked dates */}
-          {loadingUnavail ? (
-            <div className="flex flex-wrap gap-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-28 rounded-full" />
-              ))}
-            </div>
-          ) : !unavailDates?.length ? (
-            <p className="text-sm text-muted-foreground text-center py-5">
-              {t('noBlocked')}
-            </p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {(unavailDates as { id: string; date: string; reason: string | null }[]).map((d) => (
-                <div
-                  key={d.id}
-                  className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full border border-rose-500/30 bg-rose-500/8 text-sm"
-                >
-                  <span className="text-rose-400 font-medium text-xs">
-                    {format(new Date(d.date + 'T12:00:00'), 'd MMM', { locale: dfLocale })}
-                  </span>
-                  {d.reason && (
-                    <span className="text-muted-foreground text-xs">· {d.reason}</span>
-                  )}
-                  <button
-                    onClick={async () => {
-                      try {
-                        await deleteUnavail.mutateAsync(d.id)
-                        toast.success(t('deleted'))
-                      } catch {
-                        toast.error(t('errorOccurred'))
-                      }
-                    }}
-                    className="w-5 h-5 rounded-full hover:bg-rose-500/20 flex items-center justify-center text-rose-400/70 hover:text-rose-400 transition-colors"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
             </div>
           )}
         </div>

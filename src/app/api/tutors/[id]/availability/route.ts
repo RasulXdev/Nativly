@@ -102,13 +102,26 @@ export async function GET(
 
   const dayKey = DAY_KEYS[new Date(`${dateStr}T12:00:00`).getUTCDay()]
 
-  // Weekly working hours for that weekday.
-  const { data: availRows } = await db
+  // Date-specific overrides take priority over weekly defaults.
+  const { data: dateRows } = await db
     .from('tutor_availability')
     .select('start_time, end_time, is_active')
     .eq('tutor_id', tutorId)
-    .eq('day_of_week', dayKey)
-    .eq('is_active', true)
+    .eq('specific_date', dateStr)
+
+  const hasDateOverride = (dateRows ?? []).length > 0
+
+  // If there's a date-specific override, use it; otherwise fall back to weekly.
+  const availRows = hasDateOverride
+    ? (dateRows ?? []).filter((r: { is_active: boolean | null }) => r.is_active)
+    : await db
+        .from('tutor_availability')
+        .select('start_time, end_time, is_active')
+        .eq('tutor_id', tutorId)
+        .eq('day_of_week', dayKey)
+        .eq('is_active', true)
+        .is('specific_date', null)
+        .then((res: { data: unknown[] | null }) => res.data ?? [])
 
   // Day-level / time-ranged blocks.
   const { data: unavailRows } = await db
