@@ -211,7 +211,7 @@ export default function TutorSchedulePage() {
     setDateEdits((prev) => {
       const next = new Map(prev)
       for (const d of selectedDates) {
-        next.set(d, { date: d, ...first, date: d } as DateEdit)
+        next.set(d, { ...first, date: d } as DateEdit)
       }
       return next
     })
