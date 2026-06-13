@@ -480,7 +480,11 @@
     "topicIntensive": "İntensiv",
     "topicOther": "Digər",
     "messageSending": "Göndərilir...",
-    "messageSuccess": "Söhbət açıldı"
+    "messageSuccess": "Söhbət açıldı",
+    "morning": "Səhər",
+    "afternoon": "Gündüz",
+    "evening": "Axşam",
+    "slotsAvailable": "vaxt mövcuddur"
   },
   "lessons": {
     "upcoming": "Gələn dərslər",

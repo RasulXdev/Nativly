@@ -11,7 +11,10 @@ const DAY_KEYS = [
   'saturday',
 ] as const
 
-const SLOT_MINUTES = 30
+/** Granularity between bookable start times (e.g. 7:00, 7:10, 7:20 …). */
+const STEP_MINUTES = 10
+/** Default lesson length a slot must accommodate. */
+const LESSON_MINUTES = 30
 
 /** "HH:MM[:SS]" -> minutes since midnight */
 function toMinutes(t: string): number {
@@ -38,8 +41,8 @@ function minutesInTimezone(iso: string, timeZone: string): number {
 
 /**
  * GET /api/tutors/[id]/availability?date=YYYY-MM-DD
- * Returns 30-min slots for a tutor on a given date, with booked / blocked /
- * past slots marked unavailable.
+ * Returns bookable start times (10-min granularity) for a 30-min lesson on a
+ * given date, with booked / blocked / past slots marked unavailable.
  */
 export async function GET(
   req: NextRequest,
@@ -110,17 +113,21 @@ export async function GET(
       .lte('scheduled_at', dayEnd),
   ])
 
-  // Busy start-minutes (local clock time of the stored timestamp).
-  const busy = new Set<number>()
+  // Busy intervals [start, end) in local clock minutes of the stored timestamp.
+  const busyIntervals: { start: number; end: number }[] = []
   const addBusy = (rows: { scheduled_at: string; duration_minutes: number }[] | null) => {
     for (const r of rows ?? []) {
       const startMin = minutesInTimezone(r.scheduled_at, timezone)
-      const span = Math.max(1, Math.round((r.duration_minutes || SLOT_MINUTES) / SLOT_MINUTES))
-      for (let i = 0; i < span; i++) busy.add(startMin + i * SLOT_MINUTES)
+      const dur = r.duration_minutes || LESSON_MINUTES
+      busyIntervals.push({ start: startMin, end: startMin + dur })
     }
   }
   addBusy(bookings)
   addBusy(lessons)
+
+  /** Does a candidate lesson [m, m+LESSON_MINUTES) overlap any busy interval? */
+  const overlapsBusy = (m: number) =>
+    busyIntervals.some((b) => m < b.end && m + LESSON_MINUTES > b.start)
 
   // Full-day block?
   const fullDayBlocked = (unavailRows ?? []).some(
@@ -143,14 +150,16 @@ export async function GET(
     for (const row of availRows ?? []) {
       const start = toMinutes(row.start_time)
       const end = toMinutes(row.end_time)
-      for (let m = start; m + SLOT_MINUTES <= end; m += SLOT_MINUTES) {
+      // A start is valid while the full lesson still fits inside the window.
+      for (let m = start; m + LESSON_MINUTES <= end; m += STEP_MINUTES) {
         const time = `${pad(Math.floor(m / 60))}:${pad(m % 60)}`
+        // Blocked if the lesson would overlap a time-ranged unavailability.
         const inBlock = (unavailRows ?? []).some((u) => {
           if (!u.start_time || !u.end_time) return false
-          return m >= toMinutes(u.start_time) && m < toMinutes(u.end_time)
+          return m < toMinutes(u.end_time) && m + LESSON_MINUTES > toMinutes(u.start_time)
         })
         const available =
-          !busy.has(m) && !inBlock && (nowMinSameDay < 0 || m > nowMinSameDay)
+          !overlapsBusy(m) && !inBlock && (nowMinSameDay < 0 || m > nowMinSameDay)
         slots.push({ time, available })
       }
     }

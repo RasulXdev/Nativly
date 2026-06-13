@@ -480,7 +480,11 @@
     "topicIntensive": "Intensive",
     "topicOther": "Other",
     "messageSending": "Sending...",
-    "messageSuccess": "Conversation opened"
+    "messageSuccess": "Conversation opened",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "slotsAvailable": "slots available"
   },
   "lessons": {
     "upcoming": "Upcoming lessons",

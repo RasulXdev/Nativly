@@ -480,7 +480,11 @@
     "topicIntensive": "Интенсив",
     "topicOther": "Другое",
     "messageSending": "Отправка...",
-    "messageSuccess": "Беседа открыта"
+    "messageSuccess": "Беседа открыта",
+    "morning": "Утро",
+    "afternoon": "День",
+    "evening": "Вечер",
+    "slotsAvailable": "времени доступно"
   },
   "lessons": {
     "upcoming": "Предстоящие уроки",

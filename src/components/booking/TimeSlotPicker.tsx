@@ -27,6 +27,22 @@ export default function TimeSlotPicker({
   const { data, isLoading, isError } = useTutorAvailabilityDay(tutorId, date)
   const slots = data?.slots ?? []
   const hasAvailable = slots.some((s) => s.available)
+  const availableCount = slots.filter((s) => s.available).length
+
+  // Group bookable times into parts of the day for a clean, scannable list.
+  const periods = (
+    [
+      { key: 'morning', slots: slots.filter((s) => Number(s.time.slice(0, 2)) < 12) },
+      {
+        key: 'afternoon',
+        slots: slots.filter((s) => {
+          const h = Number(s.time.slice(0, 2))
+          return h >= 12 && h < 17
+        }),
+      },
+      { key: 'evening', slots: slots.filter((s) => Number(s.time.slice(0, 2)) >= 17) },
+    ] as const
+  ).filter((p) => p.slots.length > 0)
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
@@ -61,15 +77,19 @@ export default function TimeSlotPicker({
             </div>
             <p className="text-sm font-bold tracking-tight">{t('selectTime')}</p>
           </div>
-          {data?.timezone && (
+          {hasAvailable ? (
+            <span className="flex items-center gap-1.5 text-[11px] font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+              {availableCount} {t('slotsAvailable')}
+            </span>
+          ) : data?.timezone ? (
             <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground/50 bg-white/[0.03] px-2.5 py-1 rounded-full">
               <Globe className="h-3 w-3" />
               {timezoneLabel(data.timezone)}
             </span>
-          )}
+          ) : null}
         </div>
 
-        <div className="rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.08] p-5 min-h-[320px] flex flex-col">
+        <div className="rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.08] p-5 min-h-[320px] max-h-[420px] overflow-y-auto flex flex-col">
           {isLoading ? (
             <div className="grid grid-cols-3 gap-2.5 flex-1 content-start">
               {Array.from({ length: 12 }).map((_, i) => (
@@ -95,25 +115,35 @@ export default function TimeSlotPicker({
               <p className="text-sm text-muted-foreground/40 text-center">{t('noSlotsAvailable')}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-2.5 content-start">
-              {slots.map((s) => (
-                <button
-                  key={s.time}
-                  type="button"
-                  disabled={!s.available}
-                  onClick={() => onTimeChange(s.time)}
-                  className={cn(
-                    'h-11 rounded-xl text-sm font-semibold ring-1 transition-all duration-200',
-                    !s.available && 'opacity-20 cursor-not-allowed line-through ring-white/[0.04]',
-                    time === s.time
-                      ? 'ring-primary bg-primary/15 text-primary shadow-md shadow-primary/10 scale-[1.02]'
-                      : s.available
-                        ? 'ring-white/[0.08] hover:ring-primary/50 hover:bg-primary/8 hover:scale-[1.02]'
-                        : ''
-                  )}
-                >
-                  {s.time}
-                </button>
+            <div className="flex flex-col gap-4 content-start">
+              {periods.map((period) => (
+                <div key={period.key}>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40 mb-2 px-0.5">
+                    {t(period.key)}
+                  </p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {period.slots.map((s) => (
+                      <button
+                        key={s.time}
+                        type="button"
+                        disabled={!s.available}
+                        onClick={() => onTimeChange(s.time)}
+                        className={cn(
+                          'h-10 rounded-lg text-[13px] font-semibold ring-1 transition-all duration-200 tabular-nums',
+                          !s.available &&
+                            'opacity-20 cursor-not-allowed line-through ring-white/[0.04]',
+                          time === s.time
+                            ? 'ring-primary bg-primary/15 text-primary shadow-md shadow-primary/10 scale-[1.03]'
+                            : s.available
+                              ? 'ring-white/[0.08] hover:ring-primary/50 hover:bg-primary/8 hover:scale-[1.03]'
+                              : ''
+                        )}
+                      >
+                        {s.time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}
