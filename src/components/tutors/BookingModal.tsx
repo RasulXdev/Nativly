@@ -142,7 +142,7 @@ export default function BookingModal({ tutor, open, onClose }: BookingModalProps
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="dark bg-background text-foreground max-w-5xl w-[96vw] p-0 gap-0 rounded-3xl border-white/[0.08] overflow-hidden [&>button]:top-5 [&>button]:right-5 [&>button]:z-20">
+      <DialogContent className="dark bg-background text-foreground sm:max-w-5xl w-[96vw] max-h-[96vh] overflow-y-auto p-0 gap-0 rounded-3xl border-white/[0.08] overflow-x-hidden [&>button]:top-5 [&>button]:right-5 [&>button]:z-20">
         {/* Header */}
         <div className="relative px-8 sm:px-10 pt-8 pb-6">
           <div className="absolute inset-0 gradient-bg opacity-[0.07]" />
