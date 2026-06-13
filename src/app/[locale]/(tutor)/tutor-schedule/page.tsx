@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import { CalendarOff, Save, Plus, Trash2, CalendarCheck, Clock, CheckCircle2, XCircle, CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -35,9 +34,6 @@ interface TutorUpcomingLesson {
 
 const DAY_KEYS: DayOfWeek[] = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
 
-const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
-const MINUTE_OPTIONS = ['00', '10', '20', '30', '40', '50']
-
 function TimeSelect({
   value,
   onChange,
@@ -45,31 +41,14 @@ function TimeSelect({
   value: string
   onChange: (v: string) => void
 }) {
-  const [hh = '00', mm = '00'] = value.split(':')
   return (
-    <div className="flex items-center gap-1 flex-1">
-      <Select value={hh} onValueChange={(h) => onChange(`${h}:${mm}`)}>
-        <SelectTrigger className="flex-1 h-8 text-xs rounded-lg">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {HOUR_OPTIONS.map((h) => (
-            <SelectItem key={h} value={h}>{h}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <span className="text-xs text-muted-foreground">:</span>
-      <Select value={mm} onValueChange={(m) => onChange(`${hh}:${m}`)}>
-        <SelectTrigger className="w-16 h-8 text-xs rounded-lg">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {MINUTE_OPTIONS.map((m) => (
-            <SelectItem key={m} value={m}>{m}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+    <input
+      type="time"
+      value={value}
+      step={600}
+      onChange={(e) => e.target.value && onChange(e.target.value)}
+      className="flex-1 min-w-0 h-8 px-2 rounded-lg border border-input bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 tabular-nums"
+    />
   )
 }
 
