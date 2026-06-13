@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { CalendarIcon, Clock, Globe, Loader2 } from 'lucide-react'
+import { CalendarIcon, Clock, Globe } from 'lucide-react'
 import { startOfDay } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -29,14 +29,16 @@ export default function TimeSlotPicker({
   const hasAvailable = slots.some((s) => s.available)
 
   return (
-    <div className="grid md:grid-cols-[1fr_1fr] gap-5">
-      {/* Date picker */}
-      <div className="space-y-3">
-        <p className="text-sm font-semibold flex items-center gap-2">
-          <CalendarIcon className="h-4 w-4 text-primary" />
-          {t('selectDate')}
-        </p>
-        <div className="rounded-xl ring-1 ring-white/[0.06] bg-white/[0.02] p-3 flex justify-center">
+    <div className="grid lg:grid-cols-2 gap-6">
+      {/* Calendar */}
+      <div>
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+            <CalendarIcon className="h-4 w-4 text-white" />
+          </div>
+          <p className="text-sm font-bold tracking-tight">{t('selectDate')}</p>
+        </div>
+        <div className="rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.08] p-4 flex justify-center">
           <Calendar
             mode="single"
             selected={date}
@@ -51,48 +53,49 @@ export default function TimeSlotPicker({
       </div>
 
       {/* Time slots */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
-            {t('selectTime')}
-          </p>
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
+              <Clock className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-sm font-bold tracking-tight">{t('selectTime')}</p>
+          </div>
           {data?.timezone && (
-            <span className="flex items-center gap-1 text-[11px] text-muted-foreground/60">
+            <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground/50 bg-white/[0.03] px-2.5 py-1 rounded-full">
               <Globe className="h-3 w-3" />
               {timezoneLabel(data.timezone)}
             </span>
           )}
         </div>
 
-        <div className="rounded-xl ring-1 ring-white/[0.06] bg-white/[0.02] p-4 min-h-[280px] flex flex-col">
+        <div className="rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.08] p-5 min-h-[320px] flex flex-col">
           {isLoading ? (
-            <div className="grid grid-cols-3 gap-2 flex-1 content-start">
+            <div className="grid grid-cols-3 gap-2.5 flex-1 content-start">
               {Array.from({ length: 12 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 rounded-lg" />
+                <Skeleton key={i} className="h-11 rounded-xl" />
               ))}
             </div>
           ) : isError ? (
             <div className="flex-1 flex items-center justify-center">
-              <div className="flex items-center gap-2 text-xs text-destructive">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t('noSlotsAvailable')}
-              </div>
+              <p className="text-sm text-muted-foreground/50">{t('noSlotsAvailable')}</p>
             </div>
           ) : !date ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-xs text-muted-foreground/60 text-center">
-                {t('selectDate')}
-              </p>
+            <div className="flex-1 flex flex-col items-center justify-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center">
+                <CalendarIcon className="h-5 w-5 text-muted-foreground/30" />
+              </div>
+              <p className="text-sm text-muted-foreground/40">{t('selectDate')}</p>
             </div>
           ) : !hasAvailable ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-xs text-muted-foreground/60 text-center max-w-[180px]">
-                {t('noSlotsAvailable')}
-              </p>
+            <div className="flex-1 flex flex-col items-center justify-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center">
+                <Clock className="h-5 w-5 text-muted-foreground/30" />
+              </div>
+              <p className="text-sm text-muted-foreground/40 text-center">{t('noSlotsAvailable')}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-2 max-h-[260px] overflow-y-auto pr-1 content-start">
+            <div className="grid grid-cols-3 gap-2.5 content-start">
               {slots.map((s) => (
                 <button
                   key={s.time}
@@ -100,12 +103,12 @@ export default function TimeSlotPicker({
                   disabled={!s.available}
                   onClick={() => onTimeChange(s.time)}
                   className={cn(
-                    'h-10 rounded-lg text-sm font-medium ring-1 transition-all duration-150',
-                    !s.available && 'opacity-25 cursor-not-allowed line-through ring-white/[0.04]',
+                    'h-11 rounded-xl text-sm font-semibold ring-1 transition-all duration-200',
+                    !s.available && 'opacity-20 cursor-not-allowed line-through ring-white/[0.04]',
                     time === s.time
-                      ? 'ring-primary bg-primary/15 text-primary font-bold shadow-sm shadow-primary/10'
+                      ? 'ring-primary bg-primary/15 text-primary shadow-md shadow-primary/10 scale-[1.02]'
                       : s.available
-                        ? 'ring-white/[0.06] hover:ring-primary/40 hover:bg-primary/6'
+                        ? 'ring-white/[0.08] hover:ring-primary/50 hover:bg-primary/8 hover:scale-[1.02]'
                         : ''
                   )}
                 >
