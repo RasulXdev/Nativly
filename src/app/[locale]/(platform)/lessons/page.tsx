@@ -8,6 +8,8 @@ import { BookOpen, Clock, CheckCircle2 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import EmptyState from '@/components/shared/EmptyState'
 import { useLessonHistory } from '@/hooks/useLessons'
 import { getInitials } from '@/lib/utils'
@@ -32,32 +34,14 @@ export default function LessonsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-6 text-white">
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        />
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0">
-            <BookOpen className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">{t('myLessons')}</h1>
-            <p className="text-sm text-white/70 mt-0.5">
-              {lessons.length > 0
-                ? `${lessons.length} ${t('completedCount')}`
-                : t('completedTitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+      <HeroBanner
+        variant="sapphire"
+        greeting={t('myLessons')}
+        title={lessons.length > 0 ? `${lessons.length} ${t('completedCount')}` : t('completedTitle')}
+        subtitle=""
+      />
 
-      <section className="rounded-2xl border border-border bg-card overflow-hidden">
+      <GlassCard title={t('myLessons')} icon={BookOpen}>
         <div className="p-5">
           {isLoading ? (
             <div className="space-y-3">
@@ -114,7 +98,7 @@ export default function LessonsPage() {
             </div>
           )}
         </div>
-      </section>
+      </GlassCard>
     </div>
   )
 }

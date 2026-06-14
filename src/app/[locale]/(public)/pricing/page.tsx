@@ -35,6 +35,8 @@ export default async function PricingPage() {
             `,
           }}
         />
+        <div className="absolute top-[20%] left-[12%] w-[280px] h-[280px] rounded-full bg-primary/10 blur-[100px] hero-orb-1 pointer-events-none" />
+        <div className="absolute bottom-[10%] right-[8%] w-[220px] h-[220px] rounded-full bg-amber-400/6 blur-[80px] hero-orb-3 pointer-events-none" />
         <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-24 text-center space-y-5">
           <AnimateOnScroll>
             <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">{t('title')}</h1>
@@ -48,8 +50,10 @@ export default async function PricingPage() {
       </section>
 
       {/* Plans */}
-      <section className="py-16 md:py-24 px-4">
-        <div className="container mx-auto max-w-5xl">
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        <div className="absolute -top-20 right-[-8%] w-[350px] h-[350px] rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-[-5%] w-[250px] h-[250px] rounded-full bg-violet-500/4 blur-[90px] pointer-events-none" />
+        <div className="container mx-auto max-w-5xl relative">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch pt-3">
             {plans.map((plan, i) => (
               <AnimateOnScroll key={plan.id} delay={i * 80} className="h-full">
@@ -60,16 +64,19 @@ export default async function PricingPage() {
                     </div>
                   )}
                   <Card className={cn(
-                    'relative h-full flex flex-col hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 rounded-2xl',
+                    'relative h-full flex flex-col transition-all duration-300 rounded-2xl',
                     plan.popular
-                      ? 'border-primary ring-1 ring-primary/20 shadow-lg shadow-primary/10'
-                      : 'border-border/60'
+                      ? 'border-primary ring-1 ring-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:shadow-primary/15'
+                      : 'border-border/50 bg-white/70 backdrop-blur-sm card-lift gradient-border shadow-sm'
                   )}>
+                  {plan.popular && (
+                    <div className="absolute top-0 left-0 right-0 h-1 gradient-bg" />
+                  )}
                     <CardHeader className="pt-8 pb-3">
                       <h3 className="font-bold text-lg">{plan.name}</h3>
                       <p className="text-xs text-muted-foreground">{plan.lessonsPerMonth} {t('monthly')}</p>
                       <div className="mt-3 flex items-end gap-1.5">
-                        <span className="text-4xl font-extrabold tracking-tight">₼{plan.priceAzn.toFixed(0)}</span>
+                        <span className="text-4xl font-extrabold tracking-tight">{plan.popular ? <span className="gradient-text">₼{plan.priceAzn.toFixed(0)}</span> : `₼${plan.priceAzn.toFixed(0)}`}</span>
                         <span className="text-muted-foreground text-sm mb-1.5">/{t('monthly')}</span>
                       </div>
                     </CardHeader>
@@ -88,8 +95,8 @@ export default async function PricingPage() {
                         href="/register"
                         className={cn(
                           buttonVariants({ size: 'default', variant: plan.popular ? 'default' : 'outline' }),
-                          'w-full rounded-xl font-semibold mt-auto',
-                          plan.popular && 'gradient-bg border-0'
+                          'w-full rounded-full font-semibold mt-auto',
+                          plan.popular && 'btn-glow gradient-bg border-0 shadow-md shadow-primary/15'
                         )}
                       >
                         {t('subscribe')}
@@ -104,9 +111,10 @@ export default async function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 md:py-24 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-2xl space-y-6">
+      <section className="py-16 md:py-24 px-4 section-tinted relative overflow-hidden">
+        <div className="container mx-auto max-w-2xl space-y-6 relative">
           <AnimateOnScroll className="text-center space-y-3">
+            <p className="text-sm font-semibold text-primary tracking-widest uppercase">FAQ</p>
             <h2 className="text-2xl font-extrabold tracking-tight">{t('faqTitle')}</h2>
           </AnimateOnScroll>
           {[
@@ -116,9 +124,9 @@ export default async function PricingPage() {
             { q: t('faq4q'), a: t('faq4a') },
           ].map((item, i) => (
             <AnimateOnScroll key={i} delay={i * 80}>
-              <div className="rounded-xl border border-border/60 bg-card p-5 space-y-2 hover:border-primary/20 transition-colors">
+              <div className="rounded-2xl border border-border/50 bg-white/70 backdrop-blur-sm p-5 space-y-2 hover:border-primary/20 hover:shadow-sm transition-all duration-300 gradient-border">
                 <h3 className="font-semibold text-sm">{item.q}</h3>
-                <p className="text-sm text-muted-foreground">{item.a}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.a}</p>
               </div>
             </AnimateOnScroll>
           ))}

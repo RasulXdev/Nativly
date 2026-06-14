@@ -1,16 +1,70 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { DollarSign, Users, Star, BookOpen, TrendingUp } from 'lucide-react'
+import { DollarSign, Users, Star, BookOpen } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTutorStats } from '@/hooks/useTutorStats'
+import { PremiumStatsCard } from '@/components/ui/premium-stats-card'
 
 const STATS = [
-  { key: 'monthlyEarnings' as const, labelKey: 'earningsMonth', icon: DollarSign, format: (v: number) => `₼${v.toFixed(2)}`, gradient: 'from-emerald-500 to-teal-600', glow: 'shadow-emerald-500/30', accent: 'text-emerald-400', unitKey: 'unitAzn' },
-  { key: 'activeStudents' as const, labelKey: 'activeStudents', icon: Users, format: (v: number) => String(v), gradient: 'from-blue-500 to-indigo-600', glow: 'shadow-blue-500/30', accent: 'text-blue-400', unitKey: 'unitStudents' },
-  { key: 'averageRating' as const, labelKey: 'avgRating', icon: Star, format: (v: number) => v.toFixed(1), gradient: 'from-amber-500 to-orange-500', glow: 'shadow-amber-500/30', accent: 'text-amber-400', unitKey: 'unitStars' },
-  { key: 'lessonsThisMonth' as const, labelKey: 'lessonsMonth', icon: BookOpen, format: (v: number) => String(v), gradient: 'from-violet-500 to-purple-600', glow: 'shadow-violet-500/30', accent: 'text-violet-400', unitKey: 'unitLessons' },
+  {
+    key: 'monthlyEarnings' as const,
+    labelKey: 'earningsMonth',
+    unitKey: 'unitAzn',
+    icon: DollarSign,
+    format: (v: number) => `₼${v.toFixed(2)}`,
+    color: 'oklch(0.62 0.18 255)',
+    colorBg: 'oklch(0.62 0.18 255 / 0.10)',
+    colorBorder: 'oklch(0.62 0.18 255 / 0.18)',
+    gradient: 'from-[oklch(0.50_0.18_255)] to-[oklch(0.40_0.16_258)]',
+  },
+  {
+    key: 'activeStudents' as const,
+    labelKey: 'activeStudents',
+    unitKey: 'unitStudents',
+    icon: Users,
+    format: (v: number) => String(v),
+    color: 'oklch(0.72 0.17 68)',
+    colorBg: 'oklch(0.72 0.17 68 / 0.10)',
+    colorBorder: 'oklch(0.72 0.17 68 / 0.18)',
+    gradient: 'from-[oklch(0.72_0.17_68)] to-[oklch(0.65_0.18_55)]',
+  },
+  {
+    key: 'averageRating' as const,
+    labelKey: 'avgRating',
+    unitKey: 'unitStars',
+    icon: Star,
+    format: (v: number) => v.toFixed(1),
+    color: 'oklch(0.65 0.20 45)',
+    colorBg: 'oklch(0.65 0.20 45 / 0.10)',
+    colorBorder: 'oklch(0.65 0.20 45 / 0.18)',
+    gradient: 'from-[oklch(0.65_0.20_45)] to-[oklch(0.58_0.20_35)]',
+  },
+  {
+    key: 'lessonsThisMonth' as const,
+    labelKey: 'lessonsMonth',
+    unitKey: 'unitLessons',
+    icon: BookOpen,
+    format: (v: number) => String(v),
+    color: 'oklch(0.62 0.18 300)',
+    colorBg: 'oklch(0.62 0.18 300 / 0.10)',
+    colorBorder: 'oklch(0.62 0.18 300 / 0.18)',
+    gradient: 'from-[oklch(0.62_0.18_300)] to-[oklch(0.55_0.17_310)]',
+  },
 ]
+
+function StatSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border p-5" style={{ background: 'linear-gradient(145deg, oklch(0.165 0.024 260), oklch(0.135 0.020 260))' }}>
+      <div className="flex items-start justify-between mb-5">
+        <Skeleton className="h-10 w-10 rounded-xl" />
+        <Skeleton className="h-6 w-14 rounded-full" />
+      </div>
+      <Skeleton className="h-8 w-24 mb-1.5" />
+      <Skeleton className="h-4 w-32" />
+    </div>
+  )
+}
 
 export default function TutorStatsCards() {
   const t = useTranslations('tutorDashboard')
@@ -20,7 +74,7 @@ export default function TutorStatsCards() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-destructive/20 bg-card p-5 flex items-center justify-center min-h-[110px]">
+          <div key={i} className="rounded-2xl border border-destructive/15 bg-card p-5 flex items-center justify-center min-h-[120px]">
             <p className="text-xs text-muted-foreground text-center">{t('notLoaded')}</p>
           </div>
         ))}
@@ -31,44 +85,27 @@ export default function TutorStatsCards() {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-border bg-card p-5">
-            <Skeleton className="h-11 w-11 rounded-xl mb-4" />
-            <Skeleton className="h-8 w-20 mb-1.5" />
-            <Skeleton className="h-4 w-28 mb-3" />
-            <Skeleton className="h-3 w-16" />
-          </div>
-        ))}
+        {Array.from({ length: 4 }).map((_, i) => <StatSkeleton key={i} />)}
       </div>
     )
   }
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {STATS.map((stat) => {
-        const value = data?.[stat.key] ?? 0
-        return (
-          <div
-            key={stat.key}
-            className="group relative rounded-2xl border border-border bg-card overflow-hidden hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
-          >
-            <div className={`h-1 w-full bg-gradient-to-r ${stat.gradient}`} />
-            <div className="p-5">
-              <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-4 shadow-lg ${stat.glow} group-hover:scale-110 transition-transform duration-300`}>
-                <stat.icon className="h-5 w-5 text-white" />
-              </div>
-              <p className="text-2xl font-extrabold tracking-tight text-foreground">
-                {stat.format(value)}
-              </p>
-              <p className="text-sm text-muted-foreground mt-0.5 font-medium">{t(stat.labelKey)}</p>
-              <div className="flex items-center gap-1.5 mt-3">
-                <TrendingUp className={`h-3 w-3 ${stat.accent}`} />
-                <span className={`text-xs font-semibold ${stat.accent}`}>{t(stat.unitKey)}</span>
-              </div>
-            </div>
-          </div>
-        )
-      })}
+      {STATS.map((stat) => (
+        <PremiumStatsCard
+          key={stat.key}
+          icon={stat.icon}
+          label={t(stat.labelKey)}
+          value={data?.[stat.key] ?? 0}
+          unit={t(stat.unitKey)}
+          format={stat.format}
+          color={stat.color}
+          colorBg={stat.colorBg}
+          colorBorder={stat.colorBorder}
+          gradient={stat.gradient}
+        />
+      ))}
     </div>
   )
 }

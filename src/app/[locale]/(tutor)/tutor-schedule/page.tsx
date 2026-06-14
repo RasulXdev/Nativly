@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import {
   useTutorAvailability,
   useUpdateAvailability,
@@ -229,25 +230,12 @@ export default function TutorSchedulePage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      {/* ── Hero ── */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-5 sm:p-7 text-white">
-        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-        <div className="absolute -top-10 -right-10 w-36 sm:w-44 h-36 sm:h-44 rounded-full bg-white/[0.06] float-slow" />
-        <div className="absolute -bottom-8 right-16 w-24 h-24 rounded-full bg-white/[0.04] float-delay" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0">
-              <CalendarCheck className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight truncate">{t('title')}</h1>
-              <p className="text-xs sm:text-sm text-white/60 mt-0.5 truncate">
-                {activeCount > 0 ? `${activeCount} ${t('activeDays')}` : t('setHours')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <HeroBanner
+        variant="gold"
+        greeting={t('title')}
+        title={activeCount > 0 ? `${activeCount} ${t('activeDays')}` : t('setHours')}
+        subtitle=""
+      />
 
       {/* ── Schedule Mode Toggle ── */}
       <div className="rounded-2xl border border-white/[0.06] bg-card p-4 sm:p-5">

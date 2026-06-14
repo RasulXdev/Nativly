@@ -26,6 +26,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { GlassCard } from '@/components/ui/glass-card'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import EmptyState from '@/components/shared/EmptyState'
 import { Link } from '@/i18n/navigation'
 import { useUpcomingLessons, useLessonHistory, useCancelLesson } from '@/hooks/useLessons'
@@ -106,23 +108,12 @@ export default function SchedulePage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      {/* ── Hero ── */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-5 sm:p-7 text-white">
-        <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-        <div className="absolute -top-10 -right-10 w-36 sm:w-44 h-36 sm:h-44 rounded-full bg-white/[0.06] float-slow" />
-        <div className="absolute -bottom-8 right-16 w-24 h-24 rounded-full bg-white/[0.04] float-delay" />
-        <div className="relative z-10 flex items-center gap-3 sm:gap-4">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0">
-            <CalendarClock className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight truncate">{t('title')}</h1>
-            <p className="text-xs sm:text-sm text-white/60 mt-0.5 truncate">
-              {upcoming.length > 0 ? `${upcoming.length} ${t('lessons')}` : t('noUpcoming')}
-            </p>
-          </div>
-        </div>
-      </div>
+      <HeroBanner
+        variant="sapphire"
+        greeting={t('title')}
+        title={upcoming.length > 0 ? `${upcoming.length} ${t('lessons')}` : t('noUpcoming')}
+        subtitle=""
+      />
 
       {/* ── Weekly strip (scrollable) ── */}
       {!loadingUpcoming && upcoming.length > 0 && Object.keys(days).length > 0 && (
@@ -178,13 +169,7 @@ export default function SchedulePage() {
       )}
 
       {/* ── Upcoming lessons ── */}
-      <section className="rounded-2xl border border-white/[0.06] bg-card overflow-hidden">
-        <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-            <CalendarClock className="h-4 w-4 text-white" />
-          </div>
-          <h2 className="font-semibold text-sm">{t('upcoming')}</h2>
-        </div>
+      <GlassCard title={t('upcoming')} icon={CalendarClock}>
         <div className="p-3 sm:p-5">
           {loadingUpcoming ? (
             <div className="space-y-2">
@@ -251,16 +236,10 @@ export default function SchedulePage() {
             </div>
           )}
         </div>
-      </section>
+      </GlassCard>
 
       {/* ── Past lessons ── */}
-      <section className="rounded-2xl border border-white/[0.06] bg-card overflow-hidden">
-        <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-white/[0.04] flex items-center justify-center shrink-0">
-            <History className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-          <h2 className="font-semibold text-sm">{t('past')}</h2>
-        </div>
+      <GlassCard title={t('past')} icon={History}>
         <div className="p-3 sm:p-5">
           {loadingPast ? (
             <div className="space-y-2">
@@ -298,7 +277,7 @@ export default function SchedulePage() {
             </div>
           )}
         </div>
-      </section>
+      </GlassCard>
 
       {/* ── Cancel dialog ── */}
       <Dialog open={!!cancelTarget} onOpenChange={(o) => !o && setCancelTarget(null)}>

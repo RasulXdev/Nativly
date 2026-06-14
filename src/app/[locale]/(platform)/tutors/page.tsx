@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Search, SlidersHorizontal, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import TutorGrid from '@/components/tutors/TutorGrid'
 import TutorFilters from '@/components/tutors/TutorFilters'
 import { useTutors, type TutorFilters as TFilters } from '@/hooks/useTutors'
@@ -27,54 +28,23 @@ export default function TutorsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page hero header */}
-      <div className="relative overflow-hidden rounded-2xl bg-card border border-border p-6">
-        {/* Subtle gradient mesh */}
-        <div
-          className="absolute inset-0 opacity-40 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 60% 80% at 0% 50%, oklch(0.395 0.195 262 / 0.08) 0%, transparent 70%),
-              radial-gradient(ellipse 40% 60% at 100% 20%, oklch(0.55 0.21 270 / 0.06) 0%, transparent 70%)`
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-20 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, oklch(0.395 0.195 262 / 0.15) 1px, transparent 1px)',
-            backgroundSize: '28px 28px'
-          }}
-        />
-
-        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-md">
-                <GraduationCap className="h-4.5 w-4.5 text-white" />
-              </div>
-              <h1 className="text-2xl font-extrabold tracking-tight gradient-text">
-                {t('browseTitle')}
-              </h1>
-            </div>
-            <p className="text-sm text-muted-foreground pl-0.5">
-              {isLoading
-                ? t('searching')
-                : `${tutors.length}+ ${t('available')}`}
-            </p>
-          </div>
-
-          {/* Search bar */}
-          <div className="relative sm:w-72 group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
-            <input
-              type="text"
-              placeholder={t('searchPlaceholder')}
-              className="w-full h-10 pl-10 pr-4 rounded-xl border border-border/70 bg-background/80 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50 hover:border-border transition-all"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+      <HeroBanner
+        variant="sapphire"
+        greeting={t('browseTitle')}
+        title={isLoading ? t('searching') : `${tutors.length}+ ${t('available')}`}
+        subtitle=""
+      >
+        <div className="relative sm:w-72 group">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 group-focus-within:text-white/70 pointer-events-none transition-colors" />
+          <input
+            type="text"
+            placeholder={t('searchPlaceholder')}
+            className="w-full h-10 pl-10 pr-4 rounded-xl border border-white/15 bg-white/10 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/25 focus:border-white/30 hover:border-white/20 transition-all"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
-      </div>
+      </HeroBanner>
 
       <div className="flex gap-5">
         {/* Desktop Filters sidebar */}

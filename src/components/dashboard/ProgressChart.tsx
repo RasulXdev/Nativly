@@ -1,7 +1,8 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { BarChart3, ArrowRight } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useWeeklyProgress } from '@/hooks/useLessons'
 import { Link } from '@/i18n/navigation'
@@ -12,22 +13,7 @@ export default function ProgressChart() {
   const max = Math.max(...weeks.map((w) => w.count), 1)
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-            <BarChart3 className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="font-semibold text-sm">{t('weeklyProgress')}</h3>
-        </div>
-        <Link href="/lessons">
-          <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            {t('lessonsLink')}
-            <ArrowRight className="h-3 w-3" />
-          </button>
-        </Link>
-      </div>
-
+    <GlassCard title={t('weeklyProgress')} icon={BarChart3} actionLabel={t('lessonsLink')} actionHref="/lessons">
       <div className="p-5">
         {isLoading ? (
           <div className="flex items-end gap-2 h-24">
@@ -78,6 +64,6 @@ export default function ProgressChart() {
           </>
         )}
       </div>
-    </div>
+    </GlassCard>
   )
 }

@@ -15,6 +15,8 @@ import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import { useTutorProfile, useUpdateTutorProfile, useUpdateProfile } from '@/hooks/useTutorProfile'
 import { createClient } from '@/lib/supabase/client'
 import { getInitials } from '@/lib/utils'
@@ -151,15 +153,15 @@ export default function TutorSettingsPage() {
 
   return (
     <div className="space-y-6">
-      {/* ── Page header ──────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-6 text-white">
-        <div className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-        />
-        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/8 float-slow" />
-        <div className="relative z-10 flex items-center gap-4">
+      <HeroBanner
+        variant="gold"
+        greeting={t('title')}
+        title={tutorProfile?.profiles?.full_name ?? ''}
+        subtitle={headline || t('addHeadline')}
+      >
+        <div className="flex items-center gap-3">
           <div className="relative shrink-0">
-            <Avatar className="h-16 w-16 border-2 border-white/30">
+            <Avatar className="h-14 w-14 border-2 border-white/30">
               <AvatarImage src={avatarUrl} />
               <AvatarFallback className="bg-white/15 text-white text-xl font-bold">
                 {getInitials(tutorProfile?.profiles?.full_name ?? 'M')}
@@ -173,15 +175,9 @@ export default function TutorSettingsPage() {
               <Camera className="h-3 w-3 text-primary" />
             </button>
           </div>
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">{t('title')}</h1>
-            <p className="text-sm text-white/70 mt-0.5">
-              {tutorProfile?.profiles?.full_name} · {headline || t('addHeadline')}
-            </p>
-          </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
         </div>
-      </div>
+      </HeroBanner>
 
       {/* ── Tabs ─────────────────────────────────────────── */}
       <Tabs defaultValue="profile" className="space-y-5">
@@ -202,13 +198,7 @@ export default function TutorSettingsPage() {
 
         {/* ── PROFILE TAB ───────────────────────────────── */}
         <TabsContent value="profile" className="space-y-5 mt-0">
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-1 border-b border-border/60">
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <User className="h-3.5 w-3.5 text-blue-500" />
-              </div>
-              <h2 className="font-semibold text-sm">{t('profileInfo')}</h2>
-            </div>
+          <GlassCard title={t('profileInfo')} icon={User}>
 
             <div className="space-y-2">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('headline')}</Label>
@@ -288,18 +278,12 @@ export default function TutorSettingsPage() {
             >
               {updateTutor.isPending ? t('saving') : t('updateProfile')}
             </Button>
-          </div>
+          </GlassCard>
         </TabsContent>
 
         {/* ── LESSON TAB ────────────────────────────────── */}
         <TabsContent value="lesson" className="space-y-5 mt-0">
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-1 border-b border-border/60">
-              <div className="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                <Video className="h-3.5 w-3.5 text-violet-500" />
-              </div>
-              <h2 className="font-semibold text-sm">{t('introVideo')}</h2>
-            </div>
+          <GlassCard title={t('introVideo')} icon={Video}>
 
             <p className="text-sm text-muted-foreground">
               {t('introVideoDesc')}
@@ -356,16 +340,9 @@ export default function TutorSettingsPage() {
                 </div>
               </div>
             )}
-          </div>
+          </GlassCard>
 
-          {/* Instant booking card */}
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 mb-4 pb-1 border-b border-border/60">
-              <div className="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                <Zap className="h-3.5 w-3.5 text-violet-500" />
-              </div>
-              <h2 className="font-semibold text-sm">{t('instantBooking')}</h2>
-            </div>
+          <GlassCard title={t('instantBooking')} icon={Zap}>
 
             <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/20">
               <div className="flex items-start gap-3">
@@ -396,18 +373,12 @@ export default function TutorSettingsPage() {
             >
               {updateTutor.isPending ? t('saving') : t('save')}
             </Button>
-          </div>
+          </GlassCard>
         </TabsContent>
 
         {/* ── NOTIFICATIONS TAB ─────────────────────────── */}
         <TabsContent value="notifications" className="space-y-5 mt-0">
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-            <div className="flex items-center gap-2 pb-1 border-b border-border/60">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <Bell className="h-3.5 w-3.5 text-amber-500" />
-              </div>
-              <h2 className="font-semibold text-sm">{t('notificationSettings')}</h2>
-            </div>
+          <GlassCard title={t('notificationSettings')} icon={Bell}>
 
             <div className="space-y-2">
               {NOTIFICATION_ITEMS.map((item) => {
@@ -433,7 +404,7 @@ export default function TutorSettingsPage() {
             <Button className="gradient-bg border-0 text-white rounded-xl h-11 px-8">
               {t('updateNotifications')}
             </Button>
-          </div>
+          </GlassCard>
         </TabsContent>
       </Tabs>
     </div>

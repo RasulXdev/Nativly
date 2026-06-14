@@ -33,7 +33,7 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <MessageSquare className="h-5 w-5 text-primary" />
-          Rəylər
+          {t('profile.reviews')}
         </h2>
         {totalReviews > 0 && (
           <div className="flex items-center gap-3">
@@ -106,7 +106,7 @@ export default function TutorReviews({ tutorId, averageRating, totalReviews }: T
               onClick={() => setPage((p) => p + 1)}
             >
               <ChevronDown className="h-4 w-4 mr-2" />
-              Daha çox rəy
+              {t('loadMoreReviews')}
             </Button>
           )}
         </div>

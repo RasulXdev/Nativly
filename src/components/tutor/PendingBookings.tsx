@@ -4,7 +4,8 @@ import { useLocale, useTranslations } from 'next-intl'
 
 import { format } from 'date-fns'
 import { az, enUS, ru, type Locale } from 'date-fns/locale'
-import { ClipboardList, Check, X, Clock, ArrowRight } from 'lucide-react'
+import { ClipboardList, Check, X, Clock } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -56,24 +57,7 @@ export default function PendingBookings() {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-            <ClipboardList className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="font-semibold text-sm">{t('pendingTitle')}</h3>
-          {bookings && bookings.length > 0 && (
-            <Badge className="h-5 text-xs bg-amber-500/20 text-amber-400 border-amber-500/30">
-              {bookings.length}
-            </Badge>
-          )}
-        </div>
-        <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-          {t('all')}
-          <ArrowRight className="h-3 w-3" />
-        </button>
-      </div>
+    <GlassCard title={t('pendingTitle')} icon={ClipboardList}>
 
       <div className="p-5">
         {isError ? (
@@ -123,7 +107,7 @@ export default function PendingBookings() {
                       </p>
                       {booking.is_trial && (
                         <Badge className="text-[10px] h-4 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shrink-0">
-                          Sınaq
+                          {t('trial')}
                         </Badge>
                       )}
                     </div>
@@ -170,6 +154,6 @@ export default function PendingBookings() {
           </div>
         )}
       </div>
-    </div>
+    </GlassCard>
   )
 }

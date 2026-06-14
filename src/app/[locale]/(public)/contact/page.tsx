@@ -39,16 +39,23 @@ export default function ContactPage() {
           className="absolute inset-0"
           style={{ background: `radial-gradient(ellipse 50% 50% at 50% 50%, oklch(0.28 0.16 262 / 0.35) 0%, transparent 60%)` }}
         />
+        <div className="absolute top-[30%] left-[15%] w-[250px] h-[250px] rounded-full bg-primary/10 blur-[90px] hero-orb-1 pointer-events-none" />
+        <div className="absolute bottom-[20%] right-[10%] w-[200px] h-[200px] rounded-full bg-violet-500/8 blur-[80px] hero-orb-2 pointer-events-none" />
         <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-24 text-center space-y-4">
           <AnimateOnScroll>
+            <div className="inline-flex items-center gap-2 bg-white/[0.06] text-white/70 rounded-full px-4 py-1.5 text-sm font-medium ring-1 ring-white/[0.08] mb-3">
+              <Mail className="h-3.5 w-3.5 text-amber-300" />
+              {t('title')}
+            </div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">{t('title')}</h1>
             <p className="text-white/50 text-lg mt-3">{t('subtitle')}</p>
           </AnimateOnScroll>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4">
-        <div className="container mx-auto max-w-5xl">
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        <div className="absolute -top-20 right-[-8%] w-[300px] h-[300px] rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
+        <div className="container mx-auto max-w-5xl relative">
           <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10">
             {/* Contact info */}
             <AnimateOnScroll animation="slide-left" className="space-y-5">
@@ -57,8 +64,8 @@ export default function ContactPage() {
                 {contactInfo.map((item) => {
                   const Icon = item.icon
                   return (
-                    <div key={item.title} className="flex items-start gap-4 p-5 rounded-xl border border-border/60 bg-card hover:border-primary/20 transition-colors">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.accent}`}>
+                    <div key={item.title} className="group flex items-start gap-4 p-5 rounded-2xl border border-border/50 bg-white/70 backdrop-blur-sm gradient-border shadow-sm hover:shadow-primary/8 transition-all duration-300">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.accent} group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
@@ -74,7 +81,7 @@ export default function ContactPage() {
 
             {/* Contact form */}
             <AnimateOnScroll animation="slide-right">
-              <div className="rounded-2xl border border-border/60 bg-card p-6 md:p-8">
+              <div className="rounded-2xl border border-border/50 bg-white/70 backdrop-blur-sm p-6 md:p-8 shadow-sm gradient-border">
                 <h2 className="text-xl font-bold mb-6">{t('send')}</h2>
 
                 {sent ? (

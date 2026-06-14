@@ -6,11 +6,13 @@ import {
   Users, GraduationCap, BookOpen, Clock,
   TrendingUp, AlertCircle
 } from 'lucide-react'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Link } from '@/i18n/navigation'
 import { getInitials } from '@/lib/utils'
+import { GlassCard } from '@/components/ui/glass-card'
 import { format } from 'date-fns'
 
 interface AdminStats {
@@ -22,25 +24,50 @@ interface AdminStats {
   recentUsers: { id: string; full_name: string; email: string; role: string; created_at: string; avatar_url: string }[]
 }
 
-function StatCard({ icon: Icon, label, value, accent = false, href }: {
+const STAT_COLORS = [
+  { color: 'oklch(0.62 0.18 255)', bg: 'oklch(0.62 0.18 255 / 0.10)', border: 'oklch(0.62 0.18 255 / 0.18)', grad: 'from-[oklch(0.50_0.18_255)] to-[oklch(0.40_0.16_258)]' },
+  { color: 'oklch(0.72 0.17 68)', bg: 'oklch(0.72 0.17 68 / 0.10)', border: 'oklch(0.72 0.17 68 / 0.18)', grad: 'from-[oklch(0.72_0.17_68)] to-[oklch(0.65_0.18_55)]' },
+  { color: 'oklch(0.62 0.18 300)', bg: 'oklch(0.62 0.18 300 / 0.10)', border: 'oklch(0.62 0.18 300 / 0.18)', grad: 'from-[oklch(0.62_0.18_300)] to-[oklch(0.55_0.17_310)]' },
+  { color: 'oklch(0.65 0.22 10)', bg: 'oklch(0.65 0.22 10 / 0.10)', border: 'oklch(0.65 0.22 10 / 0.18)', grad: 'from-[oklch(0.65_0.22_10)] to-[oklch(0.58_0.22_20)]' },
+  { color: 'oklch(0.65 0.20 45)', bg: 'oklch(0.65 0.20 45 / 0.10)', border: 'oklch(0.65 0.20 45 / 0.18)', grad: 'from-[oklch(0.65_0.20_45)] to-[oklch(0.58_0.20_35)]' },
+]
+
+function StatCard({ icon: Icon, label, value, colorIdx = 0, href }: {
   icon: React.ElementType
   label: string
   value: number | string
-  accent?: boolean
+  colorIdx?: number
   href?: string
 }) {
+  const c = STAT_COLORS[colorIdx % STAT_COLORS.length]
   const card = (
-    <div className={`rounded-2xl border p-5 space-y-3 transition-all ${accent ? 'border-primary/30 bg-primary/5' : 'border-border bg-card'} ${href ? 'hover:border-primary/40 cursor-pointer' : ''}`}>
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent ? 'gradient-bg' : 'bg-muted/50'}`}>
-        <Icon className={`h-5 w-5 ${accent ? 'text-white' : 'text-muted-foreground'}`} />
-      </div>
-      <div>
-        <p className="text-2xl font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+    <div
+      className="group relative rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl cursor-default"
+      style={{
+        borderColor: 'oklch(1 0 0 / 0.07)',
+        background: 'linear-gradient(145deg, oklch(0.165 0.024 260), oklch(0.135 0.020 260))',
+      }}
+    >
+      <div className={`h-0.5 w-full bg-gradient-to-r ${c.grad}`} />
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${c.bg} 0%, transparent 70%)` }}
+      />
+      <div className="relative p-5 space-y-3">
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+          style={{ background: c.bg, border: `1px solid ${c.border}` }}
+        >
+          <Icon className="h-4.5 w-4.5" style={{ color: c.color }} />
+        </div>
+        <div>
+          <p className="text-2xl font-extrabold tabular-nums">{value}</p>
+          <p className="text-xs text-muted-foreground mt-0.5 font-medium">{label}</p>
+        </div>
       </div>
     </div>
   )
-  if (href) return <Link href={href}>{card}</Link>
+  if (href) return <Link href={href as Parameters<typeof Link>[0]['href']}>{card}</Link>
   return card
 }
 
@@ -57,24 +84,24 @@ export default function AdminDashboardPage() {
   }, [])
 
   const roleColors: Record<string, string> = {
-    admin: 'bg-purple-500/10 text-purple-500',
-    tutor: 'bg-blue-500/10 text-blue-500',
-    student: 'bg-emerald-500/10 text-emerald-500',
+    admin: 'bg-violet-500/15 text-violet-400 border-violet-500/20',
+    tutor: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+    student: 'bg-teal-500/15 text-teal-400 border-teal-500/20',
   }
 
   return (
     <div className="space-y-6">
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-6 text-white">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-1">
-            <TrendingUp className="h-6 w-6" />
-            <h1 className="text-2xl font-extrabold">{t('title')}</h1>
-          </div>
-          <p className="text-white/70 text-sm">Nativly platform overview</p>
+      <HeroBanner
+        variant="violet"
+        greeting="Admin Control Panel"
+        title={t('title')}
+        subtitle="Nativly platform overview · Real-time data"
+      >
+        <div className="flex items-center gap-2.5 text-sm font-medium bg-white/8 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/10 w-fit">
+          <TrendingUp className="h-4 w-4 text-violet-300" />
+          <span className="text-white/80">Live Stats</span>
         </div>
-      </div>
+      </HeroBanner>
 
       {/* Stats grid */}
       {loading ? (
@@ -83,10 +110,10 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={Users} label={t('totalUsers')} value={stats?.totalUsers ?? 0} href="/admin/users" />
-          <StatCard icon={GraduationCap} label={t('totalTutors')} value={stats?.totalTutors ?? 0} href="/admin/tutors" />
-          <StatCard icon={BookOpen} label={t('lessonsToday')} value={stats?.lessonsToday ?? 0} />
-          <StatCard icon={Clock} label={t('activeLessons')} value={stats?.activeLessons ?? 0} accent />
+          <StatCard icon={Users} label={t('totalUsers')} value={stats?.totalUsers ?? 0} href="/admin/users" colorIdx={0} />
+          <StatCard icon={GraduationCap} label={t('totalTutors')} value={stats?.totalTutors ?? 0} href="/admin/tutors" colorIdx={1} />
+          <StatCard icon={BookOpen} label={t('lessonsToday')} value={stats?.lessonsToday ?? 0} colorIdx={2} />
+          <StatCard icon={Clock} label={t('activeLessons')} value={stats?.activeLessons ?? 0} colorIdx={3} />
           {(stats?.pendingApplications ?? 0) > 0 && (
             <div className="col-span-2 lg:col-span-4">
               <Link href="/admin/tutors">
@@ -103,16 +130,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Recent registrations */}
-      <section className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-              <Users className="h-4 w-4 text-white" />
-            </div>
-            <h2 className="font-semibold text-sm">{t('recentRegistrations')}</h2>
-          </div>
-          <Link href="/admin/users" className="text-xs text-primary hover:underline">View all</Link>
-        </div>
+      <GlassCard title={t('recentRegistrations')} icon={Users} actionLabel="View all" actionHref="/admin/users">
         <div className="divide-y divide-border/50">
           {loading ? (
             <div className="p-4 space-y-3">
@@ -143,7 +161,7 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </div>
-      </section>
+      </GlassCard>
     </div>
   )
 }

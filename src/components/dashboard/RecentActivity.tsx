@@ -3,7 +3,8 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { format } from 'date-fns'
 import { az, enUS, ru, type Locale } from 'date-fns/locale'
-import { Activity, CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
+import { Activity, CheckCircle2, XCircle } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRecentActivity } from '@/hooks/useLessons'
 import EmptyState from '@/components/shared/EmptyState'
@@ -24,22 +25,7 @@ export default function RecentActivity() {
   const { data: lessons, isLoading, isError } = useRecentActivity()
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-            <Activity className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="font-semibold text-sm">{t('recentActivity')}</h3>
-        </div>
-        <Link href="/lessons">
-          <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            {t('all')}
-            <ArrowRight className="h-3 w-3" />
-          </button>
-        </Link>
-      </div>
-
+    <GlassCard title={t('recentActivity')} icon={Activity} actionLabel={t('all')} actionHref="/lessons">
       <div className="p-5">
         {isLoading ? (
           <div className="space-y-3">
@@ -88,6 +74,6 @@ export default function RecentActivity() {
           </div>
         )}
       </div>
-    </div>
+    </GlassCard>
   )
 }

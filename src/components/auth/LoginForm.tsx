@@ -9,9 +9,9 @@ import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
-import { Button } from '@/components/ui/button'
+import { ShimmerButton } from '@/components/ui/shimmer-button'
 import { toast } from 'sonner'
-import { Loader2, Mail, Lock } from 'lucide-react'
+import { Mail, Lock, ArrowRight } from 'lucide-react'
 import SocialButtons from './SocialButtons'
 import AuthField from './AuthField'
 import AuthDivider from './AuthDivider'
@@ -108,20 +108,14 @@ export default function LoginForm() {
           {...register('password')}
         />
 
-        <Button
+        <ShimmerButton
           type="submit"
-          disabled={isLoading}
-          className="btn-glow w-full h-11 rounded-xl gradient-bg border-0 font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.01] transition-all duration-200"
+          loading={isLoading}
+          icon={isLoading ? undefined : ArrowRight}
+          className="w-full flex-row-reverse"
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('loading')}
-            </>
-          ) : (
-            t('login')
-          )}
-        </Button>
+          {isLoading ? t('loading') : t('login')}
+        </ShimmerButton>
       </form>
 
       <p className="text-center text-sm text-foreground/55">

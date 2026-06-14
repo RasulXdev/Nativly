@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
 import { getInitials } from '@/lib/utils'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -66,44 +67,35 @@ export default function AdminTutorsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-          <GraduationCap className="h-5 w-5 text-white" />
+      <GlassCard title={t('title')} icon={GraduationCap}>
+        {/* Tabs */}
+        <div className="flex gap-2 px-5 pt-3 border-b border-border/30 pb-px">
+          {tabs.map(tab => (
+            <button
+              key={tab.value}
+              onClick={() => setActiveTab(tab.value)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                activeTab === tab.value
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-        <div>
-          <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">{t('subtitle')}</p>
-        </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-border pb-px">
-        {tabs.map(tab => (
-          <button
-            key={tab.value}
-            onClick={() => setActiveTab(tab.value)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-              activeTab === tab.value
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* List */}
-      <div className="space-y-3">
-        {loading ? (
-          [1, 2, 3].map(i => <Skeleton key={i} className="h-36 rounded-2xl" />)
-        ) : tutors.length === 0 ? (
-          <div className="py-16 text-center rounded-2xl border border-dashed border-border">
-            <GraduationCap className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">{t('noApplications', { status: activeTab })}</p>
-          </div>
-        ) : tutors.map(tutor => (
-          <div key={tutor.id} className="rounded-2xl border border-border bg-card p-4 space-y-4">
+        {/* List */}
+        <div className="p-5 space-y-3">
+          {loading ? (
+            [1, 2, 3].map(i => <Skeleton key={i} className="h-36 rounded-2xl" />)
+          ) : tutors.length === 0 ? (
+            <div className="py-16 text-center rounded-2xl border border-dashed border-border/30">
+              <GraduationCap className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">{t('noApplications', { status: activeTab })}</p>
+            </div>
+          ) : tutors.map(tutor => (
+            <div key={tutor.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 space-y-4 hover:border-primary/20 transition-colors">
             <div className="flex items-start gap-3">
               <Avatar className="h-12 w-12 shrink-0">
                 <AvatarFallback className="gradient-bg text-white font-bold text-sm">{getInitials(tutor.profiles?.full_name ?? 'TU')}</AvatarFallback>
@@ -188,7 +180,8 @@ export default function AdminTutorsPage() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      </GlassCard>
     </div>
   )
 }

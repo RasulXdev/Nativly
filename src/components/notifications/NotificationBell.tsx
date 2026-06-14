@@ -98,7 +98,7 @@ export default function NotificationBell() {
               className="flex items-center gap-1 text-xs text-primary hover:underline"
             >
               <CheckCheck className="h-3.5 w-3.5" />
-              Hamısını oxu
+              {t('markAllRead')}
             </button>
           )}
         </div>

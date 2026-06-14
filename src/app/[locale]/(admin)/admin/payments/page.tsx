@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
 import { getInitials } from '@/lib/utils'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -64,36 +65,26 @@ export default function AdminPaymentsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-          <CreditCard className="h-5 w-5 text-white" />
+      <GlassCard title={t('title')} icon={CreditCard}>
+        {/* Tabs */}
+        <div className="flex gap-2 px-5 pt-3 border-b border-border/30 pb-px">
+          {tabs.map(tb => (
+            <button
+              key={tb.value}
+              onClick={() => setTab(tb.value)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                tab === tb.value
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {tb.label}
+            </button>
+          ))}
         </div>
-        <div>
-          <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">{t('subtitle')}</p>
-        </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-border pb-px">
-        {tabs.map(tab => (
-          <button
-            key={tab.value}
-            onClick={() => setTab(tab.value)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-              tab.value === tab.value
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Payouts list */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="divide-y divide-border/50">
+        {/* Payouts list */}
+        <div className="divide-y divide-border/30">
           {loading ? (
             <div className="p-4 space-y-3">
               {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-xl" />)}
@@ -137,7 +128,7 @@ export default function AdminPaymentsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </GlassCard>
 
       {/* Confirm dialog */}
       <Dialog open={!!markingId} onOpenChange={open => !open && setMarkingId(null)}>

@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import EarningsChart from '@/components/tutor/EarningsChart'
 import {
   usePayoutSummary,
@@ -42,43 +44,23 @@ export default function TutorEarningsPage() {
 
   return (
     <div className="space-y-6">
-      {/* ── Hero earnings banner ─────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-7 text-white">
-        <div className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-        />
-        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/8 float-slow" />
-        <div className="absolute -bottom-14 right-32 w-32 h-32 rounded-full bg-white/5 float-delay" />
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center">
-              <Wallet className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <p className="text-sm text-white/70 font-medium">{t('thisMonth')}</p>
-            </div>
+      <HeroBanner
+        variant="gold"
+        greeting={t('thisMonth')}
+        title={loadingSummary ? '...' : fmt(summary?.thisMonth ?? 0)}
+        subtitle=""
+      >
+        <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 bg-amber-400/20 border border-amber-300/20 rounded-full px-3 py-1 text-xs font-medium text-white">
+            <Clock className="h-3 w-3" />
+            {loadingSummary ? '...' : fmt(summary?.pending ?? 0)} {t('pendingSuffix')}
           </div>
-
-          {loadingSummary ? (
-            <Skeleton className="h-11 w-32 bg-white/20 mb-4" />
-          ) : (
-            <p className="text-4xl font-black tracking-tight mb-4">{fmt(summary?.thisMonth ?? 0)}</p>
-          )}
-
-          {/* Chips row */}
-          <div className="flex flex-wrap gap-2">
-            <div className="flex items-center gap-1.5 bg-amber-400/20 border border-amber-300/20 rounded-full px-3 py-1 text-xs font-medium">
-              <Clock className="h-3 w-3" />
-              {loadingSummary ? '...' : fmt(summary?.pending ?? 0)} {t('pendingSuffix')}
-            </div>
-            <div className="flex items-center gap-1.5 bg-emerald-400/20 border border-emerald-300/20 rounded-full px-3 py-1 text-xs font-medium">
-              <CheckCircle2 className="h-3 w-3" />
-              {loadingSummary ? '...' : fmt(summary?.paid ?? 0)} {t('paidSuffix')}
-            </div>
+          <div className="flex items-center gap-1.5 bg-emerald-400/20 border border-emerald-300/20 rounded-full px-3 py-1 text-xs font-medium text-white">
+            <CheckCircle2 className="h-3 w-3" />
+            {loadingSummary ? '...' : fmt(summary?.paid ?? 0)} {t('paidSuffix')}
           </div>
         </div>
-      </div>
+      </HeroBanner>
 
       {/* ── Info card ─────────────────────────────────────── */}
       <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 border-l-4 border-l-primary">
@@ -92,18 +74,9 @@ export default function TutorEarningsPage() {
       <EarningsChart />
 
       {/* ── Payout history ───────────────────────────────── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-              <TrendingUp className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-sm">{t('payoutHistory')}</h2>
-            </div>
-          </div>
-
-          {/* Filter tabs */}
+      <GlassCard title={t('payoutHistory')} icon={TrendingUp}>
+        {/* Filter tabs */}
+        <div className="flex justify-end px-5 pt-3 pb-2 border-b border-border/30">
           <div className="flex rounded-xl border border-border bg-muted/50 p-0.5 text-xs gap-0.5">
             {TABS.map((tb) => (
               <button
@@ -180,7 +153,7 @@ export default function TutorEarningsPage() {
             </div>
           )}
         </div>
-      </div>
+      </GlassCard>
     </div>
   )
 }

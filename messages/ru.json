@@ -89,7 +89,8 @@
     "admin": "Панель администратора",
     "roleTutor": "Репетитор",
     "roleAdmin": "Админ",
-    "roleStudent": "Студент"
+    "roleStudent": "Студент",
+    "search": "Поиск"
   },
   "auth": {
     "login": "Войти",
@@ -372,7 +373,11 @@
       "lessons": "уроков",
       "viewProfile": "Профиль",
       "bookNow": "Записаться",
-      "trialAvailable": "Пробный урок доступен"
+      "trialAvailable": "Пробный урок доступен",
+      "reviewsShort": "отзыв.",
+      "instantBook": "Мгновенно",
+      "addFavorite": "В избранное",
+      "removeFavorite": "Убрать из избранного"
     },
     "profile": {
       "about": "О репетиторе",
@@ -431,7 +436,8 @@
       "sat": "Сб",
       "sun": "Вс"
     },
-    "notFound2": "Преподаватель не найден"
+    "notFound2": "Преподаватель не найден",
+    "loadMoreReviews": "Больше отзывов"
   },
   "booking": {
     "title": "Записаться на урок",
@@ -836,7 +842,9 @@
       "makeStudent": "Сделать учеником",
       "makeTutor": "Сделать репетитором",
       "sendEmail": "Написать email",
-      "noUsers": "Пользователи не найдены"
+      "noUsers": "Пользователи не найдены",
+      "statusActive": "Активен",
+      "statusInactive": "Неактивен"
     },
     "tutors": {
       "title": "Репетиторы",
@@ -1667,6 +1675,21 @@
     "videoUploaded": "Видео загружено",
     "videoFailed": "Не удалось загрузить видео",
     "passwordMin": "Пароль должен содержать не менее 6 символов",
-    "passwordsMismatch": "Пароли не совпадают"
+    "passwordsMismatch": "Пароли не совпадают",
+    "nameRequired": "Введите имя",
+    "invalidEmail": "Введите корректный email",
+    "pending": {
+      "metaTitle": "Заявка отправлена — Nativly",
+      "title": "Ваша заявка принята!",
+      "desc": "Ваша заявка преподавателя Nativly успешно отправлена. Наша команда рассмотрит ваши данные и свяжется с вами.",
+      "step1Title": "Заявка отправлена",
+      "step1Desc": "Ваши данные сохранены в системе",
+      "step2Title": "На рассмотрении",
+      "step2Desc": "В течение 1-3 рабочих дней",
+      "step3Title": "Email-уведомление",
+      "step3Desc": "Вы получите письмо с результатом",
+      "login": "Войти в аккаунт",
+      "backHome": "На главную"
+    }
   }
 }

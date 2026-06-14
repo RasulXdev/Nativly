@@ -100,8 +100,8 @@ export default function TutorOnboardingForm() {
 
   const submitStep1 = async () => {
     const errs: Record<string, string> = {}
-    if (!form.full_name.trim()) errs.full_name = 'Ad daxil edin'
-    if (!form.email.includes('@')) errs.email = 'Düzgün email daxil edin'
+    if (!form.full_name.trim()) errs.full_name = t('nameRequired')
+    if (!form.email.includes('@')) errs.email = t('invalidEmail')
     if (form.password.length < 6) errs.password = t('passwordMin')
     if (form.password !== form.confirm_password) errs.confirm_password = t('passwordsMismatch')
     if (Object.keys(errs).length) { setErrors(errs); return false }

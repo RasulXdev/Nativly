@@ -3,8 +3,9 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { format, differenceInMinutes } from 'date-fns'
 import { az, enUS, ru, type Locale } from 'date-fns/locale'
-import { Calendar, Video, Clock, ArrowRight } from 'lucide-react'
+import { Calendar, Video, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUpcomingLessons } from '@/hooks/useLessons'
@@ -34,23 +35,7 @@ export default function UpcomingLessons() {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      {/* Card header with gradient accent */}
-      <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-            <Calendar className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="font-semibold text-sm">{t('upcoming')}</h3>
-        </div>
-        <Link href="/schedule">
-          <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            {td('schedule')}
-            <ArrowRight className="h-3 w-3" />
-          </button>
-        </Link>
-      </div>
-
+    <GlassCard title={t('upcoming')} icon={Calendar} actionLabel={td('schedule')} actionHref="/schedule">
       <div className="p-5">
         {isError ? (
           <p className="text-sm text-muted-foreground text-center py-4">{td('failedToLoad')}</p>
@@ -128,6 +113,6 @@ export default function UpcomingLessons() {
           </div>
         )}
       </div>
-    </div>
+    </GlassCard>
   )
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
+import { FileText } from 'lucide-react'
 import AnimateOnScroll from '@/components/shared/AnimateOnScroll'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,8 +21,13 @@ export default async function TermsPage() {
           className="absolute inset-0"
           style={{ background: `radial-gradient(ellipse 50% 50% at 50% 50%, oklch(0.25 0.12 262 / 0.3) 0%, transparent 60%)` }}
         />
+        <div className="absolute top-[30%] right-[15%] w-[220px] h-[220px] rounded-full bg-primary/8 blur-[80px] hero-orb-1 pointer-events-none" />
         <div className="relative z-10 container mx-auto max-w-2xl px-4 py-16 md:py-20 text-center space-y-3">
           <AnimateOnScroll>
+            <div className="inline-flex items-center gap-2 bg-white/[0.06] text-white/70 rounded-full px-4 py-1.5 text-sm font-medium ring-1 ring-white/[0.08] mb-3">
+              <FileText className="h-3.5 w-3.5 text-amber-300" />
+              {t('title')}
+            </div>
             <h1 className="text-4xl font-extrabold text-white tracking-tight">{t('title')}</h1>
             <p className="text-white/40 mt-2">{t('lastUpdated')}</p>
           </AnimateOnScroll>
@@ -29,14 +35,14 @@ export default async function TermsPage() {
       </section>
 
       <section className="py-16 md:py-20 px-4">
-        <div className="container mx-auto max-w-3xl space-y-8">
+        <div className="container mx-auto max-w-3xl space-y-6">
           <AnimateOnScroll>
             <p className="text-muted-foreground leading-relaxed">{t('intro')}</p>
           </AnimateOnScroll>
 
           {sections.map((section, i) => (
             <AnimateOnScroll key={i} delay={i * 40}>
-              <div className="space-y-3 p-5 rounded-xl border border-border/40 bg-card/50 hover:border-border/60 transition-colors">
+              <div className="space-y-3 p-6 rounded-2xl border border-border/50 bg-white/70 backdrop-blur-sm hover:border-primary/15 hover:shadow-sm transition-all duration-300">
                 <h2 className="text-lg font-bold">{section.title}</h2>
                 <p className="text-muted-foreground leading-relaxed text-sm">{section.content}</p>
               </div>
@@ -44,7 +50,7 @@ export default async function TermsPage() {
           ))}
 
           <AnimateOnScroll>
-            <div className="rounded-xl bg-muted/50 border border-border/40 p-4 text-sm text-muted-foreground">
+            <div className="rounded-2xl bg-primary/5 border border-primary/10 p-5 text-sm text-muted-foreground">
               {t('contact')} <a href="mailto:legal@nativly.az" className="text-primary hover:underline font-medium">legal@nativly.az</a>
             </div>
           </AnimateOnScroll>

@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
+import { GlassCard } from '@/components/ui/glass-card'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import { useTutorStudents, useUpdateTutorNotes } from '@/hooks/useTutorStudents'
 import { getInitials } from '@/lib/utils'
 import EmptyState from '@/components/shared/EmptyState'
@@ -65,45 +67,27 @@ export default function TutorStudentsPage() {
 
   return (
     <div className="space-y-6">
-      {/* ── Hero header ─────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl gradient-bg p-6 text-white">
-        <div className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-        />
-        <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-white/8 float-slow" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">{t('myStudents')}</h1>
-              <p className="text-sm text-white/70 mt-0.5">{students?.length ?? 0} {t('studentsCount')} · {totalLessons} {t('totalLessons')}</p>
-            </div>
+      <HeroBanner
+        variant="gold"
+        greeting={t('myStudents')}
+        title={`${students?.length ?? 0} ${t('studentsCount')}`}
+        subtitle={`${totalLessons} ${t('totalLessons')}`}
+      >
+        <div className="flex gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium text-white">
+            <TrendingUp className="h-3.5 w-3.5" />
+            {totalLessons} {t('lessonsChip')}
           </div>
-          {/* Stats chips */}
-          <div className="flex gap-2 flex-wrap">
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium">
-              <TrendingUp className="h-3.5 w-3.5" />
-              {totalLessons} {t('lessonsChip')}
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium">
-              <BookOpen className="h-3.5 w-3.5" />
-              {withNotes} {t('notesChip')}
-            </div>
+          <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium text-white">
+            <BookOpen className="h-3.5 w-3.5" />
+            {withNotes} {t('notesChip')}
           </div>
         </div>
-      </div>
+      </HeroBanner>
 
       {/* ── Search + list ────────────────────────────────── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border/60 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="flex items-center gap-2.5 flex-1">
-            <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center shrink-0">
-              <GraduationCap className="h-4 w-4 text-white" />
-            </div>
-            <h2 className="font-semibold text-sm">{t('studentList')}</h2>
-          </div>
+      <GlassCard title={t('studentList')} icon={GraduationCap}>
+        <div className="px-5 pt-3 pb-3 border-b border-border/30">
           <div className="relative w-full sm:w-60 group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/70 group-focus-within:text-primary/70 pointer-events-none transition-colors" />
             <input
@@ -147,7 +131,7 @@ export default function TutorStudentsPage() {
                 <div
                   key={student.id}
                   onClick={() => openStudent(student)}
-                  className="group relative rounded-2xl border border-border/60 bg-card p-4 hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 cursor-pointer"
+                  className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer"
                 >
                   {/* Avatar + name */}
                   <div className="flex items-center gap-3 mb-3">
@@ -189,7 +173,7 @@ export default function TutorStudentsPage() {
             </div>
           )}
         </div>
-      </div>
+      </GlassCard>
 
       {/* ── Student detail sheet ─────────────────────────── */}
       <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>

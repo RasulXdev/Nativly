@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, GraduationCap, Calendar, MessageSquare, User } from 'lucide-react'
+import { LayoutDashboard, GraduationCap, Calendar, MessageSquare, User, BarChart3 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -25,6 +25,7 @@ export default function MobileNav() {
   const tutorTabs = [
     { href: '/tutor-dashboard', label: t('dashboard'), icon: LayoutDashboard },
     { href: '/tutor-schedule', label: t('schedule'), icon: Calendar },
+    { href: '/tutor-earnings', label: t('earnings'), icon: BarChart3 },
     { href: '/messages', label: t('messages'), icon: MessageSquare },
     { href: '/tutor-settings', label: t('profile'), icon: User },
   ]
@@ -35,29 +36,47 @@ export default function MobileNav() {
     pathname.split('/').some((seg) => seg === href.replace('/', ''))
 
   return (
-    <nav className="dark lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-xl">
-      <div className="flex h-16 items-stretch px-2">
-        {tabs.map((tab) => {
-          const active = isActive(tab.href)
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href as Parameters<typeof Link>[0]['href']}
-              className={cn(
-                'flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium transition-all duration-150 rounded-xl mx-0.5',
-                active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <div className={cn(
-                'flex items-center justify-center w-8 h-6 rounded-lg transition-all duration-150',
-                active && 'gradient-bg nav-active-glow'
-              )}>
-                <tab.icon className={cn('h-4 w-4', active ? 'text-white' : '')} />
-              </div>
-              <span className={active ? 'text-primary font-semibold' : ''}>{tab.label}</span>
-            </Link>
-          )
-        })}
+    <nav className="dark lg:hidden fixed bottom-0 left-0 right-0 z-50">
+      {/* Frosted glass bar */}
+      <div className="border-t border-border/60 bg-background/90 backdrop-blur-2xl">
+        {/* Teal top accent line */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+        <div className="flex h-[62px] items-stretch px-1 safe-area-pb">
+          {tabs.map((tab) => {
+            const active = isActive(tab.href)
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href as Parameters<typeof Link>[0]['href']}
+                className={cn(
+                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 transition-all duration-200 rounded-xl mx-0.5 my-1',
+                  active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {/* Active background pill */}
+                {active && (
+                  <span className="absolute inset-0 rounded-xl bg-primary/10 border border-primary/15" />
+                )}
+
+                {/* Icon container */}
+                <div className={cn(
+                  'relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-200',
+                  active && 'gradient-bg nav-active-glow scale-110'
+                )}>
+                  <tab.icon className={cn('h-3.5 w-3.5', active ? 'text-white' : '')} />
+                </div>
+
+                <span className={cn(
+                  'relative z-10 text-[9px] font-semibold leading-none tracking-wide',
+                  active ? 'text-primary' : 'text-muted-foreground'
+                )}>
+                  {tab.label}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </nav>
   )

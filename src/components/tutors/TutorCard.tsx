@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart, MapPin, Video, Zap, Star } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -16,6 +17,8 @@ interface TutorCardProps {
 }
 
 export default function TutorCard({ tutor }: TutorCardProps) {
+  const t = useTranslations('tutors.card')
+  const locale = useLocale()
   const profile = (tutor as any).profiles
   const languages: any[] = (tutor as any).user_languages ?? []
   const { user } = useAuth()
@@ -33,7 +36,13 @@ export default function TutorCard({ tutor }: TutorCardProps) {
   const specs = tutor.specializations?.slice(0, 3) ?? []
 
   return (
-    <div className="group relative rounded-2xl border border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 flex flex-col">
+    <div
+      className="group relative rounded-2xl border overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+      style={{
+        borderColor: 'oklch(1 0 0 / 0.07)',
+        background: 'linear-gradient(145deg, oklch(0.165 0.024 260), oklch(0.135 0.020 260))',
+      }}
+    >
       {/* Top gradient strip */}
       <div className="h-1 w-full gradient-bg" />
 
@@ -49,7 +58,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
                 ? 'text-rose-400 bg-rose-500/15 shadow-sm'
                 : 'text-muted-foreground hover:text-rose-400 hover:bg-rose-500/15 opacity-0 group-hover:opacity-100'
             )}
-            aria-label={isFav ? 'Seçilmişlərdən sil' : 'Seçilmişlərə əlavə et'}
+            aria-label={isFav ? t('removeFavorite') : t('addFavorite')}
           >
             <Heart className={cn('h-4 w-4', isFav && 'fill-current')} />
           </button>
@@ -87,7 +96,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
                 {(tutor.average_rating ?? 0).toFixed(1)}
               </span>
               <span className="text-xs text-muted-foreground">
-                ({tutor.total_reviews ?? 0} rəy)
+                ({tutor.total_reviews ?? 0} {t('reviewsShort')})
               </span>
             </div>
           </div>
@@ -106,7 +115,7 @@ export default function TutorCard({ tutor }: TutorCardProps) {
             {teachingLangs.map((lang) => (
               <Badge key={lang.id} variant="secondary" className="text-xs gap-1.5 py-0.5 font-medium">
                 <span>{lang.flag_emoji}</span>
-                {lang.name_az}
+                {lang[`name_${locale}`] ?? lang.name_en ?? lang.name_az}
               </Badge>
             ))}
           </div>
@@ -130,12 +139,12 @@ export default function TutorCard({ tutor }: TutorCardProps) {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <Video className="h-3 w-3" />
-            <span>{tutor.total_lessons} dərs</span>
+            <span>{tutor.total_lessons} {t('lessons')}</span>
           </div>
           {tutor.instant_booking && (
             <div className="flex items-center gap-1 text-emerald-400 font-medium">
               <Zap className="h-3 w-3" />
-              <span>Ani rezerv</span>
+              <span>{t('instantBook')}</span>
             </div>
           )}
         </div>
@@ -144,12 +153,12 @@ export default function TutorCard({ tutor }: TutorCardProps) {
         <div className="mt-auto flex items-center gap-2 pt-4 border-t border-border/50">
           <Link href={`/tutors/${tutor.id}`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full h-8 text-xs rounded-full border-border/70">
-              Profil
+              {t('viewProfile')}
             </Button>
           </Link>
           <Link href={`/tutors/${tutor.id}?book=1`} className="flex-1">
             <Button size="sm" className="w-full h-8 text-xs rounded-full gradient-bg border-0 text-white shadow-md">
-              Rezerv et
+              {t('bookNow')}
             </Button>
           </Link>
         </div>

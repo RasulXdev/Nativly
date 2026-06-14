@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { GlassCard } from '@/components/ui/glass-card'
 import { getInitials } from '@/lib/utils'
 import { format } from 'date-fns'
 
@@ -51,36 +52,28 @@ export default function AdminLessonsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-          <BookOpen className="h-5 w-5 text-white" />
+      <GlassCard title={t('title')} icon={BookOpen}>
+        {/* Status filters */}
+        <div className="flex flex-wrap gap-2 px-5 pt-4 pb-3 border-b border-border/30">
+          {filters.map(s => (
+            <Button
+              key={s}
+              size="sm"
+              variant={statusFilter === s ? 'default' : 'outline'}
+              onClick={() => setStatusFilter(s)}
+              className="capitalize text-xs"
+            >
+              {s ? t(STATUS_CONFIG[s]?.key) : t('all')}
+            </Button>
+          ))}
         </div>
-        <div>
-          <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground">{t('totalLessons', { count: total })}</p>
-        </div>
-      </div>
 
-      {/* Status filters */}
-      <div className="flex flex-wrap gap-2">
-        {filters.map(s => (
-          <Button
-            key={s}
-            size="sm"
-            variant={statusFilter === s ? 'default' : 'outline'}
-            onClick={() => setStatusFilter(s)}
-            className="capitalize text-xs"
-          >
-            {s ? t(STATUS_CONFIG[s]?.key) : t('all')}
-          </Button>
-        ))}
-      </div>
+        <div className="text-xs text-muted-foreground px-5 pt-3">{t('totalLessons', { count: total })}</div>
 
-      {/* Lessons list */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="divide-y divide-border/50">
+        {/* Lessons list */}
+        <div className="divide-y divide-border/30">
           {loading ? (
-            <div className="p-4 space-y-3">
+            <div className="p-5 space-y-3">
               {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-xl" />)}
             </div>
           ) : lessons.length === 0 ? (
@@ -114,7 +107,7 @@ export default function AdminLessonsPage() {
             )
           })}
         </div>
-      </div>
+      </GlassCard>
     </div>
   )
 }

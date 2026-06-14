@@ -14,7 +14,7 @@ export default function EarningsChart() {
   const max = Math.max(...bars.map((b) => b.amount), 1)
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'oklch(1 0 0 / 0.07)', background: 'linear-gradient(145deg, oklch(0.15 0.022 260), oklch(0.125 0.018 260))' }}>
       <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">

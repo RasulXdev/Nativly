@@ -89,7 +89,8 @@
     "admin": "Admin panel",
     "roleTutor": "Müəllim",
     "roleAdmin": "Admin",
-    "roleStudent": "Tələbə"
+    "roleStudent": "Tələbə",
+    "search": "Axtar"
   },
   "auth": {
     "login": "Daxil ol",
@@ -372,7 +373,11 @@
       "lessons": "dərs",
       "viewProfile": "Profil",
       "bookNow": "Rezerv et",
-      "trialAvailable": "Sınaq dərsi var"
+      "trialAvailable": "Sınaq dərsi var",
+      "reviewsShort": "rəy",
+      "instantBook": "Ani rezerv",
+      "addFavorite": "Seçilmişlərə əlavə et",
+      "removeFavorite": "Seçilmişlərdən sil"
     },
     "profile": {
       "about": "Haqqında",
@@ -431,7 +436,8 @@
       "sat": "Şnb",
       "sun": "Baz"
     },
-    "notFound2": "Müəllim tapılmadı"
+    "notFound2": "Müəllim tapılmadı",
+    "loadMoreReviews": "Daha çox rəy"
   },
   "booking": {
     "title": "Dərs rezerv et",
@@ -836,7 +842,9 @@
       "makeStudent": "Tələbə et",
       "makeTutor": "Müəllim et",
       "sendEmail": "E-poçt göndər",
-      "noUsers": "İstifadəçi tapılmadı"
+      "noUsers": "İstifadəçi tapılmadı",
+      "statusActive": "Aktiv",
+      "statusInactive": "Deaktiv"
     },
     "tutors": {
       "title": "Müəllimlər",
@@ -1667,6 +1675,21 @@
     "videoUploaded": "Video yükləndi",
     "videoFailed": "Video yüklənmədi",
     "passwordMin": "Şifrə ən azı 6 simvol olmalıdır",
-    "passwordsMismatch": "Şifrələr uyğun gəlmir"
+    "passwordsMismatch": "Şifrələr uyğun gəlmir",
+    "nameRequired": "Ad daxil edin",
+    "invalidEmail": "Düzgün email daxil edin",
+    "pending": {
+      "metaTitle": "Müraciət göndərildi — Nativly",
+      "title": "Müraciətiniz qəbul edildi!",
+      "desc": "Nativly müəllim müraciətiniz uğurla göndərildi. Komandamız məlumatlarınızı nəzərdən keçirib sizinlə əlaqə saxlayacaq.",
+      "step1Title": "Müraciət göndərildi",
+      "step1Desc": "Məlumatlarınız sistemə daxil edildi",
+      "step2Title": "Nəzərdən keçirilir",
+      "step2Desc": "1-3 iş günü ərzində",
+      "step3Title": "Email bildirişi",
+      "step3Desc": "Nəticə haqqında email alacaqsınız",
+      "login": "Hesaba daxil ol",
+      "backHome": "Ana səhifəyə qayıt"
+    }
   }
 }

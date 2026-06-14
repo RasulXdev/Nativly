@@ -44,6 +44,8 @@ export default async function BecomeTutorPage() {
             `,
           }}
         />
+        <div className="absolute top-[15%] right-[5%] w-[280px] h-[280px] rounded-full bg-primary/10 blur-[100px] hero-orb-1 pointer-events-none" />
+        <div className="absolute bottom-[20%] left-[8%] w-[220px] h-[220px] rounded-full bg-amber-400/6 blur-[80px] hero-orb-3 pointer-events-none" />
         <div className="relative z-10 container mx-auto max-w-6xl px-4 sm:px-6 py-20 md:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimateOnScroll animation="slide-left">
@@ -130,7 +132,7 @@ export default async function BecomeTutorPage() {
               const Icon = BENEFIT_ICONS[i]
               return (
                 <AnimateOnScroll key={b.title} delay={i * 80}>
-                  <div className="group relative rounded-2xl border border-border/60 bg-card p-6 space-y-4 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 h-full">
+                  <div className="group relative rounded-2xl border border-border/50 bg-white/70 backdrop-blur-sm p-6 space-y-4 card-lift gradient-border shadow-sm h-full">
                     <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', BENEFIT_BG[i])}>
                       <Icon className="h-5 w-5" />
                     </div>
@@ -200,7 +202,7 @@ export default async function BecomeTutorPage() {
                 {requirements.map((r) => (
                   <li
                     key={r}
-                    className="flex items-start gap-3.5 p-4 rounded-xl border border-border/60 bg-card hover:border-primary/20 transition-colors"
+                    className="flex items-start gap-3.5 p-4 rounded-xl border border-border/50 bg-white/70 backdrop-blur-sm hover:border-primary/20 hover:shadow-sm transition-all duration-200"
                   >
                     <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                       <CheckCircle className="h-4 w-4 text-primary" />

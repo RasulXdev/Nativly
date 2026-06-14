@@ -4,7 +4,8 @@ import { useLocale, useTranslations } from 'next-intl'
 
 import { format, differenceInMinutes } from 'date-fns'
 import { az, enUS, ru, type Locale } from 'date-fns/locale'
-import { CalendarClock, Video, Clock, ArrowRight } from 'lucide-react'
+import { CalendarClock, Video, Clock } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -38,22 +39,7 @@ export default function TodayLessons() {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-4 flex items-center justify-between border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-            <CalendarClock className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="font-semibold text-sm">{t('todayLessons')}</h3>
-        </div>
-        <Link href="/tutor-schedule">
-          <button className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-            Cədvəl
-            <ArrowRight className="h-3 w-3" />
-          </button>
-        </Link>
-      </div>
-
+    <GlassCard title={t('todayLessons')} icon={CalendarClock} actionLabel={t('schedule')} actionHref="/tutor-schedule">
       <div className="p-5">
         {isError ? (
           <p className="text-sm text-muted-foreground text-center py-4">{t('failedToLoad')}</p>
@@ -127,6 +113,6 @@ export default function TodayLessons() {
           </div>
         )}
       </div>
-    </div>
+    </GlassCard>
   )
 }
