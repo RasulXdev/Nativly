@@ -31,7 +31,7 @@ function getAlignClass(align?: string) {
   return 'text-left'
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   columns = [],
   data = [],
   emptyState,
@@ -52,8 +52,8 @@ export function DataTable<T extends Record<string, unknown>>({
   const sortedData = React.useMemo(() => {
     if (!sortConfig) return data
     return [...data].sort((a, b) => {
-      const aVal = a[sortConfig.key]
-      const bVal = b[sortConfig.key]
+      const aVal = (a as Record<string, unknown>)[sortConfig.key]
+      const bVal = (b as Record<string, unknown>)[sortConfig.key]
       if (aVal === bVal) return 0
       const comparison = (aVal as number | string) > (bVal as number | string) ? 1 : -1
       return sortConfig.direction === 'asc' ? comparison : -comparison
@@ -117,7 +117,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   {columns.map((column) => (
                     <td key={column.key} className={cn('px-4 py-3 align-middle', getAlignClass(column.align), column.className)}>
-                      {column.render ? column.render(row) : (row[column.key] as React.ReactNode) ?? '—'}
+                      {column.render ? column.render(row) : ((row as Record<string, unknown>)[column.key] as React.ReactNode) ?? '—'}
                     </td>
                   ))}
                 </tr>
