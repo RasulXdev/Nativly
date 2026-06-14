@@ -60,7 +60,7 @@ export default function AdminSettingsPage() {
     }).eq('id', plan.id)
     setSaving(null)
     if (error) toast.error(error.message)
-    else toast.success('Plan saved')
+    else toast.success(t('planSaved'))
   }
 
   return (
@@ -83,7 +83,7 @@ export default function AdminSettingsPage() {
         <div key={plan.id} className="rounded-2xl border border-border bg-card p-5 space-y-5">
           <div className="flex items-center gap-2">
             <Package className="h-4 w-4 text-muted-foreground" />
-            <h2 className="font-semibold">{plan.name_en ?? plan.name_az ?? 'Plan'}</h2>
+            <h2 className="font-semibold">{plan.name_en ?? plan.name_az ?? t('plan')}</h2>
             <label className="ml-auto flex items-center gap-2 cursor-pointer">
               <span className="text-xs text-muted-foreground">{t('active')}</span>
               <div

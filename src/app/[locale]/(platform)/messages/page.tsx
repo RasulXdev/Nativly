@@ -210,7 +210,7 @@ export default function MessagesPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold truncate">{other?.full_name ?? 'User'}</p>
+                        <p className="text-sm font-semibold truncate">{other?.full_name ?? t('user')}</p>
                         {conv.last_message && (
                           <span className="text-xs text-muted-foreground shrink-0 ml-1">
                             {formatMsgTime(conv.last_message.created_at)}
@@ -260,7 +260,7 @@ export default function MessagesPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">{selectedConv.other_participant?.full_name ?? 'User'}</p>
+                  <p className="font-semibold text-sm truncate">{selectedConv.other_participant?.full_name ?? t('user')}</p>
                   <p className="text-xs text-muted-foreground">
                     {selectedConv.other_participant?.is_online ? t('online') : t('lastSeen')}
                   </p>

@@ -96,7 +96,7 @@ export default function TutorSettingsPage() {
   const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 100 * 1024 * 1024) { toast.error('Max 100MB'); return }
+    if (file.size > 100 * 1024 * 1024) { toast.error(t('maxFileSize', { size: '100MB' })); return }
     setVideoUploading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -164,7 +164,7 @@ export default function TutorSettingsPage() {
             <Avatar className="h-14 w-14 border-2 border-white/30">
               <AvatarImage src={avatarUrl} />
               <AvatarFallback className="bg-white/15 text-white text-xl font-bold">
-                {getInitials(tutorProfile?.profiles?.full_name ?? 'M')}
+                {getInitials(tutorProfile?.profiles?.full_name ?? '?')}
               </AvatarFallback>
             </Avatar>
             <button

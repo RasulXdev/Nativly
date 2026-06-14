@@ -62,7 +62,17 @@
     "copy": "Kopyala",
     "share": "Paylaş",
     "download": "Yüklə",
-    "underConstruction": "Bu bölmə hazırlanır"
+    "underConstruction": "Bu bölmə hazırlanır",
+    "maxFileSize": "Maks {size}",
+    "updated": "Yeniləndi",
+    "markedAsPaid": "Ödənilmiş kimi işarələndi",
+    "planSaved": "Plan saxlanıldı",
+    "plan": "Plan",
+    "user": "İstifadəçi",
+    "na": "Yoxdur",
+    "role": "Rol",
+    "status": "Status",
+    "joined": "Qoşuldu"
   },
   "nav": {
     "home": "Ana səhifə",
@@ -614,7 +624,8 @@
     "deleteMessage": "Mesajı sil",
     "editMessage": "Mesajı redaktə et",
     "fileAttached": "Fayl əlavə edildi",
-    "imageAttached": "Şəkil əlavə edildi"
+    "imageAttached": "Şəkil əlavə edildi",
+    "user": "İstifadəçi"
   },
   "wallet": {
     "title": "Cüzdan",
@@ -657,7 +668,9 @@
       "active": "Aktiv",
       "cancelled": "Ləğv edilib",
       "expired": "Müddəti bitib",
-      "pastDue": "Gecikmişdir"
+      "pastDue": "Gecikmişdir",
+      "plan": "Plan",
+      "lessonsPerMonth": "{count} dərs/ay"
     },
     "notificationsTitle": "Bildirişlər",
     "updateProfile": "Profili yenilə",
@@ -718,7 +731,13 @@
       "sharedNotes": "Birgə qeydlər",
       "notesPlaceholder": "Birlikdə qeydlər yazın...",
       "saveNotes": "Qeydləri saxla",
-      "notesSaved": "Qeydlər saxlanıldı"
+      "notesSaved": "Qeydlər saxlanıldı",
+      "you": "Siz",
+      "messagePlaceholder": "Mesaj...",
+      "notConfigured": "Video zəng konfiqurasiya edilməyib",
+      "defaultParticipant": "Qonaq",
+      "defaultTutor": "Müəllim",
+      "connectionFailed": "Bağlantı uğursuz oldu"
     },
     "postCall": {
       "title": "Dərs tamamlandı",
@@ -822,7 +841,10 @@
       "activeLessons": "Aktiv dərslər",
       "recentRegistrations": "Son qeydiyyatlar",
       "userGrowth": "İstifadəçi artımı",
-      "revenueChart": "Gəlir qrafiki"
+      "revenueChart": "Gəlir qrafiki",
+      "greeting": "Admin İdarə Paneli",
+      "subtitle": "Nativly platform icmalı · Real-vaxt məlumatlar",
+      "liveStats": "Canlı Statistika"
     },
     "users": {
       "title": "İstifadəçilər",
@@ -832,7 +854,7 @@
       "all": "Hamısı",
       "role": "Rol",
       "status": "Status",
-      "joined": "Qoşulub",
+      "joined": "Qoşuldu",
       "lastActive": "Son aktiv",
       "actions": "Əməliyyatlar",
       "viewProfile": "Profili gör",
@@ -844,7 +866,8 @@
       "sendEmail": "E-poçt göndər",
       "noUsers": "İstifadəçi tapılmadı",
       "statusActive": "Aktiv",
-      "statusInactive": "Deaktiv"
+      "statusInactive": "Deaktiv",
+      "updated": "Yeniləndi"
     },
     "tutors": {
       "title": "Müəllimlər",
@@ -869,7 +892,10 @@
       "noTutors": "Müəllim tapılmadı",
       "lessons": "dərs",
       "viewDocuments": "Sənədlərə bax",
-      "viewVideo": "Giriş videosuna bax"
+      "viewVideo": "Giriş videosuna bax",
+      "approved": "Təsdiqləndi!",
+      "rejected": "Rədd edildi",
+      "updated": "Yeniləndi"
     },
     "lessons": {
       "title": "Dərslər",
@@ -887,7 +913,8 @@
       "duration": "Müddət",
       "noLessons": "Dərs tapılmadı",
       "viewDetails": "Ətraflı",
-      "handleDispute": "Mübahisəni həll et"
+      "handleDispute": "Mübahisəni həll et",
+      "na": "Yoxdur"
     },
     "payments": {
       "title": "Ödənişlər",
@@ -911,7 +938,8 @@
       "totalRevenue": "Ümumi gəlir",
       "tutorPayout": "Müəllim ödənişi",
       "platformProfit": "Platform mənfəəti",
-      "stripeId": "Stripe ID"
+      "stripeId": "Stripe ID",
+      "markedAsPaid": "Ödənilmiş kimi işarələndi"
     },
     "settings": {
       "title": "Admin tənzimləmələri",
@@ -938,14 +966,19 @@
       "descriptionRu": "Təsvir (RU)",
       "featuredTutors": "Öndə görünən müəllimlər",
       "systemAnnouncements": "Sistem elanları",
-      "cancellationPolicy": "Ləğvetmə siyasəti"
+      "cancellationPolicy": "Ləğvetmə siyasəti",
+      "planSaved": "Plan saxlanıldı",
+      "plan": "Plan"
     },
     "pendingApplications": "Gözləyən müraciətlər",
     "approve": "Təsdiqlə",
     "reject": "Rədd et",
     "deactivate": "Deaktiv et",
     "feature": "Öne çıxar",
-    "unfeature": "Öndən çıxar"
+    "unfeature": "Öndən çıxar",
+    "controlPanel": "Admin İdarə Paneli",
+    "approved": "Təsdiqləndi!",
+    "rejected": "Rədd edildi"
   },
   "errors": {
     "required": "Bu sahə məcburidir",
@@ -1484,7 +1517,8 @@
       "paymentDesc": "Dərs ödənişi alındıqda",
       "marketingLabel": "Xəbər emailləri",
       "marketingDesc": "Nativly yenilikləri və təklifləri"
-    }
+    },
+    "maxFileSize": "Maks {size}"
   },
   "privacy": {
     "title": "Gizlilik Siyasəti",

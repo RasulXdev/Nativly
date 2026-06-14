@@ -52,7 +52,7 @@ export default function AdminPaymentsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ payoutId: markingId, note }),
     })
-    toast.success('Marked as paid')
+    toast.success(t('markedAsPaid'))
     setMarkingId(null)
     setNote('')
     load()
@@ -94,7 +94,7 @@ export default function AdminPaymentsPage() {
           ) : payouts.map(p => (
             <div key={p.id} className="flex items-center gap-3 px-4 py-3">
               <Avatar className="h-10 w-10 shrink-0">
-                <AvatarFallback className="gradient-bg text-white text-xs font-bold">{getInitials(p.tutor?.full_name ?? 'T')}</AvatarFallback>
+                <AvatarFallback className="gradient-bg text-white text-xs font-bold">{getInitials(p.tutor?.full_name ?? '?')}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{p.tutor?.full_name}</p>

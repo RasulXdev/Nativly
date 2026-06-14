@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, action, value }),
     })
-    toast.success('Updated')
+    toast.success(t('updated'))
     load()
   }
 
@@ -147,7 +147,7 @@ export default function AdminUsersPage() {
               },
               {
                 key: 'role',
-                header: 'Role',
+                header: t('role'),
                 sortable: true,
                 render: (u) => {
                   const RoleIcon = ROLE_ICONS[u.role]
@@ -161,7 +161,7 @@ export default function AdminUsersPage() {
               },
               {
                 key: 'is_active',
-                header: 'Status',
+                header: t('status'),
                 sortable: true,
                 align: 'center',
                 render: (u) => (
@@ -173,7 +173,7 @@ export default function AdminUsersPage() {
               },
               {
                 key: 'created_at',
-                header: 'Joined',
+                header: t('joined'),
                 sortable: true,
                 align: 'right',
                 className: 'text-xs text-muted-foreground tabular-nums whitespace-nowrap',

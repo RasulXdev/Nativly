@@ -55,7 +55,7 @@ export default function AdminTutorsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tutorId, action }),
     })
-    toast.success(action === 'approve' ? 'Approved!' : action === 'reject' ? 'Rejected' : 'Updated')
+    toast.success(action === 'approve' ? t('approved') : action === 'reject' ? t('rejected') : t('updated'))
     load()
   }
 
@@ -98,7 +98,7 @@ export default function AdminTutorsPage() {
             <div key={tutor.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 space-y-4 hover:border-primary/20 transition-colors">
             <div className="flex items-start gap-3">
               <Avatar className="h-12 w-12 shrink-0">
-                <AvatarFallback className="gradient-bg text-white font-bold text-sm">{getInitials(tutor.profiles?.full_name ?? 'TU')}</AvatarFallback>
+                <AvatarFallback className="gradient-bg text-white font-bold text-sm">{getInitials(tutor.profiles?.full_name ?? '?')}</AvatarFallback>
                 <AvatarFallback />
               </Avatar>
               <div className="flex-1 min-w-0">

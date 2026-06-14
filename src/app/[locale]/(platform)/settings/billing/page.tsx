@@ -85,15 +85,15 @@ export default function BillingPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Zap className="h-5 w-5" />
-                    <span className="font-bold text-lg">{sub?.plan?.name_az ?? 'Plan'}</span>
+                    <span className="font-bold text-lg">{sub?.plan?.name_az ?? t('plan')}</span>
                   </div>
                   <p className="text-white/70 text-sm">
-                    {sub?.lessons_total} lessons/month
+                    {t('lessonsPerMonth', { count: sub?.lessons_total ?? 0 })}
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-white/20 text-white">
                   <CheckCircle className="h-4 w-4" />
-                  <span>Active</span>
+                  <span>{t('active')}</span>
                 </div>
               </div>
             </div>

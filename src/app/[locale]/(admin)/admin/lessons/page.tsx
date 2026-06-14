@@ -81,12 +81,12 @@ export default function AdminLessonsPage() {
           ) : lessons.map(lesson => {
             const cfg = STATUS_CONFIG[lesson.status] ?? STATUS_CONFIG.scheduled
             const StatusIcon = cfg.icon
-            const tutorName = lesson.tutor?.profiles?.full_name ?? 'N/A'
+            const tutorName = lesson.tutor?.profiles?.full_name ?? t('na')
             return (
               <div key={lesson.id} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors">
                 {/* Student */}
                 <Avatar className="h-9 w-9 shrink-0">
-                  <AvatarFallback className="gradient-bg text-white text-xs font-bold">{getInitials(lesson.student?.full_name ?? 'S')}</AvatarFallback>
+                  <AvatarFallback className="gradient-bg text-white text-xs font-bold">{getInitials(lesson.student?.full_name ?? '?')}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">

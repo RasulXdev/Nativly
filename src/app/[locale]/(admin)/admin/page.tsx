@@ -93,13 +93,13 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <HeroBanner
         variant="violet"
-        greeting="Admin Control Panel"
+        greeting={t('greeting')}
         title={t('title')}
-        subtitle="Nativly platform overview · Real-time data"
+        subtitle={t('subtitle')}
       >
         <div className="flex items-center gap-2.5 text-sm font-medium bg-white/8 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/10 w-fit">
           <TrendingUp className="h-4 w-4 text-violet-300" />
-          <span className="text-white/80">Live Stats</span>
+          <span className="text-white/80">{t('liveStats')}</span>
         </div>
       </HeroBanner>
 

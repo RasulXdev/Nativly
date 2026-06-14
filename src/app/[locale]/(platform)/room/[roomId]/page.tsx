@@ -74,7 +74,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   // LiveKit connection
   const [token, setToken] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
-  const [participantName, setParticipantName] = useState('Guest')
+  const [participantName, setParticipantName] = useState('')
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -93,7 +93,9 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
           .select('full_name')
           .eq('id', user.id)
           .single()
-        if (profile?.full_name) setParticipantName(profile.full_name)
+        setParticipantName(profile?.full_name || t('room.defaultParticipant'))
+      } else {
+        setParticipantName(t('room.defaultParticipant'))
       }
       const { data } = await supabase
         .from('lessons')
@@ -121,7 +123,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
   const handleJoin = async () => {
     if (!serverUrl) {
-      toast.error('LiveKit not configured')
+      toast.error(t('room.notConfigured'))
       return
     }
     setConnecting(true)
@@ -140,7 +142,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
       setPhase('in')
       timerRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000)
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Connection failed')
+      toast.error(e instanceof Error ? e.message : t('room.connectionFailed'))
     } finally {
       setConnecting(false)
     }
@@ -196,7 +198,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
     return `${m}:${s}`
   }
 
-  const tutorName = lesson?.tutor?.profiles?.full_name ?? 'Tutor'
+  const tutorName = lesson?.tutor?.profiles?.full_name ?? t('room.defaultTutor')
   const tutorAvatar = lesson?.tutor?.profiles?.avatar_url ?? ''
   const durationMins = lesson?.duration_minutes ?? 30
 
@@ -214,22 +216,22 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   /* ── PRE-CALL ── */
   if (phase === 'pre') {
     return (
-      <div className="min-h-screen bg-background dark flex items-center justify-center p-4 overflow-x-hidden">
+      <div className="min-h-dvh bg-background dark flex items-center justify-center p-4 overflow-y-auto">
         <div className="w-full max-w-2xl space-y-6">
           <Button variant="ghost" size="sm" onClick={() => router.back()} className="text-muted-foreground">
             <ArrowLeft className="h-4 w-4 mr-1" /> {tc('back')}
           </Button>
 
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-5 sm:space-y-6">
             <div className="text-center space-y-1">
-              <h1 className="text-2xl font-bold">{t('preCall.title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold">{t('preCall.title')}</h1>
               <p className="text-muted-foreground text-sm">{t('preCall.subtitle')}</p>
             </div>
 
             {/* Lesson Info */}
             {lesson && (
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border border-border/60">
-                <Avatar className="h-12 w-12 shrink-0">
+              <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-muted/30 border border-border/60">
+                <Avatar className="h-10 w-10 sm:h-12 sm:w-12 shrink-0">
                   <AvatarImage src={tutorAvatar} />
                   <AvatarFallback className="gradient-bg text-white font-bold">
                     {getInitials(tutorName)}
@@ -243,21 +245,21 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
             )}
 
             {/* Device checks */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
                 { label: t('preCall.camera'), icon: camEnabled ? Video : VideoOff, ok: camEnabled, toggle: () => setCamEnabled(v => !v) },
                 { label: t('preCall.microphone'), icon: micEnabled ? Mic : MicOff, ok: micEnabled, toggle: () => setMicEnabled(v => !v) },
                 { label: t('preCall.networkQuality'), icon: networkGood ? Wifi : WifiOff, ok: networkGood, toggle: () => setNetworkGood(v => !v) },
               ].map(item => (
-                <div key={item.label} className="flex items-center justify-between p-3 rounded-xl border border-border/60">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.ok ? 'bg-emerald-500/10' : 'bg-destructive/10'}`}>
+                <div key={item.label} className="flex items-center justify-between gap-2 p-2.5 sm:p-3 rounded-xl border border-border/60">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${item.ok ? 'bg-emerald-500/10' : 'bg-destructive/10'}`}>
                       <item.icon className={`h-4 w-4 ${item.ok ? 'text-emerald-500' : 'text-destructive'}`} />
                     </div>
-                    <span className="text-sm font-medium">{item.label}</span>
+                    <span className="text-sm font-medium truncate">{item.label}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs ${item.ok ? 'text-emerald-500' : 'text-destructive'}`}>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-xs whitespace-nowrap ${item.ok ? 'text-emerald-500' : 'text-destructive'}`}>
                       {item.ok ? t('preCall.good') : t('preCall.poor')}
                     </span>
                     <Button size="sm" variant="outline" className="h-7 text-xs" onClick={item.toggle}>
@@ -280,27 +282,27 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   /* ── POST-CALL ── */
   if (phase === 'post') {
     return (
-      <div className="min-h-screen bg-background dark flex items-center justify-center p-4 overflow-x-hidden">
+      <div className="min-h-dvh bg-background dark flex items-center justify-center p-4 overflow-y-auto">
         <div className="w-full max-w-lg space-y-5">
           <div className="text-center space-y-1">
-            <div className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
-              <Video className="h-8 w-8 text-white" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
+              <Video className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold">{t('postCall.title')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">{t('postCall.title')}</h1>
             <p className="text-muted-foreground text-sm">
               {t('postCall.duration')}: {formatTimer(elapsedSeconds)}
             </p>
           </div>
 
           {!reviewSubmitted ? (
-            <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-5">
               <h2 className="font-semibold">{t('postCall.writeReview')}</h2>
 
               {/* Star rating */}
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map(s => (
                   <button key={s} onClick={() => setRating(s)} className="transition-transform hover:scale-110">
-                    <Star className={`h-8 w-8 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                    <Star className={`h-7 w-7 sm:h-8 sm:w-8 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                   </button>
                 ))}
               </div>
@@ -322,12 +324,12 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
               </Button>
             </div>
           ) : (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 text-center">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 sm:p-6 text-center">
               <p className="text-emerald-500 font-semibold">{t('postCall.reviewSubmitted')}</p>
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="outline" className="flex-1" onClick={() => router.push('/tutors')}>
               {t('postCall.bookNext')}
             </Button>
@@ -462,79 +464,79 @@ function InCallView({
   const mainTrack = (screenShareTrack?.publication && screenShareTrack) || (remoteCameraTrack?.publication && remoteCameraTrack) || null
 
   return (
-    <div className="flex flex-col h-screen bg-zinc-950 dark overflow-hidden">
+    <div className="flex flex-col h-dvh bg-zinc-950 dark overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-zinc-900/80 backdrop-blur border-b border-zinc-800 shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 bg-zinc-900/80 backdrop-blur border-b border-zinc-800 shrink-0 gap-2 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src={tutorAvatar} />
             <AvatarFallback className="gradient-bg text-white text-xs">{getInitials(tutorName)}</AvatarFallback>
           </Avatar>
-          <div>
-            <p className="text-sm font-semibold text-white">{tutorName}</p>
-            <p className="text-xs text-zinc-400">{t('room.title')}</p>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-white truncate">{tutorName}</p>
+            <p className="text-xs text-zinc-400 truncate">{t('room.title')}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {connectionState === ConnectionState.Reconnecting && (
-            <span className="text-xs text-amber-400 animate-pulse font-medium">{t('room.reconnecting')}</span>
+            <span className="text-xs text-amber-400 animate-pulse font-medium hidden sm:inline">{t('room.reconnecting')}</span>
           )}
           {lessonEndingWarning && (
-            <span className="text-xs text-amber-400 animate-pulse font-medium">
+            <span className="text-xs text-amber-400 animate-pulse font-medium whitespace-nowrap">
               {remainingMins} {t('room.minutesLeft')}
             </span>
           )}
-          <div className="flex items-center gap-1.5 bg-zinc-800 rounded-full px-3 py-1">
-            <div className={`w-2 h-2 rounded-full ${connectionState === ConnectionState.Connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+          <div className="flex items-center gap-1.5 bg-zinc-800 rounded-full px-2.5 py-1">
+            <div className={`w-2 h-2 rounded-full shrink-0 ${connectionState === ConnectionState.Connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
             <span className="text-xs text-zinc-300 font-mono">{formatTimer(elapsedSeconds)}</span>
           </div>
         </div>
       </div>
 
       {/* Main area */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Video area */}
-        <div className="flex-1 flex items-center justify-center bg-zinc-950 relative p-4">
+        <div className="flex-1 min-w-0 flex items-center justify-center bg-zinc-950 relative p-2 sm:p-4">
           {/* Remote / main video */}
-          <div className="w-full max-w-3xl aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800 overflow-hidden">
+          <div className="w-full h-full max-w-4xl max-h-full bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800 overflow-hidden">
             {mainTrack ? (
-              <VideoTrack trackRef={mainTrack} className="w-full h-full object-cover rounded-2xl" />
+              <VideoTrack trackRef={mainTrack} className="w-full h-full object-contain rounded-2xl" />
             ) : (
               <div className="text-center space-y-3">
-                <Avatar className="h-20 w-20 mx-auto">
+                <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto">
                   <AvatarImage src={tutorAvatar} />
-                  <AvatarFallback className="gradient-bg text-white text-2xl font-bold">{getInitials(tutorName)}</AvatarFallback>
+                  <AvatarFallback className="gradient-bg text-white text-xl sm:text-2xl font-bold">{getInitials(tutorName)}</AvatarFallback>
                 </Avatar>
-                <p className="text-zinc-400 text-sm">{t('room.waitingForParticipant')}</p>
+                <p className="text-zinc-400 text-xs sm:text-sm">{t('room.waitingForParticipant')}</p>
               </div>
             )}
           </div>
 
           {/* Self video (PiP) */}
-          <div className="absolute bottom-6 right-6 w-32 sm:w-40 aspect-video bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center overflow-hidden">
+          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 w-24 sm:w-36 aspect-video bg-zinc-800 rounded-xl border border-zinc-700 flex items-center justify-center overflow-hidden shadow-lg">
             {camOn && localCameraTrack?.publication ? (
               <VideoTrack trackRef={localCameraTrack} className="w-full h-full object-cover" />
             ) : (
-              <VideoOff className="h-6 w-6 text-zinc-500" />
+              <VideoOff className="h-5 w-5 text-zinc-500" />
             )}
           </div>
         </div>
 
         {/* Side panel */}
         {(showChat || showNotes) && (
-          <div className="w-72 sm:w-80 bg-zinc-900 border-l border-zinc-800 flex flex-col shrink-0">
+          <div className="w-64 sm:w-72 md:w-80 bg-zinc-900 border-l border-zinc-800 flex flex-col shrink-0 max-h-full overflow-hidden">
             {/* Panel tabs */}
             <div className="flex border-b border-zinc-800 shrink-0">
               <button
                 onClick={() => { setShowChat(true); setShowNotes(false) }}
-                className={`flex-1 py-3 text-xs font-medium transition-colors ${showChat ? 'text-white border-b-2 border-primary' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`flex-1 py-2.5 text-xs font-medium transition-colors ${showChat ? 'text-white border-b-2 border-primary' : 'text-zinc-500 hover:text-zinc-300'}`}
               >
                 {t('room.chat')}
               </button>
               <button
                 onClick={() => { setShowNotes(true); setShowChat(false) }}
-                className={`flex-1 py-3 text-xs font-medium transition-colors ${showNotes ? 'text-white border-b-2 border-primary' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`flex-1 py-2.5 text-xs font-medium transition-colors ${showNotes ? 'text-white border-b-2 border-primary' : 'text-zinc-500 hover:text-zinc-300'}`}
               >
                 {t('room.notes')}
               </button>
@@ -547,21 +549,21 @@ function InCallView({
                     <p className="text-zinc-500 text-xs text-center mt-4">{t('room.chat')}</p>
                   )}
                   {chatMessages.map((m, i) => (
-                    <div key={m.id ?? i} className="bg-zinc-800 rounded-xl p-2.5">
-                      <p className="text-xs text-zinc-400 mb-1">
-                        {m.from?.identity === localParticipant.identity ? 'You' : (m.from?.name || m.from?.identity || '—')} · {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <div key={m.id ?? i} className="bg-zinc-800 rounded-xl p-2.5 overflow-hidden">
+                      <p className="text-xs text-zinc-400 mb-1 truncate">
+                        {m.from?.identity === localParticipant.identity ? t('room.you') : (m.from?.name || m.from?.identity || '—')} · {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
-                      <p className="text-sm text-white break-words">{m.message}</p>
+                      <p className="text-sm text-white break-words overflow-wrap-anywhere">{m.message}</p>
                     </div>
                   ))}
                 </div>
-                <div className="p-3 border-t border-zinc-800 shrink-0 flex gap-2">
+                <div className="p-2.5 border-t border-zinc-800 shrink-0 flex gap-2">
                   <input
                     value={chatInput}
                     onChange={e => setChatInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendChat()}
-                    placeholder="Message..."
-                    className="flex-1 bg-zinc-800 text-white text-sm rounded-xl px-3 py-2 outline-none border border-zinc-700 focus:border-primary"
+                    placeholder={t('room.messagePlaceholder')}
+                    className="flex-1 min-w-0 bg-zinc-800 text-white text-sm rounded-xl px-3 py-2 outline-none border border-zinc-700 focus:border-primary"
                   />
                   <Button size="sm" onClick={handleSendChat} className="shrink-0 gradient-bg border-0 text-white">
                     <ChevronRight className="h-4 w-4" />
@@ -572,8 +574,8 @@ function InCallView({
 
             {showNotes && (
               <>
-                <div className="flex-1 p-3 min-h-0 flex flex-col">
-                  <p className="text-xs text-zinc-400 mb-2">{t('room.sharedNotes')}</p>
+                <div className="flex-1 p-3 min-h-0 flex flex-col overflow-hidden">
+                  <p className="text-xs text-zinc-400 mb-2 shrink-0">{t('room.sharedNotes')}</p>
                   <Textarea
                     value={sharedNotes}
                     onChange={e => setSharedNotes(e.target.value)}
@@ -581,7 +583,7 @@ function InCallView({
                     className="flex-1 resize-none bg-zinc-800 border-zinc-700 text-white text-sm min-h-0"
                   />
                 </div>
-                <div className="p-3 border-t border-zinc-800 shrink-0">
+                <div className="p-2.5 border-t border-zinc-800 shrink-0">
                   <Button size="sm" variant="outline" className="w-full text-xs border-zinc-700 text-zinc-300" onClick={() => toast.success(t('room.notesSaved'))}>
                     {t('room.saveNotes')}
                   </Button>
@@ -593,56 +595,56 @@ function InCallView({
       </div>
 
       {/* Controls bar */}
-      <div className="shrink-0 bg-zinc-900/90 backdrop-blur border-t border-zinc-800 px-4 py-3">
-        <div className="flex items-center justify-center gap-3 flex-wrap">
+      <div className="shrink-0 bg-zinc-900/90 backdrop-blur border-t border-zinc-800 px-2 sm:px-4 py-2 sm:py-3">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3">
           <button
             onClick={() => toggleMic()}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${micOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
+            className={`flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-colors ${micOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
             title={micOn ? t('room.mute') : t('room.unmute')}
           >
-            {micOn ? <Mic className="h-5 w-5 text-white" /> : <MicOff className="h-5 w-5 text-destructive" />}
-            <span className="text-[10px] text-zinc-400">{micOn ? t('room.mute') : t('room.unmute')}</span>
+            {micOn ? <Mic className="h-4 w-4 sm:h-5 sm:w-5 text-white" /> : <MicOff className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />}
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 hidden sm:block">{micOn ? t('room.mute') : t('room.unmute')}</span>
           </button>
 
           <button
             onClick={() => toggleCam()}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${camOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
+            className={`flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-colors ${camOn ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-destructive/20 hover:bg-destructive/30'}`}
             title={camOn ? t('room.cameraOff') : t('room.cameraOn')}
           >
-            {camOn ? <Video className="h-5 w-5 text-white" /> : <VideoOff className="h-5 w-5 text-destructive" />}
-            <span className="text-[10px] text-zinc-400">{camOn ? t('room.cameraOff') : t('room.cameraOn')}</span>
+            {camOn ? <Video className="h-4 w-4 sm:h-5 sm:w-5 text-white" /> : <VideoOff className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />}
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 hidden sm:block">{camOn ? t('room.cameraOff') : t('room.cameraOn')}</span>
           </button>
 
           <button
             onClick={() => toggleScreen()}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${screenOn ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+            className={`flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-colors hidden sm:flex ${screenOn ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            {screenOn ? <MonitorOff className="h-5 w-5 text-primary" /> : <Monitor className="h-5 w-5 text-white" />}
-            <span className="text-[10px] text-zinc-400">{screenOn ? t('room.stopShare') : t('room.screenShare')}</span>
+            {screenOn ? <MonitorOff className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> : <Monitor className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 hidden sm:block">{screenOn ? t('room.stopShare') : t('room.screenShare')}</span>
           </button>
 
           <button
             onClick={() => { setShowChat(v => !v); setShowNotes(false) }}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${showChat ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+            className={`flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-colors ${showChat ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            <MessageSquare className={`h-5 w-5 ${showChat ? 'text-primary' : 'text-white'}`} />
-            <span className="text-[10px] text-zinc-400">{t('room.chat')}</span>
+            <MessageSquare className={`h-4 w-4 sm:h-5 sm:w-5 ${showChat ? 'text-primary' : 'text-white'}`} />
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 hidden sm:block">{t('room.chat')}</span>
           </button>
 
           <button
             onClick={() => { setShowNotes(v => !v); setShowChat(false) }}
-            className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-colors ${showNotes ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
+            className={`flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-colors ${showNotes ? 'bg-primary/20' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            <FileText className={`h-5 w-5 ${showNotes ? 'text-primary' : 'text-white'}`} />
-            <span className="text-[10px] text-zinc-400">{t('room.notes')}</span>
+            <FileText className={`h-4 w-4 sm:h-5 sm:w-5 ${showNotes ? 'text-primary' : 'text-white'}`} />
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 hidden sm:block">{t('room.notes')}</span>
           </button>
 
           <button
             onClick={onRequestEnd}
-            className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-destructive hover:bg-destructive/90 transition-colors ml-2"
+            className="flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-destructive hover:bg-destructive/90 transition-colors ml-1 sm:ml-2"
           >
-            <PhoneOff className="h-5 w-5 text-white" />
-            <span className="text-[10px] text-white">{t('room.endCall')}</span>
+            <PhoneOff className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+            <span className="text-[9px] sm:text-[10px] text-white hidden sm:block">{t('room.endCall')}</span>
           </button>
         </div>
       </div>

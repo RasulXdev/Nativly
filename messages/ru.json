@@ -62,7 +62,17 @@
     "copy": "Копировать",
     "share": "Поделиться",
     "download": "Скачать",
-    "underConstruction": "Этот раздел в разработке"
+    "underConstruction": "Этот раздел в разработке",
+    "maxFileSize": "Макс {size}",
+    "updated": "Обновлено",
+    "markedAsPaid": "Отмечено как оплачено",
+    "planSaved": "План сохранён",
+    "plan": "План",
+    "user": "Пользователь",
+    "na": "Н/Д",
+    "role": "Роль",
+    "status": "Статус",
+    "joined": "Присоединился"
   },
   "nav": {
     "home": "Главная",
@@ -614,7 +624,8 @@
     "deleteMessage": "Удалить сообщение",
     "editMessage": "Редактировать сообщение",
     "fileAttached": "Файл прикреплён",
-    "imageAttached": "Фото прикреплено"
+    "imageAttached": "Фото прикреплено",
+    "user": "Пользователь"
   },
   "wallet": {
     "title": "Кошелёк",
@@ -654,10 +665,12 @@
       "upgrade": "Повысить план",
       "downgrade": "Понизить план",
       "perMonth": "/ месяц",
-      "active": "Активна",
+      "active": "Активный",
       "cancelled": "Отменена",
       "expired": "Истекла",
-      "pastDue": "Просрочена"
+      "pastDue": "Просрочена",
+      "plan": "План",
+      "lessonsPerMonth": "{count} уроков/мес"
     },
     "notificationsTitle": "Уведомления",
     "updateProfile": "Обновить профиль",
@@ -718,7 +731,13 @@
       "sharedNotes": "Общие заметки",
       "notesPlaceholder": "Пишите заметки вместе здесь...",
       "saveNotes": "Сохранить заметки",
-      "notesSaved": "Заметки сохранены"
+      "notesSaved": "Заметки сохранены",
+      "you": "Вы",
+      "messagePlaceholder": "Сообщение...",
+      "notConfigured": "Видеозвонки не настроены",
+      "defaultParticipant": "Гость",
+      "defaultTutor": "Преподаватель",
+      "connectionFailed": "Ошибка подключения"
     },
     "postCall": {
       "title": "Урок завершён",
@@ -822,7 +841,10 @@
       "activeLessons": "Активные уроки",
       "recentRegistrations": "Последние регистрации",
       "userGrowth": "Рост пользователей",
-      "revenueChart": "График выручки"
+      "revenueChart": "График выручки",
+      "greeting": "Панель управления",
+      "subtitle": "Обзор платформы Nativly · Данные в реальном времени",
+      "liveStats": "Статистика"
     },
     "users": {
       "title": "Пользователи",
@@ -832,7 +854,7 @@
       "all": "Все",
       "role": "Роль",
       "status": "Статус",
-      "joined": "Зарегистрирован",
+      "joined": "Присоединился",
       "lastActive": "Последняя активность",
       "actions": "Действия",
       "viewProfile": "Просмотр профиля",
@@ -844,7 +866,8 @@
       "sendEmail": "Написать email",
       "noUsers": "Пользователи не найдены",
       "statusActive": "Активен",
-      "statusInactive": "Неактивен"
+      "statusInactive": "Неактивен",
+      "updated": "Обновлено"
     },
     "tutors": {
       "title": "Репетиторы",
@@ -869,7 +892,10 @@
       "noTutors": "Репетиторы не найдены",
       "lessons": "уроков",
       "viewDocuments": "Просмотр документов",
-      "viewVideo": "Просмотр видео-резюме"
+      "viewVideo": "Просмотр видео-резюме",
+      "approved": "Одобрено!",
+      "rejected": "Отклонено",
+      "updated": "Обновлено"
     },
     "lessons": {
       "title": "Уроки",
@@ -887,7 +913,8 @@
       "duration": "Продолжительность",
       "noLessons": "Уроки не найдены",
       "viewDetails": "Подробнее",
-      "handleDispute": "Решить спор"
+      "handleDispute": "Решить спор",
+      "na": "Н/Д"
     },
     "payments": {
       "title": "Платежи",
@@ -911,7 +938,8 @@
       "totalRevenue": "Общий доход",
       "tutorPayout": "Выплата репетитору",
       "platformProfit": "Прибыль платформы",
-      "stripeId": "Stripe ID"
+      "stripeId": "Stripe ID",
+      "markedAsPaid": "Отмечено как оплачено"
     },
     "settings": {
       "title": "Настройки администратора",
@@ -938,14 +966,19 @@
       "descriptionRu": "Описание (RU)",
       "featuredTutors": "Выделенные репетиторы",
       "systemAnnouncements": "Системные объявления",
-      "cancellationPolicy": "Политика отмены"
+      "cancellationPolicy": "Политика отмены",
+      "planSaved": "План сохранён",
+      "plan": "План"
     },
     "pendingApplications": "Ожидающие заявки",
     "approve": "Одобрить",
     "reject": "Отклонить",
     "deactivate": "Деактивировать",
     "feature": "Выделить",
-    "unfeature": "Убрать выделение"
+    "unfeature": "Убрать выделение",
+    "controlPanel": "Панель управления",
+    "approved": "Одобрено!",
+    "rejected": "Отклонено"
   },
   "errors": {
     "required": "Это поле обязательно",
@@ -1484,7 +1517,8 @@
       "paymentDesc": "Когда получена выплата за урок",
       "marketingLabel": "Новостные письма",
       "marketingDesc": "Новости и предложения Nativly"
-    }
+    },
+    "maxFileSize": "Макс {size}"
   },
   "privacy": {
     "title": "Политика конфиденциальности",

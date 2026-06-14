@@ -62,7 +62,17 @@
     "copy": "Copy",
     "share": "Share",
     "download": "Download",
-    "underConstruction": "This section is under construction"
+    "underConstruction": "This section is under construction",
+    "maxFileSize": "Max {size}",
+    "updated": "Updated",
+    "markedAsPaid": "Marked as paid",
+    "planSaved": "Plan saved",
+    "plan": "Plan",
+    "user": "User",
+    "na": "N/A",
+    "role": "Role",
+    "status": "Status",
+    "joined": "Joined"
   },
   "nav": {
     "home": "Home",
@@ -614,7 +624,8 @@
     "deleteMessage": "Delete message",
     "editMessage": "Edit message",
     "fileAttached": "File attached",
-    "imageAttached": "Image attached"
+    "imageAttached": "Image attached",
+    "user": "User"
   },
   "wallet": {
     "title": "Wallet",
@@ -657,7 +668,9 @@
       "active": "Active",
       "cancelled": "Cancelled",
       "expired": "Expired",
-      "pastDue": "Past due"
+      "pastDue": "Past due",
+      "plan": "Plan",
+      "lessonsPerMonth": "{count} lessons/month"
     },
     "notificationsTitle": "Notifications",
     "updateProfile": "Update profile",
@@ -718,7 +731,13 @@
       "sharedNotes": "Shared notes",
       "notesPlaceholder": "Write notes together here...",
       "saveNotes": "Save notes",
-      "notesSaved": "Notes saved"
+      "notesSaved": "Notes saved",
+      "you": "You",
+      "messagePlaceholder": "Message...",
+      "notConfigured": "Video calling is not configured",
+      "defaultParticipant": "Guest",
+      "defaultTutor": "Tutor",
+      "connectionFailed": "Connection failed"
     },
     "postCall": {
       "title": "Lesson completed",
@@ -822,7 +841,10 @@
       "activeLessons": "Active lessons",
       "recentRegistrations": "Recent registrations",
       "userGrowth": "User growth",
-      "revenueChart": "Revenue chart"
+      "revenueChart": "Revenue chart",
+      "greeting": "Admin Control Panel",
+      "subtitle": "Nativly platform overview · Real-time data",
+      "liveStats": "Live Stats"
     },
     "users": {
       "title": "Users",
@@ -844,7 +866,8 @@
       "sendEmail": "Send email",
       "noUsers": "No users found",
       "statusActive": "Active",
-      "statusInactive": "Inactive"
+      "statusInactive": "Inactive",
+      "updated": "Updated"
     },
     "tutors": {
       "title": "Tutors",
@@ -869,7 +892,10 @@
       "noTutors": "No tutors found",
       "lessons": "lessons",
       "viewDocuments": "View documents",
-      "viewVideo": "View intro video"
+      "viewVideo": "View intro video",
+      "approved": "Approved!",
+      "rejected": "Rejected",
+      "updated": "Updated"
     },
     "lessons": {
       "title": "Lessons",
@@ -887,7 +913,8 @@
       "duration": "Duration",
       "noLessons": "No lessons found",
       "viewDetails": "View details",
-      "handleDispute": "Handle dispute"
+      "handleDispute": "Handle dispute",
+      "na": "N/A"
     },
     "payments": {
       "title": "Payments",
@@ -911,7 +938,8 @@
       "totalRevenue": "Total revenue",
       "tutorPayout": "Tutor payout",
       "platformProfit": "Platform profit",
-      "stripeId": "Stripe ID"
+      "stripeId": "Stripe ID",
+      "markedAsPaid": "Marked as paid"
     },
     "settings": {
       "title": "Admin settings",
@@ -938,14 +966,19 @@
       "descriptionRu": "Description (RU)",
       "featuredTutors": "Featured tutors",
       "systemAnnouncements": "System announcements",
-      "cancellationPolicy": "Cancellation policy"
+      "cancellationPolicy": "Cancellation policy",
+      "planSaved": "Plan saved",
+      "plan": "Plan"
     },
     "pendingApplications": "Pending applications",
     "approve": "Approve",
     "reject": "Reject",
     "deactivate": "Deactivate",
     "feature": "Feature",
-    "unfeature": "Unfeature"
+    "unfeature": "Unfeature",
+    "controlPanel": "Admin Control Panel",
+    "approved": "Approved!",
+    "rejected": "Rejected"
   },
   "errors": {
     "required": "This field is required",
@@ -1484,7 +1517,8 @@
       "paymentDesc": "When a lesson payout is received",
       "marketingLabel": "News emails",
       "marketingDesc": "Nativly news and offers"
-    }
+    },
+    "maxFileSize": "Max {size}"
   },
   "privacy": {
     "title": "Privacy Policy",
